@@ -80,6 +80,20 @@ describe('Model', () => {
       expect(() => model.validate()).toThrow("SoftwareSystems named 'softwareSystem2', 'softwareSystem4' are referenced but not defined.");
     })
 
+    test('should validate a Model by checking that all People that have been referenced have also been defined', () => {
+      model.definePerson("person1")
+      model.referencePerson("person1")
+
+      model.referencePerson("person2")
+
+      model.definePerson("person3")
+      model.referencePerson("person3")
+
+      model.referencePerson("person4")
+
+      expect(() => model.validate()).toThrow("People named 'person2', 'person4' are referenced but not defined.")
+    })
+
     test('should validate a Model by checking that all Containers that have been referenced have also been defined', () => {
       const softwareSystem = model.defineSoftwareSystem("softwareSystem")
       softwareSystem.defineContainer("container2")
@@ -88,6 +102,21 @@ describe('Model', () => {
       softwareSystemReference.referenceContainer("container3")
 
       expect(() => model.validate()).toThrow("Elements named 'softwareSystem.container1', 'softwareSystem.container3' are referenced but not defined.")
+    })
+
+    test('should validate a Model by checking that all Components that have been referenced have also been defined', () => {
+      const softwareSystem1 = model.defineSoftwareSystem("softwareSystem1")
+      const container1 = softwareSystem1.defineContainer("container1")
+      container1.defineComponent("component1")
+
+      const softwareSystem2 = model.defineSoftwareSystem("softwareSystem2")
+      const container2 = softwareSystem2.defineContainer("container2")
+      container2.defineComponent("component2")
+
+      model.referenceSoftwareSystem("softwareSystem1").referenceContainer("container1").referenceComponent("component2")
+      model.referenceSoftwareSystem("softwareSystem2").referenceContainer("container2").referenceComponent("component1")
+
+      expect(() => model.validate()).toThrow("Elements named 'softwareSystem1.container1.component2', 'softwareSystem2.container2.component1' are referenced but not defined.")
     })
   })
 

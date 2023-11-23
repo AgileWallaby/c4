@@ -64,8 +64,7 @@ export class Reference<T> {
 
   public getChildElements(path?: string): ReadonlyArray<string> {
     const result = Array.from(this._references.values()).flatMap(reference => {
-      const parentPath = path ? `${path}.` : '' + this.name
-      const currentPath = `${parentPath}.${reference.name}`
+      const currentPath = `${path ? path : '' + this.name}.${reference.name}`
       return [currentPath, ...reference.getChildElements(currentPath)]
     })
     return result

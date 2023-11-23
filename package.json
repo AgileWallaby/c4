@@ -5,6 +5,7 @@
   "scripts": {},
   "private": true,
   "dependencies": {
+    "glob": "^10.3.10",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
