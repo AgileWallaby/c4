@@ -1,5 +1,8 @@
-import { Container } from './container';
+import { Component, ReferencedComponent } from './component';
+import { Container, ReferencedContainer } from './container';
 import { faker } from '@faker-js/faker'
+import { ReferencedSoftwareSystem, SoftwareSystem } from './softwareSystem';
+import { Person } from './person';
 
 describe('Container', () => {
 
@@ -9,20 +12,23 @@ describe('Container', () => {
 
   const defaultTags = ["Element", "Container"]
 
-  test('should be created with name only', () => {
-    const container = new Container(name)
-    expect(container.name).toBe(name)
-    expect(container.description).toBeUndefined()
-    expect(container.tags).toHaveLength(2)
-    expect(container.tags).toEqual(expect.arrayContaining(defaultTags))
-  })
+  describe('can be created', () => {
 
-  test('should be created with name and definition', () => {
-    const container = new Container(name, { description, tags})
-    expect(container.name).toBe(name)
-    expect(container.description).toBe(description)
-    expect(container.tags).toHaveLength(tags.length + 2)
-    expect(container.tags).toEqual(expect.arrayContaining(defaultTags.concat(tags)))
+    test('should be created with name only', () => {
+      const container = new Container(name)
+      expect(container.name).toBe(name)
+      expect(container.description).toBeUndefined()
+      expect(container.tags).toHaveLength(2)
+      expect(container.tags).toEqual(expect.arrayContaining(defaultTags))
+    })
+
+    test('should be created with name and definition', () => {
+      const container = new Container(name, { description, tags})
+      expect(container.name).toBe(name)
+      expect(container.description).toBe(description)
+      expect(container.tags).toHaveLength(tags.length + 2)
+      expect(container.tags).toEqual(expect.arrayContaining(defaultTags.concat(tags)))
+    })
   })
 
   describe('can contain components', () => {
@@ -40,7 +46,6 @@ describe('Container', () => {
       expect(component.tags).toEqual(expect.arrayContaining(defaultComponentTags))
     })
 
-
     test('can define a container with definition', () => {
       const container = new Container("system")
       const component = container.defineComponent(componentName, { description: componentDescription, tags: componentTags })
@@ -54,7 +59,22 @@ describe('Container', () => {
       const container = new Container("system")
       container.defineComponent(componentName)
 
-      expect(() => container.defineComponent(componentName)).toThrow(`A Container named '${componentName}' is defined elsewhere in this SoftwareSystem. A Container can be defined only once, but can be referenced multiple times.`)
+      expect(() => container.defineComponent(componentName)).toThrow(`A Component named '${componentName}' is defined elsewhere in this Container. A Component can be defined only once, but can be referenced multiple times.`)
     })
+  })
+
+  test.each([
+    new Container("otherContainer"),
+    new Component("component"),
+    new SoftwareSystem("softwareSystem"),
+    new Person("person"),
+    new ReferencedContainer("referencedContainer"),
+    new ReferencedComponent("referencedComponent"),
+    new ReferencedSoftwareSystem("referencedSoftwareSystem"),
+  ])('can use other elements', (element) => {
+    const container = new Container("container")
+    container.uses(element)
+    expect(container.relationships).toHaveLength(1)
+    expect(container.relationships[0].destination).toBe(element)
   })
 })

@@ -43,17 +43,32 @@ export class Relationship {
 }
 
 export class Reference<T> {
-  private readonly _children = new Map<string, Reference<T>>()
+  private readonly _references = new Map<string, Reference<T>>()
 
   constructor(public readonly name: string) {
   }
 
-  protected referenceChild(name: string, x: (namex: string) => Reference<T>): Reference<T> {
-    let child = this._children.get(name)
-    if (!child) {
-      child = x(name)
-      this._children.set(name, child)
+  protected referenceChild(name: string, createChild: (childName: string) => Reference<T>): Reference<T> {
+    let reference = this._references.get(name)
+    if (!reference) {
+      reference = createChild(name)
+      this._references.set(name, reference)
     }
-    return child
+    return reference
   }
+
+  public get references(): ReadonlyArray<Reference<T>> {
+    return Array.from(this._references.values())
+  }
+
+  public getChildElements(path?: string): ReadonlyArray<string> {
+    const result = Array.from(this._references.values()).flatMap(reference => {
+      const parentPath = path ? `${path}.` : '' + this.name
+      const currentPath = `${parentPath}.${reference.name}`
+      return [currentPath, ...reference.getChildElements(currentPath)]
+    })
+    return result
+  }
+
+
 }

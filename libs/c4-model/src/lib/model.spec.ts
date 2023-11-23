@@ -34,7 +34,7 @@ describe('Model', () => {
     expect(softwareSystem2.name).toBe("softwareSystem");
   })
 
-  test('should validate a model by checking that all software systems that have been referenced have also been defined', () => {
+  test('should validate a model by checking that all SoftwareSystems that have been referenced have also been defined', () => {
     model.defineSoftwareSystem("softwareSystem1");
     model.referenceSoftwareSystem("softwareSystem1");
 
@@ -50,6 +50,16 @@ describe('Model', () => {
     model.referenceSoftwareSystem("softwareSystem4");
 
     expect(() => model.validate()).toThrow("SoftwareSystems named 'softwareSystem2', 'softwareSystem4' are referenced but not defined.");
+  })
+
+  test('should validate a model by checking that all Containers that have been referenced have also been defined', () => {
+    const softwareSystem = model.defineSoftwareSystem("softwareSystem")
+    softwareSystem.defineContainer("container2")
+    const softwareSystemReference = model.referenceSoftwareSystem("softwareSystem")
+    softwareSystemReference.referenceContainer("container1")
+    softwareSystemReference.referenceContainer("container3")
+
+    expect(() => model.validate()).toThrow("Elements named 'softwareSystem.container1', 'softwareSystem.container3' are referenced but not defined.")
   })
 
   test('should be able to define that one software system uses another', () => {

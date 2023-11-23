@@ -9,7 +9,7 @@ export interface ContainerDefinition extends TechnologyDefinition {
 
 export class Container extends Element {
 
-  public relationships: Relationship[] = []
+  private _relationships: Relationship[] = []
   private _components = new Map<string, Component>();
 
   constructor(public override readonly name: string, definition?: ContainerDefinition) {
@@ -18,12 +18,16 @@ export class Container extends Element {
 
   public uses(otherElement: Person | SoftwareSystem | ReferencedSoftwareSystem | Container | ReferencedContainer | Component | ReferencedComponent, definition?: TechnologyDefinition): void {
     const relationship = new Relationship(this, otherElement, definition)
-    this.relationships.push(relationship)
+    this._relationships.push(relationship)
+  }
+
+  public get relationships(): ReadonlyArray<Relationship> {
+    return this._relationships
   }
 
   public defineComponent(name: string, definition?: ComponentDefinition): Component {
     if (this._components.has(name)) {
-      throw Error(`A Container named '${name}' is defined elsewhere in this SoftwareSystem. A Container can be defined only once, but can be referenced multiple times.`)
+      throw Error(`A Component named '${name}' is defined elsewhere in this Container. A Component can be defined only once, but can be referenced multiple times.`)
     }
 
     const component = new Component(name, definition)

@@ -29,5 +29,12 @@ export class Model {
     if (undefinedSoftwareSystems.length > 0) {
       throw Error(`SoftwareSystems named '${undefinedSoftwareSystems.join("', '")}' are referenced but not defined.`)
     }
+    const definedElements = Array.from(this.softwareSystems.values()).flatMap(system => system.getChildElements())
+    const referencedElements = Array.from(this.referencedSoftwareSystems.values()).flatMap(system => system.getChildElements())
+
+    const undefinedElements = referencedElements.filter(name => !definedElements.includes(name))
+    if (undefinedElements.length > 0) {
+      throw Error(`Elements named '${undefinedElements.join("', '")}' are referenced but not defined.`)
+    }
   }
 }

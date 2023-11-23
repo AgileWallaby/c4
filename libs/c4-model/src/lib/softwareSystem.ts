@@ -39,6 +39,11 @@ export class SoftwareSystem extends Element {
 
     return container
   }
+
+  public getChildElements(): ReadonlyArray<string> {
+    const result = Array.from(this._containers.values()).map(container => `${this.name}.${container.name}`)
+    return result
+  }
 }
 
 export class ReferencedSoftwareSystem extends Reference<Container> {

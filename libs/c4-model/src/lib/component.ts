@@ -1,22 +1,26 @@
 import { Element, Reference, Relationship, TechnologyDefinition } from "./core"
-import { Container } from "./container"
+import { Container, ReferencedContainer } from "./container"
 import { Person } from "./person"
-import { SoftwareSystem } from "./softwareSystem"
+import { ReferencedSoftwareSystem, SoftwareSystem } from "./softwareSystem"
 
 export interface ComponentDefinition extends TechnologyDefinition {
 }
 
 export class Component extends Element {
 
-  public relationships: Relationship[] = []
+  private _relationships: Relationship[] = []
 
   constructor(public override readonly name: string, definition?: ComponentDefinition) {
     super(name, ["Component"], definition)
   }
 
-  public uses(otherElement: Person | SoftwareSystem | Container | Component, definition?: TechnologyDefinition): void {
+  public uses(otherElement: Person | SoftwareSystem | Container | Component | ReferencedSoftwareSystem | ReferencedContainer | ReferencedComponent, definition?: TechnologyDefinition): void {
     const relationship = new Relationship(this, otherElement, definition)
-    this.relationships.push(relationship)
+    this._relationships.push(relationship)
+  }
+
+  public get relationships(): ReadonlyArray<Relationship> {
+    return this._relationships
   }
 }
 
