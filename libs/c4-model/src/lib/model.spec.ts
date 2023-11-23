@@ -8,12 +8,12 @@ describe('Model', () => {
     model = new Model("model")
   })
 
-  test('defining a software system should return system with provided name', () => {
+  test('defining a SoftwareSystem should return system with provided name', () => {
     const softwareSystem = model.defineSoftwareSystem("softwareSystem")
     expect(softwareSystem.name).toBe("softwareSystem")
   })
 
-  test('defining a software system with name and definition should return system with provided name and definition', () => {
+  test('defining a SoftwareSystem with name and definition should return system with provided name and definition', () => {
     const softwareSystem = model.defineSoftwareSystem("softwareSystem", { description: "description", tags: ["tag1", "tag2"] })
     expect(softwareSystem.name).toBe("softwareSystem")
     expect(softwareSystem.description).toBe("description")
@@ -22,12 +22,12 @@ describe('Model', () => {
 
   })
 
-  test('should not permit a software system to be defined multiple times', () => {
+  test('should not permit a SoftwareSystem to be defined multiple times', () => {
     model.defineSoftwareSystem("softwareSystem");
     expect(() => model.defineSoftwareSystem("softwareSystem")).toThrow("A SoftwareSystem named 'softwareSystem' is defined elsewhere in this Model. A SoftwareSystem can be defined only once, but can be referenced multiple times.");
   });
 
-  test('should permit a software system to be referenced multiple times without being defined', () => {
+  test('should permit a SoftwareSystem to be referenced multiple times without being defined', () => {
     const softwareSystem1 = model.referenceSoftwareSystem("softwareSystem");
     expect(softwareSystem1.name).toBe("softwareSystem");
     const softwareSystem2 = model.referenceSoftwareSystem("softwareSystem");
@@ -39,10 +39,14 @@ describe('Model', () => {
     model.referenceSoftwareSystem("softwareSystem1");
 
     model.referenceSoftwareSystem("softwareSystem2");
+    model.referenceSoftwareSystem("softwareSystem2");
 
-    model.referenceSoftwareSystem("softwareSystem3");
+    model.referenceSoftwareSystem("softwareSystem2");
     model.defineSoftwareSystem("softwareSystem3");
 
+    model.referenceSoftwareSystem("softwareSystem4");
+    model.referenceSoftwareSystem("softwareSystem4");
+    model.referenceSoftwareSystem("softwareSystem4");
     model.referenceSoftwareSystem("softwareSystem4");
 
     expect(() => model.validate()).toThrow("SoftwareSystems named 'softwareSystem2', 'softwareSystem4' are referenced but not defined.");
@@ -65,16 +69,8 @@ describe('Model', () => {
     expect(softwareSystem1.relationships[0].destination).toBe(softwareSystem2);
   })
 
-  test('should be able to define a relationship between a referenced software system and a defined software system', () => {
-    const softwareSystem1 = model.referenceSoftwareSystem("softwareSystem1");
-    const softwareSystem2 = model.defineSoftwareSystem("softwareSystem2");
-    softwareSystem1.uses(softwareSystem2, { description: "sends data to" });
-    expect(softwareSystem1.relationships.length).toBe(1);
-    expect(softwareSystem1.relationships[0].destination).toBe(softwareSystem2);
-  })
-
-  test('compiler test', () => {
-    const softwareSystem = model.referenceSoftwareSystem("softwareSystem1")
-    softwareSystem.defineContainer("container1")
-  })
+  // test('compiler test', () => {
+  //   const softwareSystem = model.referenceSoftwareSystem("softwareSystem1")
+  //   softwareSystem.defineContainer("container1")
+  // })
 });

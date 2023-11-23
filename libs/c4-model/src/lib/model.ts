@@ -1,10 +1,10 @@
-import { SoftwareSystem, SoftwareSystemDefinition } from './softwareSystem';
+import { ReferencedSoftwareSystem, SoftwareSystem, SoftwareSystemDefinition } from './softwareSystem';
 
 export class Model {
   constructor(public name: string) {}
 
   private softwareSystems = new Map<string, SoftwareSystem>();
-  private referencedSoftwareSystems = new Map<string, SoftwareSystem>();
+  private referencedSoftwareSystems = new Map<string, ReferencedSoftwareSystem>();
 
   defineSoftwareSystem(name: string, definition?: SoftwareSystemDefinition): SoftwareSystem {
     if (this.softwareSystems.has(name)) {
@@ -15,10 +15,10 @@ export class Model {
     return system
   }
 
-  referenceSoftwareSystem(name: string): SoftwareSystem {
+  referenceSoftwareSystem(name: string): ReferencedSoftwareSystem {
     let system = this.referencedSoftwareSystems.get(name);
     if (!system) {
-      system = new SoftwareSystem(name)
+      system = new ReferencedSoftwareSystem(name)
       this.referencedSoftwareSystems.set(name, system);
     }
     return system

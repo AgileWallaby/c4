@@ -1,6 +1,6 @@
-import { Definition, Element, Relationship, TechnologyDefinition } from './core'
-import { Container, ContainerDefinition } from './container'
-import { Component } from './component'
+import { Definition, Element, Reference, Relationship, TechnologyDefinition } from './core'
+import { Container, ContainerDefinition, ReferencedContainer } from './container'
+import { Component, ReferencedComponent } from './component'
 import { Person } from './person'
 
 export interface SoftwareSystemDefinition extends Definition {
@@ -19,7 +19,7 @@ export class SoftwareSystem extends Element {
     super(name, ["Software System"], definition)
   }
 
-  public uses(otherElement: Person | SoftwareSystem | Container | Component, definition?: TechnologyDefinition): void {
+  public uses(otherElement: Person | SoftwareSystem | ReferencedSoftwareSystem | Container | ReferencedContainer | Component | ReferencedComponent, definition?: TechnologyDefinition): void {
     const relationship = new Relationship(this, otherElement, definition)
     this._relationships.push(relationship)
   }
@@ -40,3 +40,13 @@ export class SoftwareSystem extends Element {
     return container
   }
 }
+
+export class ReferencedSoftwareSystem extends Reference<Container> {
+
+  public referenceContainer(name: string): ReferencedContainer {
+    const containerReference = this.referenceChild(name, (name: string) => new ReferencedContainer(name))
+    return containerReference as ReferencedContainer
+  }
+}
+
+

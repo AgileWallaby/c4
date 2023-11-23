@@ -1,4 +1,4 @@
-import { Element, Relationship, TechnologyDefinition } from "./core"
+import { Element, Reference, Relationship, TechnologyDefinition } from "./core"
 import { Container } from "./container"
 import { Person } from "./person"
 import { SoftwareSystem } from "./softwareSystem"
@@ -18,4 +18,7 @@ export class Component extends Element {
     const relationship = new Relationship(this, otherElement, definition)
     this.relationships.push(relationship)
   }
+}
+
+export class ReferencedComponent extends Reference<undefined> {
 }

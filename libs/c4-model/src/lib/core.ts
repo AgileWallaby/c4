@@ -1,3 +1,7 @@
+import { Component } from "./component"
+import { Container } from "./container"
+import { SoftwareSystem } from "./softwareSystem"
+
 export interface Definition {
   description?: string
   tags?: string[]
@@ -31,7 +35,7 @@ export class Relationship {
   public readonly tags: ReadonlyArray<string>
   public readonly technology?: string
 
-  constructor(public readonly source: Element, public readonly destination: Element, definition?: TechnologyDefinition) {
+  constructor(public readonly source: Element, public readonly destination: Element | Reference<SoftwareSystem | Container | Component>, definition?: TechnologyDefinition) {
     this.description = definition?.description
     this.technology = definition?.technology
     this.tags = (definition?.tags ?? []).concat(["Relationship"])
@@ -39,6 +43,17 @@ export class Relationship {
 }
 
 export class Reference<T> {
+  private readonly _children = new Map<string, Reference<T>>()
+
   constructor(public readonly name: string) {
+  }
+
+  protected referenceChild(name: string, x: (namex: string) => Reference<T>): Reference<T> {
+    let child = this._children.get(name)
+    if (!child) {
+      child = x(name)
+      this._children.set(name, child)
+    }
+    return child
   }
 }
