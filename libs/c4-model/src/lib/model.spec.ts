@@ -1,6 +1,6 @@
 import { Model } from './c4-model';
 
-describe('c4Model', () => {
+describe('Model', () => {
 
   test('defining a software system should return system with provided name', () => {
     const model = new Model("model");
@@ -35,5 +35,33 @@ describe('c4Model', () => {
     model.referenceSoftwareSystem("softwareSystem4");
 
     expect(() => model.validate()).toThrow("Software systems named 'softwareSystem2', 'softwareSystem4' are referenced but not defined.");
+  })
+
+  test('should be able to define that one software system uses another', () => {
+    const model = new Model("model");
+    const softwareSystem1 = model.defineSoftwareSystem("softwareSystem1");
+    const softwareSystem2 = model.defineSoftwareSystem("softwareSystem2");
+    softwareSystem1.uses(softwareSystem2, "sends data to");
+    expect(softwareSystem1.relationships.length).toBe(1);
+    expect(softwareSystem1.relationships[0].destination).toBe(softwareSystem2);
+    expect(softwareSystem1.relationships[0].description).toBe("sends data to");
+  })
+
+  test('should be able to define a relationship between a defined software system and a referenced software system', () => {
+    const model = new Model("model");
+    const softwareSystem1 = model.defineSoftwareSystem("softwareSystem1");
+    const softwareSystem2 = model.referenceSoftwareSystem("softwareSystem2");
+    softwareSystem1.uses(softwareSystem2, "sends data to");
+    expect(softwareSystem1.relationships.length).toBe(1);
+    expect(softwareSystem1.relationships[0].destination).toBe(softwareSystem2);
+  })
+
+  test('should be able to define a relationship between a referenced software system and a defined software system', () => {
+    const model = new Model("model");
+    const softwareSystem1 = model.referenceSoftwareSystem("softwareSystem1");
+    const softwareSystem2 = model.defineSoftwareSystem("softwareSystem2");
+    softwareSystem1.uses(softwareSystem2, "sends data to");
+    expect(softwareSystem1.relationships.length).toBe(1);
+    expect(softwareSystem1.relationships[0].destination).toBe(softwareSystem2);
   })
 });
