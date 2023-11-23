@@ -1,30 +1,25 @@
-import { Element, Relationship } from './relationship'
+import { Definition, Element, Relationship, TechnologyDefinition } from './core'
+import { Container } from './container'
+import { Component } from './component'
+import { Person } from './person'
 
-
-export class Container extends Element {
-  public description: string = ""
-  public technology: string = ""
-  public tags: string[] = []
-}
-
-export class Component extends Element {
-  public description: string = ""
-  public technology: string = ""
-  public tags: string[] = []
+export interface SoftwareSystemDefinition extends Definition {
 }
 
 export class SoftwareSystem extends Element {
 
-  public description: string = ""
-  public tags: string[] = []
-  public relationships: Relationship[] = []
+  private _relationships: Relationship[] = []
 
-  constructor(public override readonly name: string) {
-    super(name)
+  constructor(public override readonly name: string, definition?: SoftwareSystemDefinition) {
+    super(name, ["Software System"], definition)
   }
 
-  public uses(softwareSystem: SoftwareSystem, description: string): void {
-    const relationship = new Relationship(this, softwareSystem, description)
-    this.relationships.push(relationship)
+  public uses(otherElement: Person | SoftwareSystem | Container | Component, definition?: TechnologyDefinition): void {
+    const relationship = new Relationship(this, otherElement, definition)
+    this._relationships.push(relationship)
+  }
+
+  public get relationships(): ReadonlyArray<Relationship> {
+    return this._relationships
   }
 }

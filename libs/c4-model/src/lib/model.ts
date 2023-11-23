@@ -1,4 +1,4 @@
-import { SoftwareSystem } from './softwareSystem';
+import { SoftwareSystem, SoftwareSystemDefinition } from './softwareSystem';
 
 export class Model {
   constructor(public name: string) {}
@@ -6,11 +6,11 @@ export class Model {
   private softwareSystems = new Map<string, SoftwareSystem>();
   private referencedSoftwareSystems = new Map<string, SoftwareSystem>();
 
-  defineSoftwareSystem(name: string): SoftwareSystem {
+  defineSoftwareSystem(name: string, definition?: SoftwareSystemDefinition): SoftwareSystem {
     if (this.softwareSystems.has(name)) {
       throw Error(`A software system named '${name}' is defined elsewhere. A software system can be defined only once, but can be referenced multiple times.`)
     }
-    const system = new SoftwareSystem(name);
+    const system = new SoftwareSystem(name, definition);
     this.softwareSystems.set(name, system);
     return system
   }

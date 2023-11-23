@@ -1,1 +1,1 @@
-export * from './lib/c4-model';
+export * from './lib/model';
