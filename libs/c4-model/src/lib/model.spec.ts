@@ -24,7 +24,7 @@ describe('Model', () => {
 
   test('should not permit a software system to be defined multiple times', () => {
     model.defineSoftwareSystem("softwareSystem");
-    expect(() => model.defineSoftwareSystem("softwareSystem")).toThrow("A software system named 'softwareSystem' is defined elsewhere. A software system can be defined only once, but can be referenced multiple times.");
+    expect(() => model.defineSoftwareSystem("softwareSystem")).toThrow("A SoftwareSystem named 'softwareSystem' is defined elsewhere in this Model. A SoftwareSystem can be defined only once, but can be referenced multiple times.");
   });
 
   test('should permit a software system to be referenced multiple times without being defined', () => {
@@ -45,7 +45,7 @@ describe('Model', () => {
 
     model.referenceSoftwareSystem("softwareSystem4");
 
-    expect(() => model.validate()).toThrow("Software systems named 'softwareSystem2', 'softwareSystem4' are referenced but not defined.");
+    expect(() => model.validate()).toThrow("SoftwareSystems named 'softwareSystem2', 'softwareSystem4' are referenced but not defined.");
   })
 
   test('should be able to define that one software system uses another', () => {
@@ -71,5 +71,10 @@ describe('Model', () => {
     softwareSystem1.uses(softwareSystem2, { description: "sends data to" });
     expect(softwareSystem1.relationships.length).toBe(1);
     expect(softwareSystem1.relationships[0].destination).toBe(softwareSystem2);
+  })
+
+  test('compiler test', () => {
+    const softwareSystem = model.referenceSoftwareSystem("softwareSystem1")
+    softwareSystem.defineContainer("container1")
   })
 });

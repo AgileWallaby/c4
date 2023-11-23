@@ -18,7 +18,12 @@ export abstract class Element {
 }
 
 export abstract class TechnicalElement extends Element {
-  public technology: string = ""
+  public readonly technology?: string
+
+  constructor(name: string, defaultTags: string[] = [], definition?: TechnologyDefinition) {
+    super(name, defaultTags, definition)
+    this.technology = definition?.technology
+  }
 }
 
 export class Relationship {
@@ -30,5 +35,10 @@ export class Relationship {
     this.description = definition?.description
     this.technology = definition?.technology
     this.tags = (definition?.tags ?? []).concat(["Relationship"])
+  }
+}
+
+export class Reference<T> {
+  constructor(public readonly name: string) {
   }
 }
