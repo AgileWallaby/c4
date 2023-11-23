@@ -1,10 +1,7 @@
-import { Element, Reference, Relationship, TechnologyDefinition } from "./core"
+import { Element, Reference, Relationship, RelationshipTarget, TechnologyDefinition } from "./core"
 import { Component, ComponentDefinition, ReferencedComponent } from "./component"
-import { Person } from "./person"
-import { ReferencedSoftwareSystem, SoftwareSystem } from "./softwareSystem"
 
 export interface ContainerDefinition extends TechnologyDefinition {
-
 }
 
 export class Container extends Element {
@@ -16,7 +13,7 @@ export class Container extends Element {
     super(name, ["Container"], definition)
   }
 
-  public uses(otherElement: Person | SoftwareSystem | ReferencedSoftwareSystem | Container | ReferencedContainer | Component | ReferencedComponent, definition?: TechnologyDefinition): void {
+  public uses(otherElement: RelationshipTarget, definition?: TechnologyDefinition): void {
     const relationship = new Relationship(this, otherElement, definition)
     this._relationships.push(relationship)
   }

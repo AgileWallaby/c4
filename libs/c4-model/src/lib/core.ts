@@ -1,6 +1,7 @@
-import { Component } from "./component"
-import { Container } from "./container"
-import { SoftwareSystem } from "./softwareSystem"
+import { Component, ReferencedComponent } from "./component"
+import { Container, ReferencedContainer } from "./container"
+import { ReferencedSoftwareSystem, SoftwareSystem } from "./softwareSystem"
+import { Person } from "./person"
 
 export interface Definition {
   description?: string
@@ -69,6 +70,6 @@ export class Reference<T> {
     })
     return result
   }
-
-
 }
+
+export type RelationshipTarget = Person | SoftwareSystem | ReferencedSoftwareSystem | Container | ReferencedContainer | Component | ReferencedComponent
