@@ -16,9 +16,30 @@ export abstract class Element {
   public readonly description?: string
   public readonly tags: ReadonlyArray<string>
 
+  private _relationships: Relationship[] = []
+
   constructor(public readonly name: string, defaultTags: string[] = [], definition?: Definition) {
     this.description = definition?.description
     this.tags = (definition?.tags ?? []).concat(["Element"]).concat(defaultTags)
+  }
+
+  public get canonicalName(): string {
+    return this.name.toLowerCase()
+  }
+
+  public uses(otherElement: RelationshipTarget, definition?: TechnologyDefinition): void {
+    const relationship = new Relationship(this, otherElement, definition)
+    this._relationships.push(relationship)
+  }
+
+  public get relationships(): ReadonlyArray<Relationship> {
+    return this._relationships
+  }
+
+  public abstract getChildElements(): ReadonlyArray<Element>
+
+  public getRelationshipsInHierarchy(): ReadonlyArray<Relationship> {
+    return this._relationships.concat(this.getChildElements().flatMap(element => element.getRelationshipsInHierarchy()))
   }
 }
 
@@ -49,6 +70,10 @@ export class Reference<T> {
   constructor(public readonly name: string) {
   }
 
+  public get canonicalName(): string {
+    return this.name.toLowerCase()
+  }
+
   protected referenceChild(name: string, createChild: (childName: string) => Reference<T>): Reference<T> {
     let reference = this._references.get(name)
     if (!reference) {
@@ -62,10 +87,10 @@ export class Reference<T> {
     return Array.from(this._references.values())
   }
 
-  public getChildElements(path?: string): ReadonlyArray<string> {
+  public getChildElementNames(path?: string): ReadonlyArray<string> {
     const result = Array.from(this._references.values()).flatMap(reference => {
       const currentPath = `${path ? path : '' + this.name}.${reference.name}`
-      return [currentPath, ...reference.getChildElements(currentPath)]
+      return [currentPath, ...reference.getChildElementNames(currentPath)]
     })
     return result
   }

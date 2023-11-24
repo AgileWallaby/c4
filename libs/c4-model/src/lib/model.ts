@@ -4,6 +4,41 @@ import { join } from 'path'
 import { ReferencedSoftwareSystem, SoftwareSystem, SoftwareSystemDefinition } from './softwareSystem';
 import { Person, PersonDefinition, ReferencedPerson } from './person'
 
+
+export class Group<T> {
+  public constructor(public readonly name: string) {}
+
+  public addToGroup(groupCollection: string, groupMember: T) {
+  }
+}
+
+export class ModelGroup extends Group<SoftwareSystem | Person> {
+
+  private softwareSystems = new Map<string, SoftwareSystem>()
+  private people = new Map<string, Person>()
+
+  public constructor(public override readonly name: string, private readonly defineSoftwareSystemOnModel: (name: string, definition?: SoftwareSystemDefinition) => SoftwareSystem, private readonly definePersonOnModel: (name: string, definition?: PersonDefinition) => Person) {
+    super(name)
+  }
+
+  public defineSoftwareSystem(name: string, definition?: SoftwareSystemDefinition): SoftwareSystem {
+    const softwareSystem = this.defineSoftwareSystemOnModel(name, definition)
+    this.softwareSystems.set(name, softwareSystem)
+    return softwareSystem
+  }
+
+  public definePerson(name: string, definition?: PersonDefinition): Person {
+    const person = this.definePersonOnModel(name, definition)
+    this.people.set(name, person)
+    return person
+  }
+}
+
+export interface ModelDefinitions {
+  defineSoftwareSystem(name: string, definition?: SoftwareSystemDefinition): SoftwareSystem
+  definePerson(name: string, definition?: PersonDefinition): Person
+}
+
 export class Model {
   constructor(public name: string) {}
 
@@ -13,6 +48,8 @@ export class Model {
   private people = new Map<string, Person>()
   private referencedPeople = new Map<string, ReferencedPerson>()
 
+  private groups = new Map<string, ModelGroup>()
+
   defineSoftwareSystem(name: string, definition?: SoftwareSystemDefinition): SoftwareSystem {
     if (this.softwareSystems.has(name)) {
       throw Error(`A SoftwareSystem named '${name}' is defined elsewhere in this Model. A SoftwareSystem can be defined only once, but can be referenced multiple times.`)
@@ -20,6 +57,15 @@ export class Model {
     const system = new SoftwareSystem(name, definition);
     this.softwareSystems.set(name, system);
     return system
+  }
+
+  addGroup(groupName: string): Group<SoftwareSystem | Person> & ModelDefinitions {
+    let group = this.groups.get(groupName)
+    if (!group) {
+      group = new ModelGroup(groupName, (name, definition) => this.defineSoftwareSystem(name, definition), (name, definition) => this.definePerson(name, definition))
+      this.groups.set(groupName, group)
+    }
+    return group
   }
 
   referenceSoftwareSystem(name:  string): ReferencedSoftwareSystem {
@@ -60,13 +106,21 @@ export class Model {
       throw Error(`People named '${undefinedPeople.join("', '")}' are referenced but not defined.`)
     }
 
-    const definedElements = Array.from(this.softwareSystems.values()).flatMap(system => system.getChildElements())
-    const referencedElements = Array.from(this.referencedSoftwareSystems.values()).flatMap(system => system.getChildElements())
+    const definedElements = Array.from(this.softwareSystems.values()).flatMap(system => system.getChildElementNames())
+    const referencedElements = Array.from(this.referencedSoftwareSystems.values()).flatMap(system => system.getChildElementNames())
 
     const undefinedElements = referencedElements.filter(name => !definedElements.includes(name))
     if (undefinedElements.length > 0) {
       throw Error(`Elements named '${undefinedElements.join("', '")}' are referenced but not defined.`)
     }
+  }
+
+  getPeople(): ReadonlyArray<Person> {
+    return Array.from(this.people.values())
+  }
+
+  getSoftwareSystems(): ReadonlyArray<SoftwareSystem> {
+    return Array.from(this.softwareSystems.values())
   }
 }
 

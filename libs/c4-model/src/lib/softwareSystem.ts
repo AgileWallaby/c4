@@ -1,4 +1,4 @@
-import { Definition, Element, Reference, Relationship, RelationshipTarget, TechnologyDefinition } from './core'
+import { Definition, Element, Reference } from './core'
 import { Container, ContainerDefinition, ReferencedContainer } from './container'
 
 export interface SoftwareSystemDefinition extends Definition {
@@ -10,20 +10,10 @@ export interface SoftwareSystemReference {
 
 export class SoftwareSystem extends Element {
 
-  private _relationships: Relationship[] = []
   private _containers = new Map<string, Container>();
 
   constructor(public override readonly name: string, definition?: SoftwareSystemDefinition) {
     super(name, ["Software System"], definition)
-  }
-
-  public uses(otherElement: RelationshipTarget, definition?: TechnologyDefinition): void {
-    const relationship = new Relationship(this, otherElement, definition)
-    this._relationships.push(relationship)
-  }
-
-  public get relationships(): ReadonlyArray<Relationship> {
-    return this._relationships
   }
 
   public defineContainer(name: string, definition?: ContainerDefinition): Container {
@@ -38,9 +28,13 @@ export class SoftwareSystem extends Element {
     return container
   }
 
-  public getChildElements(): ReadonlyArray<string> {
+  public getChildElementNames(): ReadonlyArray<string> {
     const result = Array.from(this._containers.values()).map(container => `${this.name}.${container.name}`)
     return result
+  }
+
+  public getChildElements(): ReadonlyArray<Element> {
+    return Array.from(this._containers.values())
   }
 }
 

@@ -1,9 +1,11 @@
 import { Relationship } from "./core"
+import { Container } from "./container"
 
 describe('Core', () => {
   test('Relationship', () => {
     const relationship = new Relationship(
-      { name: "source", tags: [] }, { name: "destination", tags: [] },
+      new Container("source"),
+      new Container("destination"),
       { description: "description", technology: "technology", tags: ["tag1", "tag2"]}
     )
     expect(relationship.source.name).toBe("source")
