@@ -61,62 +61,87 @@ describe('Model', () => {
     })
   })
 
-  describe('can validate', () => {
-    test('should validate a Model by checking that all SoftwareSystems that have been referenced have also been defined', () => {
+  describe('can validate the Model', () => {
+
+    function defineTestModel1(model: Model): void {
       model.defineSoftwareSystem("softwareSystem1");
       model.referenceSoftwareSystem("softwareSystem1");
-
       model.referenceSoftwareSystem("softwareSystem2");
       model.referenceSoftwareSystem("softwareSystem2");
-
       model.referenceSoftwareSystem("softwareSystem2");
       model.defineSoftwareSystem("softwareSystem3");
+      model.referenceSoftwareSystem("softwareSystem4");
+      model.referenceSoftwareSystem("softwareSystem4");
+      model.referenceSoftwareSystem("softwareSystem4");
+      model.referenceSoftwareSystem("softwareSystem4");
+    }
 
-      model.referenceSoftwareSystem("softwareSystem4");
-      model.referenceSoftwareSystem("softwareSystem4");
-      model.referenceSoftwareSystem("softwareSystem4");
-      model.referenceSoftwareSystem("softwareSystem4");
-
-      expect(() => model.validate()).toThrow("SoftwareSystems named 'softwareSystem2', 'softwareSystem4' are referenced but not defined.");
-    })
-
-    test('should validate a Model by checking that all People that have been referenced have also been defined', () => {
+    function defineTestModel2(model: Model): void {
       model.definePerson("person1")
       model.referencePerson("person1")
-
       model.referencePerson("person2")
-
       model.definePerson("person3")
       model.referencePerson("person3")
-
       model.referencePerson("person4")
+    }
 
-      expect(() => model.validate()).toThrow("People named 'person2', 'person4' are referenced but not defined.")
-    })
-
-    test('should validate a Model by checking that all Containers that have been referenced have also been defined', () => {
+    function defineTestModel3(model: Model): void {
       const softwareSystem = model.defineSoftwareSystem("softwareSystem")
       softwareSystem.defineContainer("container2")
       const softwareSystemReference = model.referenceSoftwareSystem("softwareSystem")
       softwareSystemReference.referenceContainer("container1")
       softwareSystemReference.referenceContainer("container3")
+    }
 
-      expect(() => model.validate()).toThrow("Elements named 'softwareSystem.container1', 'softwareSystem.container3' are referenced but not defined.")
-    })
-
-    test('should validate a Model by checking that all Components that have been referenced have also been defined', () => {
+    function defineTestModel4(model: Model): void {
       const softwareSystem1 = model.defineSoftwareSystem("softwareSystem1")
       const container1 = softwareSystem1.defineContainer("container1")
       container1.defineComponent("component1")
-
       const softwareSystem2 = model.defineSoftwareSystem("softwareSystem2")
       const container2 = softwareSystem2.defineContainer("container2")
       container2.defineComponent("component2")
-
       model.referenceSoftwareSystem("softwareSystem1").referenceContainer("container1").referenceComponent("component2")
       model.referenceSoftwareSystem("softwareSystem2").referenceContainer("container2").referenceComponent("component1")
+    }
 
-      expect(() => model.validate()).toThrow("Elements named 'softwareSystem1.container1.component2', 'softwareSystem2.container2.component1' are referenced but not defined.")
+    test.each([
+      [defineTestModel1, "SoftwareSystems named 'softwareSystem2', 'softwareSystem4' are referenced but not defined."],
+      [defineTestModel2, "People named 'person2', 'person4' are referenced but not defined."],
+      [defineTestModel3, "Elements named 'softwareSystem.container1', 'softwareSystem.container3' are referenced but not defined."],
+      [defineTestModel4, "Elements named 'softwareSystem1.container1.component2', 'softwareSystem2.container2.component1' are referenced but not defined."]
+    ])('a Model that has not defined all Elements that are referenced should be considered invalid', (defineModel: (m: Model) => void, expectedError: string) => {
+      const model = new Model("model")
+      defineModel(model)
+      expect(() => model.validate()).toThrow(expectedError)
+    })
+
+    function defineTestModel5(model: Model): void {
+      model.definePerson("person1")
+      model.definePerson("person2")
+      const sys1 = model.defineSoftwareSystem("softwareSystem1", { description: "description", tags: ["tag1", "tag2"] })
+      const cont1 = sys1.defineContainer("container1", { description: "description", technology: "technology", tags: ["tag1", "tag2"] })
+      cont1.defineComponent("component1", { description: "description", technology: "technology", tags: ["tag1", "tag2"] })
+
+      const cont2 = sys1.defineContainer("container2", { description: "description", technology: "technology", tags: ["tag1", "tag2"] })
+      cont2.defineComponent("component2", { description: "description", technology: "technology", tags: ["tag1", "tag2"] })
+      const sys2 = model.defineSoftwareSystem("softwareSystem2")
+      const cont3 = sys2.defineContainer("container3")
+      cont3.defineComponent("component3")
+
+      const sys2ref = model.referenceSoftwareSystem("softwareSystem2")
+      const cont3ref = sys2ref.referenceContainer("container3")
+      cont3ref.referenceComponent("component3")
+
+      model.referencePerson("person1")
+      model.referencePerson("person2")
+    }
+
+    test.each([
+      defineTestModel5
+    ])('a Model that has defined all Elements that are referenced should be considered valid', (defineModel: (m: Model) => void) => {
+      const model = new Model("model")
+      defineModel(model)
+      expect(() => model.validate()).not.toThrow()
     })
   })
 
@@ -136,4 +161,4 @@ describe('Model', () => {
     expect(softwareSystem1.relationships.length).toBe(1);
     expect(softwareSystem1.relationships[0].destination).toBe(softwareSystem2);
   })
-});
+})

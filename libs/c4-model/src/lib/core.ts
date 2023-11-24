@@ -41,6 +41,14 @@ export abstract class Element {
   public getRelationshipsInHierarchy(): ReadonlyArray<Relationship> {
     return this._relationships.concat(this.getChildElements().flatMap(element => element.getRelationshipsInHierarchy()))
   }
+
+  public getChildElementNames(path?: string): ReadonlyArray<string> {
+    const result = Array.from(this.getChildElements()).flatMap(reference => {
+      const currentPath = `${path ? path : '' + this.name}.${reference.name}`
+      return [currentPath, ...reference.getChildElementNames(currentPath)]
+    })
+    return result
+  }
 }
 
 export abstract class TechnicalElement extends Element {

@@ -28,11 +28,6 @@ export class SoftwareSystem extends Element {
     return container
   }
 
-  public getChildElementNames(): ReadonlyArray<string> {
-    const result = Array.from(this._containers.values()).map(container => `${this.name}.${container.name}`)
-    return result
-  }
-
   public getChildElements(): ReadonlyArray<Element> {
     return Array.from(this._containers.values())
   }

@@ -1,5 +1,6 @@
 import { Model } from "./model"
 import { StructurizrDSLWriter } from "./structurizrDSLWriter"
+import { Views } from './views'
 
 describe('can write to dsl', () => {
   test('', () => {
@@ -16,9 +17,37 @@ describe('can write to dsl', () => {
     const cont3 = sys2.defineContainer("container3")
     const comp3 = cont3.defineComponent("component3")
 
-    comp3.uses(person1)
 
-    const writer = new StructurizrDSLWriter(model)
+    const sys2ref = model.referenceSoftwareSystem("softwareSystem2")
+    const cont3ref = sys2ref.referenceContainer("container3")
+    const comp3ref = cont3ref.referenceComponent("component3")
+
+    const person1ref = model.referencePerson("person1")
+
+    person1.uses(person2, { description: "description", tags: ["tag1", "tag2"]})
+    person2.uses(person1ref, { description: "description", tags: ["tag1", "tag2"]})
+
+    person1.uses(sys1)
+    person1.uses(sys2)
+
+    person2.uses(sys1)
+
+    sys1.uses(sys2)
+    sys2.uses(sys1)
+
+    const views = new Views()
+    const landscapeView = views.addSystemLandscapeView("someName1", { description: "someDescription"})
+    landscapeView.includeAll()
+    const contextView = views.addSystemContextView("someName", { subject: sys1, description: "someDescription", title: 'My Title'})
+    contextView.includeAll()
+
+    const containerView = views.addContainerView("someName2s", { subject: sys1, description:  "someDescription"})
+    containerView.includeAll()
+
+    const componentView = views.addComponentView("someName3", { subject: cont1, description: "someOtherDescripgtion", title: 'The Other Title'})
+    componentView.includeAll()
+
+    const writer = new StructurizrDSLWriter(model, views)
     const dsl = writer.write()
     console.log(dsl)
     // Use the writer object here

@@ -1,4 +1,4 @@
-import { Definition, Element, Reference } from './core'
+import { Definition, Element, Reference, Relationship, RelationshipTarget } from './core'
 
 export interface PersonDefinition extends Definition {
 }
@@ -10,6 +10,13 @@ export class Person extends Element {
 
   public getChildElements(): ReadonlyArray<Element> {
     return []
+  }
+
+  public override uses(otherElement: RelationshipTarget, definition?: Definition): void {
+    super.uses(otherElement, definition)
+    // base(this).uses(otherElement, definition)
+    // const relationship = new Relationship(this, otherElement, definition)
+    // this._relationships.push(relationship)
   }
 }
 
