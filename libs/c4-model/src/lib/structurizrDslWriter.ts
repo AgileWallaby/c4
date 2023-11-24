@@ -9,7 +9,8 @@ const INDENT_SIZE = 2
 
 export class StructurizrDSLWriter {
 
-  public constructor(private readonly model: Model, private readonly views: Views) {
+  public constructor(private readonly model: Model,
+    private readonly views: Views) {
   }
 
   private writeElement(elementType: string, element: Element, level: number, closeElement: boolean = true): string {
