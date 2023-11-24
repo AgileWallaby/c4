@@ -105,3 +105,10 @@ export class Reference<T> {
 }
 
 export type RelationshipTarget = Person | SoftwareSystem | ReferencedSoftwareSystem | Container | ReferencedContainer | Component | ReferencedComponent
+
+export class Group<T> {
+  public constructor(public readonly name: string) {}
+
+  public addToGroup(groupCollection: string, groupMember: T) {
+  }
+}

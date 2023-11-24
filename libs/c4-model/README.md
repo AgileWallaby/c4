@@ -1,11 +1,22 @@
-# c4-model
+# `@agilewallaby/c4-model`
 
-This library was generated with [Nx](https://nx.dev).
+This is an opinionated Typescript library for generating C4 models in code, and then exporting the
+model to one or more supported formats for consumption by a rendering mechanism.
 
-## Building
+Currently supported output formats are:
 
-Run `nx build c4-model` to build the library.
+* [Structurizr DSL](https://github.com/structurizr/dsl/blob/master/docs/language-reference.md): only the
+static views are supported, e.g. system landscape, system context, container, and component diagrams.
+Deployment and dynamic diagrams may be supported in the future.
 
-## Running unit tests
+## Usage
 
-Run `nx test c4-model` to execute the unit tests via [Jest](https://jestjs.io).
+The core of this library is the `Model` class. From here you can 'define' instances of `SoftwareSystem`
+and `Person`. They can also be defined through a `Group`;
+
+```
+import { Model } from '@agilewallaby/c4-model'
+
+const model = new Model("myModel")
+const system1 = model.defineSoftwareSystem("system1")
+```

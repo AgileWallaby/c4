@@ -1,36 +1,45 @@
 import { glob } from 'glob'
 import { join } from 'path'
 
+import { Group } from './core'
 import { ReferencedSoftwareSystem, SoftwareSystem, SoftwareSystemDefinition } from './softwareSystem';
 import { Person, PersonDefinition, ReferencedPerson } from './person'
 
-
-export class Group<T> {
-  public constructor(public readonly name: string) {}
-
-  public addToGroup(groupCollection: string, groupMember: T) {
-  }
+interface DefineSoftwareSystem {
+  defineSoftwareSystem(name: string, definition?: SoftwareSystemDefinition): SoftwareSystem
 }
 
-export class ModelGroup extends Group<SoftwareSystem | Person> {
+interface DefinePerson {
+  definePerson(name: string, definition?: PersonDefinition): Person
+}
+
+export class ModelGroup extends Group<SoftwareSystem | Person> implements DefineSoftwareSystem, DefinePerson {
 
   private softwareSystems = new Map<string, SoftwareSystem>()
   private people = new Map<string, Person>()
 
-  public constructor(public override readonly name: string, private readonly defineSoftwareSystemOnModel: (name: string, definition?: SoftwareSystemDefinition) => SoftwareSystem, private readonly definePersonOnModel: (name: string, definition?: PersonDefinition) => Person) {
+  public constructor(public override readonly name: string, private readonly model: DefineSoftwareSystem & DefinePerson) {
     super(name)
   }
 
   public defineSoftwareSystem(name: string, definition?: SoftwareSystemDefinition): SoftwareSystem {
-    const softwareSystem = this.defineSoftwareSystemOnModel(name, definition)
+    const softwareSystem = this.model.defineSoftwareSystem(name, definition)
     this.softwareSystems.set(name, softwareSystem)
     return softwareSystem
   }
 
   public definePerson(name: string, definition?: PersonDefinition): Person {
-    const person = this.definePersonOnModel(name, definition)
+    const person = this.model.definePerson(name, definition)
     this.people.set(name, person)
     return person
+  }
+
+  public getSoftwareSystems(): ReadonlyArray<SoftwareSystem> {
+    return Array.from(this.softwareSystems.values())
+  }
+
+  public getPeople(): ReadonlyArray<Person> {
+    return Array.from(this.people.values())
   }
 }
 
@@ -62,7 +71,7 @@ export class Model {
   addGroup(groupName: string): Group<SoftwareSystem | Person> & ModelDefinitions {
     let group = this.groups.get(groupName)
     if (!group) {
-      group = new ModelGroup(groupName, (name, definition) => this.defineSoftwareSystem(name, definition), (name, definition) => this.definePerson(name, definition))
+      group = new ModelGroup(groupName, this)
       this.groups.set(groupName, group)
     }
     return group
@@ -121,6 +130,20 @@ export class Model {
 
   getSoftwareSystems(): ReadonlyArray<SoftwareSystem> {
     return Array.from(this.softwareSystems.values())
+  }
+
+  getPeopleNotInGroups(): ReadonlyArray<Person> {
+    const peopleInGroups = Array.from(this.groups.values()).flatMap(group => group.getPeople())
+    return Array.from(this.people.values()).filter(person => !peopleInGroups.includes(person))
+  }
+
+  getSoftwareSystemsNotInGroups(): ReadonlyArray<SoftwareSystem> {
+    const systemsInGroups = Array.from(this.groups.values()).flatMap(group => group.getSoftwareSystems())
+    return Array.from(this.softwareSystems.values()).filter(system => !systemsInGroups.includes(system))
+  }
+
+  getGroups(): ReadonlyArray<ModelGroup> {
+    return Array.from(this.groups.values())
   }
 }
 

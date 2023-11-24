@@ -1,8 +1,8 @@
 import { Element } from "./core"
 import { Component } from "./component"
-import { Container } from "./container"
-import { Model } from "./model"
-import { SoftwareSystem } from "./softwareSystem"
+import { Container, ContainerGroup } from "./container"
+import { Model, ModelGroup } from "./model"
+import { SoftwareSystem, SoftwareSystemGroup } from "./softwareSystem"
 import { View, Views } from './views'
 
 const INDENT_SIZE = 2
@@ -36,16 +36,28 @@ export class StructurizrDSLWriter {
     return componentDsl
   }
 
+  private writeContainerGroup(group: ContainerGroup, level: number): string {
+    let containerGroupDsl = ""
+    containerGroupDsl += this.writeLine(`${group.name} = group "${group.name}" {`, level)
+    group.getComponents().forEach(component => {
+      containerGroupDsl += this.writeComponent(component, level + 1)
+    })
+    containerGroupDsl += this.writeLine(`}`, level)
+    return containerGroupDsl
+  }
+
   private writeContainer(container: Container, level: number): string {
     let containerDsl = ""
 
     containerDsl += this.writeElement("container", container, level, false)
     containerDsl += this.writeLine(`technology "${container.technology}"`, level + 1)
 
-    container.getChildElements().forEach((element) => {
-      if (element instanceof Component) {
-        containerDsl += this.writeComponent(element, level + 1)
-      }
+    container.getComponentsNotInGroups().forEach((component) => {
+      containerDsl += this.writeComponent(component, level + 1)
+    })
+
+    container.getGroups().forEach((group) => {
+      containerDsl += this.writeContainerGroup(group, level + 1)
     })
 
     containerDsl += this.writeLine(`}`, level)
@@ -53,15 +65,27 @@ export class StructurizrDSLWriter {
     return containerDsl
   }
 
+  private writeSoftwareSystemGroup(group: SoftwareSystemGroup, level: number): string {
+    let softwareSystemGroupDsl = ""
+    softwareSystemGroupDsl += this.writeLine(`${group.name} = group "${group.name}" {`, level)
+    group.getContainers().forEach(container => {
+      softwareSystemGroupDsl += this.writeContainer(container, level + 1)
+    })
+    softwareSystemGroupDsl += this.writeLine(`}`, level)
+    return softwareSystemGroupDsl
+  }
+
   private writeSoftwareSystem(softwareSystem: SoftwareSystem, level: number): string {
     let softwareSystemDsl = ""
 
     softwareSystemDsl += this.writeElement("softwareSystem", softwareSystem, level, false)
 
-    softwareSystem.getChildElements().forEach((element) => {
-      if (element instanceof Container) {
-        softwareSystemDsl += this.writeContainer(element, level + 1)
-      }
+    softwareSystem.getContainersNotInGroups().forEach((container) => {
+      softwareSystemDsl += this.writeContainer(container, level + 1)
+    })
+
+    softwareSystem.getGroups().forEach((group) => {
+      softwareSystemDsl += this.writeSoftwareSystemGroup(group, level + 1)
     })
 
     softwareSystemDsl += this.writeLine(`}`, level)
@@ -86,18 +110,35 @@ export class StructurizrDSLWriter {
     return relationshipsDsl
   }
 
+  private writeModelGroup(group: ModelGroup, level: number): string {
+    let modelGroupDsl = ""
+    modelGroupDsl += this.writeLine(`${group.name} = group "${group.name}" {`, level)
+    group.getPeople().forEach(person => {
+      modelGroupDsl += this.writeElement("person", person, level + 1)
+    })
+    group.getSoftwareSystems().forEach(softwareSystem => {
+      modelGroupDsl += this.writeSoftwareSystem(softwareSystem, level + 1)
+    })
+    modelGroupDsl += this.writeLine(`}`, level)
+    return modelGroupDsl
+  }
+
   private writeModel(model: Model, level: number): string {
     let modelDsl = ""
 
     modelDsl += this.writeLine(`model {`, level)
     modelDsl += this.writeLine('// Elements', level + 1)
 
-    model.getPeople().forEach(person => {
+    model.getPeopleNotInGroups().forEach(person => {
       modelDsl += this.writeElement("person", person, level + 1)
     })
 
-    model.getSoftwareSystems().forEach(softwareSystem => {
+    model.getSoftwareSystemsNotInGroups().forEach(softwareSystem => {
       modelDsl += this.writeSoftwareSystem(softwareSystem, level + 1)
+    })
+
+    model.getGroups().forEach(group => {
+      modelDsl += this.writeModelGroup(group, level + 1)
     })
 
     modelDsl += this.writeLine('// Relationships', level + 1)
