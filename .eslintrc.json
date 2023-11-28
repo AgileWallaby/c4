@@ -14,18 +14,7 @@
       "rules": {
         "no-console": ["error"],
         "prettier/prettier": [
-          "warn",
-          {
-            "parser": "typescript",
-            "printWidth": 140,
-            "tabWidth": 4,
-            "useTabs": false,
-            "semi": false,
-            "trailingComma": "es5",
-            "bracketSpacing": true,
-            "arrowParens": "always",
-            "singleQuote": true
-          }
+          "warn"
         ],
         "@nx/enforce-module-boundaries": [
           "error",
