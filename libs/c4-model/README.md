@@ -9,6 +9,11 @@ Currently supported output formats are:
 static views are supported, e.g. system landscape, system context, container, and component diagrams.
 Deployment and dynamic diagrams may be supported in the future.
 
+Other formats that may be supported in the future:
+
+* The [YAML format](https://backstage.io/docs/features/software-catalog/descriptor-format) specified by
+[Spotify Backstage](https://backstage.io/) for documenting systems in the [Software Catalog](https://backstage.io/docs/features/software-catalog/).
+
 ## Usage
 
 The core of this library is the `Model` class. From here you can 'define' instances of `SoftwareSystem`
