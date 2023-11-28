@@ -2,7 +2,9 @@
   "name": "@c4/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "prepare": "husky install"
+  },
   "private": true,
   "dependencies": {
     "glob": "^10.3.10",
