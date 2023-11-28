@@ -1,18 +1,18 @@
-import { Element, Reference, TechnicalElement, TechnologyDefinition } from "./core"
+import { Element, Reference, TechnicalElement, TechnologyDefinition } from './core'
 
-export interface ComponentDefinition extends TechnologyDefinition {
-}
+export type ComponentDefinition = TechnologyDefinition
 
 export class Component extends TechnicalElement {
+    constructor(
+        public override readonly name: string,
+        definition?: ComponentDefinition
+    ) {
+        super(name, ['Component'], definition)
+    }
 
-  constructor(public override readonly name: string, definition?: ComponentDefinition) {
-    super(name, ["Component"], definition)
-  }
-
-  public getChildElements(): ReadonlyArray<Element> {
-    return []
-  }
+    public getChildElements(): ReadonlyArray<Element> {
+        return []
+    }
 }
 
-export class ReferencedComponent extends Reference<undefined> {
-}
+export class ReferencedComponent extends Reference<undefined> {}
