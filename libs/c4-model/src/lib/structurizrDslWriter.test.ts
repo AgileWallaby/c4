@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-console */
+
 import { Model } from './model'
 import { StructurizrDSLWriter } from './structurizrDSLWriter'
 import { Views } from './views'

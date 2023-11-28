@@ -7,7 +7,8 @@ interface DefineComponent {
     defineComponent(name: string, definition?: ComponentDefinition): Component
 }
 
-export class ContainerGroup extends Group<Container> implements DefineComponent {
+// TODO: This will be a Group<Container> if that is added back in
+export class ContainerGroup extends Group implements DefineComponent {
     private _components = new Map<string, Component>()
 
     public constructor(

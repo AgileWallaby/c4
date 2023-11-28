@@ -13,7 +13,8 @@ interface DefinePerson {
     definePerson(name: string, definition?: PersonDefinition): Person
 }
 
-export class ModelGroup extends Group<SoftwareSystem | Person> implements DefineSoftwareSystem, DefinePerson {
+// TODO: This will be a Group of type <SoftwareSystem | Person> if that is added back in
+export class ModelGroup extends Group implements DefineSoftwareSystem, DefinePerson {
     private softwareSystems = new Map<string, SoftwareSystem>()
     private people = new Map<string, Person>()
 
@@ -164,13 +165,12 @@ export async function buildModel(modelName: string, globPath = 'c4.dsl.ts'): Pro
 
     for (const file of result) {
         const moduleFile = join(__dirname, file)
-        console.log(`Accumulating model from ${moduleFile}`)
 
         const module = await import(moduleFile)
         if (typeof module.buildModel === 'function') {
             module.buildModel(model)
         } else {
-            console.log(`${file} does not contain the method 'buildModel'`)
+            throw new Error(`No buildModel function found in ${moduleFile}`)
         }
     }
 

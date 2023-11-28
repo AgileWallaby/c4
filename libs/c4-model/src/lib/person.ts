@@ -1,4 +1,4 @@
-import { Definition, Element, Reference, Relationship, RelationshipTarget } from './core'
+import { Definition, Element, Reference, RelationshipTarget } from './core'
 
 export type PersonDefinition = Definition
 
@@ -16,9 +16,6 @@ export class Person extends Element {
 
     public override uses(otherElement: RelationshipTarget, definition?: Definition): void {
         super.uses(otherElement, definition)
-        // base(this).uses(otherElement, definition)
-        // const relationship = new Relationship(this, otherElement, definition)
-        // this._relationships.push(relationship)
     }
 }
 

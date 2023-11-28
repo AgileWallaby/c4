@@ -120,8 +120,9 @@ export type RelationshipTarget =
     | Component
     | ReferencedComponent
 
-export class Group<T> {
+export class Group {
     public constructor(public readonly name: string) {}
 
-    public addToGroup(groupCollection: string, groupMember: T) {}
+    // TODO: Implement this in some useful way?
+    // public addToGroup(groupCollection: string, groupMember: T) {}
 }

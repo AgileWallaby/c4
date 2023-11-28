@@ -1,8 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Model } from './model'
 
 describe('scratch pad', () => {
-    test('bump', () => {})
-
     test('it', () => {
         const model = new Model('model')
         const sys1 = model.defineSoftwareSystem('softwareSystem1')

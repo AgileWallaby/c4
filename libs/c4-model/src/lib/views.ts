@@ -1,4 +1,3 @@
-import { Component } from './component'
 import { Container } from './container'
 import { Element } from './core'
 import { SoftwareSystem } from './softwareSystem'
