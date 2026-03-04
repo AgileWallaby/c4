@@ -78,7 +78,7 @@ export default [
     })
     .map((config) => ({
       ...config,
-      files: ["**/*.spec.ts", "**/*.spec.tsx", "**/*.spec.js", "**/*.spec.jsx"],
+      files: ["**/*.test.ts", "**/*.test.tsx", "**/*.test.js", "**/*.test.jsx"],
       rules: {
         ...config.rules,
       },

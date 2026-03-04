@@ -4,7 +4,8 @@
       "Bash(pnpm:*)",
       "Bash(corepack enable:*)",
       "Bash(corepack use:*)",
-      "Bash(chmod +x:*)"
+      "Bash(chmod +x:*)",
+      "Bash(git mv:*)"
     ]
   }
 }
