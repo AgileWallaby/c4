@@ -155,17 +155,24 @@ export class Model {
     }
 }
 
-export async function buildModel(modelName: string, globPath = 'c4.dsl.ts'): Promise<Model> {
+export interface BuildModelOptions {
+    modelName?: string
+    globPath?: string
+    searchRoot?: string
+}
+
+export async function buildModel(options: BuildModelOptions = {}): Promise<Model> {
+    const { modelName = 'model', globPath = 'c4.dsl.ts', searchRoot = __dirname } = options
     const model = new Model(modelName)
 
-    const result = await glob(`**/${globPath}`, { cwd: __dirname })
+    const result = await glob(`**/${globPath}`, { cwd: searchRoot })
 
     if (result.length === 0) {
         throw new Error(`No ${globPath} files found`)
     }
 
     for (const file of result) {
-        const moduleFile = join(__dirname, file)
+        const moduleFile = join(searchRoot, file)
 
         const module = await import(moduleFile)
         if (typeof module.buildModel === 'function') {

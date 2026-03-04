@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@agilewallaby/c4-model": ["libs/c4-model/src/index.ts"]
+      "@agilewallaby/c4-model": ["libs/c4-model/src/index.ts"],
+      "@c4/c4-model-examples": ["libs/c4-model-examples/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
