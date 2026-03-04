@@ -1,3 +1,3 @@
-export * from './lib/model'
-export * from './lib/views'
-export * from './lib/structurizrDslWriter'
+export * from './model'
+export * from './views'
+export * from './structurizrDslWriter'
