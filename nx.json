@@ -36,5 +36,6 @@
       "!{projectRoot}/test-setup.[jt]s"
     ],
     "sharedGlobals": []
-  }
+  },
+  "useInferencePlugins": false
 }
