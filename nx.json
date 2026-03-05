@@ -1,6 +1,20 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "release": {
+    "projects": ["c4-model"],
+    "version": {
+      "manifestRootsToUpdate": [
+        "{projectRoot}",
+        { "path": "dist/libs/{projectName}", "preserveLocalDependencyProtocols": false }
+      ]
+    }
+  },
   "targetDefaults": {
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/libs/{projectName}"
+      }
+    },
     "build": {
       "cache": true,
       "dependsOn": ["^build"],
