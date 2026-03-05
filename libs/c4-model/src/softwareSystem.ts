@@ -1,10 +1,11 @@
-import { Definition, Element, Group } from './core'
+import { Definition, Element, Group, TechnologyDefinition } from './core'
 import { Container, ContainerDefinition } from './container'
+import { ElementArchetype, mergeArchetypeWithOverride } from './archetype'
 
 export type SoftwareSystemDefinition = Definition
 
 interface DefineContainer {
-    defineContainer(name: string, definition?: ContainerDefinition): Container
+    defineContainer(name: string, archetypeOrDef?: ElementArchetype | ContainerDefinition, override?: ContainerDefinition): Container
 }
 
 export interface SoftwareSystemReference {
@@ -22,8 +23,12 @@ export class SoftwareSystemGroup extends Group implements DefineContainer {
         super(name)
     }
 
-    public defineContainer(name: string, definition?: ContainerDefinition): Container {
-        const container = this.softwareSystem.defineContainer(name, definition)
+    public defineContainer(
+        name: string,
+        archetypeOrDef?: ElementArchetype | ContainerDefinition,
+        override?: ContainerDefinition
+    ): Container {
+        const container = this.softwareSystem.defineContainer(name, archetypeOrDef, override)
         this._containers.set(name, container)
         return container
     }
@@ -39,17 +44,32 @@ export class SoftwareSystem extends Element implements DefineContainer {
 
     constructor(
         public override readonly name: string,
-        definition?: SoftwareSystemDefinition
+        definition?: SoftwareSystemDefinition,
+        archetype?: ElementArchetype,
+        overrideDefinition?: TechnologyDefinition
     ) {
-        super(name, ['Software System'], definition)
+        super(name, ['Software System'], definition, archetype, overrideDefinition)
     }
 
-    public defineContainer(name: string, definition?: ContainerDefinition): Container {
+    public defineContainer(
+        name: string,
+        archetypeOrDef?: ElementArchetype | ContainerDefinition,
+        override?: ContainerDefinition
+    ): Container {
         if (this._containers.has(name)) {
             throw Error(`A Container named '${name}' is defined elsewhere in this SoftwareSystem. A Container can be defined only once.`)
         }
 
-        const container = new Container(name, definition)
+        let definition: ContainerDefinition | undefined
+        let archetype: ElementArchetype | undefined
+        if (archetypeOrDef instanceof ElementArchetype) {
+            archetype = archetypeOrDef
+            definition = mergeArchetypeWithOverride(archetypeOrDef, override)
+        } else {
+            definition = archetypeOrDef
+        }
+
+        const container = new Container(name, definition, archetype, override)
 
         this._containers.set(name, container)
 

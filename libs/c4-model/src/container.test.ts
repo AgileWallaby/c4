@@ -3,6 +3,7 @@ import { Container } from './container'
 import { faker } from '@faker-js/faker'
 import { SoftwareSystem } from './softwareSystem'
 import { Person } from './person'
+import { ElementArchetype } from './archetype'
 
 describe('Container', () => {
     const name = faker.word.words()
@@ -50,6 +51,30 @@ describe('Container', () => {
             expect(component.description).toBe(componentDescription)
             expect(component.tags).toHaveLength(2 + componentTags.length)
             expect(component.tags).toEqual(expect.arrayContaining([...defaultComponentTags, ...componentTags]))
+        })
+
+        test('can define a component with archetype', () => {
+            const arch = new ElementArchetype('springController', 'component', {
+                technology: 'Spring MVC Controller',
+                tags: ['Controller'],
+            })
+            const container = new Container('api')
+            const component = container.defineComponent('UserController', arch)
+            expect(component.name).toBe('UserController')
+            expect(component.technology).toBe('Spring MVC Controller')
+            expect(component.tags).toEqual(expect.arrayContaining(['Controller', 'Element', 'Component']))
+            expect(component.archetype).toBe(arch)
+        })
+
+        test('can define a component with archetype and override', () => {
+            const arch = new ElementArchetype('springController', 'component', {
+                technology: 'Spring MVC Controller',
+                tags: ['Controller'],
+            })
+            const container = new Container('api')
+            const component = container.defineComponent('UserController', arch, { description: 'Handles user requests' })
+            expect(component.technology).toBe('Spring MVC Controller')
+            expect(component.description).toBe('Handles user requests')
         })
 
         test('should not permit a component to be defined multiple times in the same container', () => {

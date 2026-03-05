@@ -1,9 +1,10 @@
-import { Element } from './core'
+import { Element, Relationship } from './core'
 import { Component } from './component'
 import { Container, ContainerGroup } from './container'
 import { Model, ModelGroup } from './model'
 import { SoftwareSystem, SoftwareSystemGroup } from './softwareSystem'
 import { View, Views } from './views'
+import { ElementArchetype, RelationshipArchetype } from './archetype'
 
 const INDENT_SIZE = 2
 
@@ -13,14 +14,127 @@ export class StructurizrDSLWriter {
         private readonly views: Views
     ) {}
 
+    private collectArchetypes(): { elementArchetypes: ElementArchetype[]; relationshipArchetypes: RelationshipArchetype[] } {
+        const elementSet = new Set<ElementArchetype>()
+        const relationshipSet = new Set<RelationshipArchetype>()
+
+        const collectFromElement = (element: Element) => {
+            if (element.archetype) {
+                let arch: ElementArchetype | undefined = element.archetype
+                while (arch) {
+                    elementSet.add(arch)
+                    arch = arch.parent
+                }
+            }
+            element.relationships.forEach((rel) => {
+                if (rel.archetype) {
+                    let arch: RelationshipArchetype | undefined = rel.archetype
+                    while (arch) {
+                        relationshipSet.add(arch)
+                        arch = arch.parent
+                    }
+                }
+            })
+            element.getChildElements().forEach(collectFromElement)
+        }
+
+        const allElements: Element[] = [...this.model.getPeople(), ...this.model.getSoftwareSystems()]
+        allElements.forEach(collectFromElement)
+
+        // Topological sort: parents before children
+        const sortArchetypes = <T extends { parent?: T }>(set: Set<T>): T[] => {
+            const sorted: T[] = []
+            const visited = new Set<T>()
+            const visit = (arch: T) => {
+                if (visited.has(arch)) return
+                if (arch.parent && set.has(arch.parent)) visit(arch.parent)
+                visited.add(arch)
+                sorted.push(arch)
+            }
+            set.forEach(visit)
+            return sorted
+        }
+
+        return {
+            elementArchetypes: sortArchetypes(elementSet),
+            relationshipArchetypes: sortArchetypes(relationshipSet),
+        }
+    }
+
+    private writeArchetypes(level: number): string {
+        const { elementArchetypes, relationshipArchetypes } = this.collectArchetypes()
+        if (elementArchetypes.length === 0 && relationshipArchetypes.length === 0) return ''
+
+        let dsl = this.writeLine(`archetypes {`, level)
+
+        for (const arch of elementArchetypes) {
+            const baseType = arch.parent ? arch.parent.name : arch.elementKind
+            let inner = ''
+            if (arch.ownDescription) {
+                inner += this.writeLine(`description "${arch.ownDescription}"`, level + 2)
+            }
+            if (arch.ownTechnology) {
+                inner += this.writeLine(`technology "${arch.ownTechnology}"`, level + 2)
+            }
+            if (arch.ownTags.length > 0) {
+                inner += this.writeLine(`tags ${arch.ownTags.map((t) => `"${t}"`).join(' ')}`, level + 2)
+            }
+            if (inner) {
+                dsl += this.writeLine(`${arch.name} = ${baseType} {`, level + 1)
+                dsl += inner
+                dsl += this.writeLine(`}`, level + 1)
+            } else {
+                dsl += this.writeLine(`${arch.name} = ${baseType} {}`, level + 1)
+            }
+        }
+
+        for (const arch of relationshipArchetypes) {
+            const arrow = arch.parent ? `--${arch.parent.name}->` : `->`
+            let inner = ''
+            if (arch.ownDescription) {
+                inner += this.writeLine(`description "${arch.ownDescription}"`, level + 2)
+            }
+            if (arch.ownTechnology) {
+                inner += this.writeLine(`technology "${arch.ownTechnology}"`, level + 2)
+            }
+            if (arch.ownTags.length > 0) {
+                inner += this.writeLine(`tags ${arch.ownTags.map((t) => `"${t}"`).join(' ')}`, level + 2)
+            }
+            if (inner) {
+                dsl += this.writeLine(`${arch.name} = ${arrow} {`, level + 1)
+                dsl += inner
+                dsl += this.writeLine(`}`, level + 1)
+            } else {
+                dsl += this.writeLine(`${arch.name} = ${arrow} {}`, level + 1)
+            }
+        }
+
+        dsl += this.writeLine(`}`, level)
+        return dsl
+    }
+
     private writeElement(elementType: string, element: Element, level: number, closeElement = true): string {
         let elementDsl = ''
 
-        elementDsl += this.writeLine(`${element.canonicalName} = ${elementType} "${element.name}" {`, level)
-        if (element.description) {
-            elementDsl += this.writeLine(`description "${element.description}"`, level + 1)
+        const type = element.archetype ? element.archetype.name : elementType
+        elementDsl += this.writeLine(`${element.canonicalName} = ${type} "${element.name}" {`, level)
+        if (element.archetype) {
+            const ovr = element.overrideDefinition
+            if (ovr?.description) {
+                elementDsl += this.writeLine(`description "${ovr.description}"`, level + 1)
+            }
+            if (ovr?.tags && ovr.tags.length > 0) {
+                elementDsl += this.writeLine(`tags ${ovr.tags.map((tag) => `"${tag}"`).join(' ')}`, level + 1)
+            }
+            if (ovr && 'technology' in ovr && ovr.technology) {
+                elementDsl += this.writeLine(`technology "${ovr.technology}"`, level + 1)
+            }
+        } else {
+            if (element.description) {
+                elementDsl += this.writeLine(`description "${element.description}"`, level + 1)
+            }
+            elementDsl += this.writeLine(`tags ${element.tags.map((tag) => `"${tag}"`).join(' ')}`, level + 1)
         }
-        elementDsl += this.writeLine(`tags ${element.tags.map((tag) => `"${tag}"`).join(' ')}`, level + 1)
         if (closeElement) {
             elementDsl += this.writeLine(`}`, level)
         }
@@ -31,7 +145,9 @@ export class StructurizrDSLWriter {
         let componentDsl = ''
 
         componentDsl += this.writeElement('component', component, level, false)
-        componentDsl += this.writeLine(`technology "${component.technology}"`, level + 1)
+        if (!component.archetype && component.technology) {
+            componentDsl += this.writeLine(`technology "${component.technology}"`, level + 1)
+        }
         componentDsl += this.writeLine(`}`, level)
 
         return componentDsl
@@ -51,7 +167,9 @@ export class StructurizrDSLWriter {
         let containerDsl = ''
 
         containerDsl += this.writeElement('container', container, level, false)
-        containerDsl += this.writeLine(`technology "${container.technology}"`, level + 1)
+        if (!container.archetype && container.technology) {
+            containerDsl += this.writeLine(`technology "${container.technology}"`, level + 1)
+        }
 
         container.getComponentsNotInGroups().forEach((component) => {
             containerDsl += this.writeComponent(component, level + 1)
@@ -94,18 +212,41 @@ export class StructurizrDSLWriter {
         return softwareSystemDsl
     }
 
+    private writeRelationship(relationship: Relationship, level: number): string {
+        let dsl = ''
+        if (relationship.archetype) {
+            const arrow = `--${relationship.archetype.name}->`
+            const ovr = relationship.overrideDefinition
+            const desc = ovr?.description ?? relationship.description ?? 'uses'
+            dsl += this.writeLine(
+                `${relationship.source.canonicalName} ${arrow} ${relationship.destination.canonicalName} "${desc}" {`,
+                level
+            )
+            if (ovr?.technology) {
+                dsl += this.writeLine(`technology "${ovr.technology}"`, level + 1)
+            }
+            if (ovr?.tags && ovr.tags.length > 0) {
+                dsl += this.writeLine(`tags ${ovr.tags.map((tag) => `"${tag}"`).join(' ')}`, level + 1)
+            }
+            dsl += this.writeLine(`}`, level)
+        } else {
+            const tech = relationship.technology ? ` "${relationship.technology}"` : ''
+            dsl += this.writeLine(
+                `${relationship.source.canonicalName} -> ${relationship.destination.canonicalName} "${relationship.description ?? 'uses'}"${tech} {`,
+                level
+            )
+            dsl += this.writeLine(`tags ${relationship.tags.map((tag) => `"${tag}"`).join(' ')}`, level + 1)
+            dsl += this.writeLine(`}`, level)
+        }
+        return dsl
+    }
+
     private writeRelationships(elements: Element[], level: number): string {
         let relationshipsDsl = ''
 
         elements.forEach((element) => {
             element.getRelationshipsInHierarchy().forEach((relationship) => {
-                const tech = relationship.technology ? ` "${relationship.technology}"` : ''
-                relationshipsDsl += this.writeLine(
-                    `${relationship.source.canonicalName} -> ${relationship.destination.canonicalName} "${relationship.description ?? 'uses'}"${tech} {`,
-                    level
-                )
-                relationshipsDsl += this.writeLine(`tags ${relationship.tags.map((tag) => `"${tag}"`).join(' ')}`, level + 1)
-                relationshipsDsl += this.writeLine(`}`, level)
+                relationshipsDsl += this.writeRelationship(relationship, level)
             })
         })
 
@@ -151,10 +292,7 @@ export class StructurizrDSLWriter {
     }
 
     private writeView(view: View<Element>, viewType: string, level: number): string {
-        let viewDsl = this.writeLine(
-            `${viewType}${view.subject ? ' "' + view.subject.canonicalName + '"' : ''} "${view.key}" {`,
-            level
-        )
+        let viewDsl = this.writeLine(`${viewType}${view.subject ? ' "' + view.subject.canonicalName + '"' : ''} "${view.key}" {`, level)
         viewDsl += this.writeLine(`description "${view.description}"`, level + 1)
         if (view.title) {
             viewDsl += this.writeLine(`title "${view.title}"`, level + 1)
@@ -203,6 +341,7 @@ export class StructurizrDSLWriter {
         this.model.validate()
 
         dsl += this.writeLine(`workspace "${this.model.name}" {`, 0)
+        dsl += this.writeArchetypes(1)
         dsl += this.writeModel(this.model, 1)
         dsl += this.writeViews(this.views, 1)
         dsl += this.writeLine(`}`, 0)

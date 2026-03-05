@@ -1,5 +1,6 @@
 import { SoftwareSystem } from './softwareSystem'
 import { faker } from '@faker-js/faker'
+import { ElementArchetype } from './archetype'
 
 describe('SoftwareSystem', () => {
     describe('can be created', () => {
@@ -62,6 +63,31 @@ describe('SoftwareSystem', () => {
             expect(container.description).toBe(containerDescription)
             expect(container.tags).toHaveLength(2 + containerTags.length)
             expect(container.tags).toEqual(expect.arrayContaining([...defaultContainerTags, ...containerTags]))
+        })
+
+        test('can define a container with archetype', () => {
+            const arch = new ElementArchetype('springBoot', 'container', {
+                technology: 'Spring Boot',
+                tags: ['Application'],
+            })
+            const system = new SoftwareSystem('system')
+            const container = system.defineContainer('api', arch)
+            expect(container.name).toBe('api')
+            expect(container.technology).toBe('Spring Boot')
+            expect(container.tags).toEqual(expect.arrayContaining(['Application', 'Element', 'Container']))
+            expect(container.archetype).toBe(arch)
+        })
+
+        test('can define a container with archetype and override', () => {
+            const arch = new ElementArchetype('springBoot', 'container', {
+                technology: 'Spring Boot',
+                tags: ['Application'],
+            })
+            const system = new SoftwareSystem('system')
+            const container = system.defineContainer('api', arch, { description: 'REST API', tags: ['REST'] })
+            expect(container.technology).toBe('Spring Boot')
+            expect(container.description).toBe('REST API')
+            expect(container.tags).toEqual(expect.arrayContaining(['Application', 'REST', 'Element', 'Container']))
         })
 
         test('should not permit a container to be defined multiple times in the same software system', () => {

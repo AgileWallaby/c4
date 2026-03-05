@@ -1,10 +1,11 @@
 import { Element, Group, TechnicalElement, TechnologyDefinition } from './core'
 import { Component, ComponentDefinition } from './component'
+import { ElementArchetype, mergeArchetypeWithOverride } from './archetype'
 
 export type ContainerDefinition = TechnologyDefinition
 
 interface DefineComponent {
-    defineComponent(name: string, definition?: ComponentDefinition): Component
+    defineComponent(name: string, archetypeOrDef?: ElementArchetype | ComponentDefinition, override?: ComponentDefinition): Component
 }
 
 // TODO: This will be a Group<Container> if that is added back in
@@ -18,8 +19,12 @@ export class ContainerGroup extends Group implements DefineComponent {
         super(name)
     }
 
-    public defineComponent(name: string, definition?: ComponentDefinition): Component {
-        const component = this.container.defineComponent(name, definition)
+    public defineComponent(
+        name: string,
+        archetypeOrDef?: ElementArchetype | ComponentDefinition,
+        override?: ComponentDefinition
+    ): Component {
+        const component = this.container.defineComponent(name, archetypeOrDef, override)
         this._components.set(name, component)
         return component
     }
@@ -35,17 +40,32 @@ export class Container extends TechnicalElement implements DefineComponent {
 
     constructor(
         public override readonly name: string,
-        definition?: ContainerDefinition
+        definition?: ContainerDefinition,
+        archetype?: ElementArchetype,
+        overrideDefinition?: TechnologyDefinition
     ) {
-        super(name, ['Container'], definition)
+        super(name, ['Container'], definition, archetype, overrideDefinition)
     }
 
-    public defineComponent(name: string, definition?: ComponentDefinition): Component {
+    public defineComponent(
+        name: string,
+        archetypeOrDef?: ElementArchetype | ComponentDefinition,
+        override?: ComponentDefinition
+    ): Component {
         if (this._components.has(name)) {
             throw Error(`A Component named '${name}' is defined elsewhere in this Container. A Component can be defined only once.`)
         }
 
-        const component = new Component(name, definition)
+        let definition: ComponentDefinition | undefined
+        let archetype: ElementArchetype | undefined
+        if (archetypeOrDef instanceof ElementArchetype) {
+            archetype = archetypeOrDef
+            definition = mergeArchetypeWithOverride(archetypeOrDef, override)
+        } else {
+            definition = archetypeOrDef
+        }
+
+        const component = new Component(name, definition, archetype, override)
 
         this._components.set(name, component)
 

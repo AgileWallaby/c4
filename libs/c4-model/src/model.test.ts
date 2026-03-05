@@ -1,4 +1,5 @@
 import { Model } from './model'
+import { ElementArchetype } from './archetype'
 
 describe('Model', () => {
     let model: Model
@@ -41,6 +42,55 @@ describe('Model', () => {
             expect(person.description).toBe('description')
             expect(person.tags.length).toBe(4)
             expect(person.tags).toEqual(expect.arrayContaining(['tag1', 'Element', 'Person', 'tag2']))
+        })
+    })
+
+    describe('can define SoftwareSystems with archetypes', () => {
+        test('defining a SoftwareSystem with archetype should apply archetype properties', () => {
+            const arch = new ElementArchetype('internalSystem', 'softwareSystem', {
+                description: 'Internal system',
+                tags: ['Internal'],
+            })
+            const system = model.defineSoftwareSystem('mySystem', arch)
+            expect(system.name).toBe('mySystem')
+            expect(system.description).toBe('Internal system')
+            expect(system.tags).toEqual(expect.arrayContaining(['Internal', 'Element', 'Software System']))
+            expect(system.archetype).toBe(arch)
+        })
+
+        test('defining a SoftwareSystem with archetype and override', () => {
+            const arch = new ElementArchetype('internalSystem', 'softwareSystem', {
+                description: 'Internal system',
+                tags: ['Internal'],
+            })
+            const system = model.defineSoftwareSystem('mySystem', arch, { description: 'Override desc', tags: ['Extra'] })
+            expect(system.description).toBe('Override desc')
+            expect(system.tags).toEqual(expect.arrayContaining(['Internal', 'Extra', 'Element', 'Software System']))
+            expect(system.overrideDefinition).toEqual({ description: 'Override desc', tags: ['Extra'] })
+        })
+    })
+
+    describe('can define People with archetypes', () => {
+        test('defining a Person with archetype should apply archetype properties', () => {
+            const arch = new ElementArchetype('externalUser', 'person', {
+                description: 'External user',
+                tags: ['External'],
+            })
+            const person = model.definePerson('user', arch)
+            expect(person.name).toBe('user')
+            expect(person.description).toBe('External user')
+            expect(person.tags).toEqual(expect.arrayContaining(['External', 'Element', 'Person']))
+            expect(person.archetype).toBe(arch)
+        })
+
+        test('defining a Person with archetype and override', () => {
+            const arch = new ElementArchetype('externalUser', 'person', {
+                description: 'External user',
+                tags: ['External'],
+            })
+            const person = model.definePerson('admin', arch, { description: 'Admin user' })
+            expect(person.description).toBe('Admin user')
+            expect(person.tags).toEqual(expect.arrayContaining(['External', 'Element', 'Person']))
         })
     })
 

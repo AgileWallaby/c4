@@ -4,6 +4,7 @@
 import { Model } from './model'
 import { StructurizrDSLWriter } from './structurizrDSLWriter'
 import { Views } from './views'
+import { ElementArchetype, RelationshipArchetype } from './archetype'
 
 describe('can write to dsl', () => {
     test('', () => {
@@ -58,5 +59,77 @@ describe('can write to dsl', () => {
         const dsl = writer.write()
         console.log(dsl)
         // Use the writer object here
+    })
+
+    test('should output archetypes block when archetypes are used', () => {
+        const model = new Model('archModel')
+        const springBoot = new ElementArchetype('springBootApp', 'container', {
+            technology: 'Spring Boot',
+            tags: ['Application'],
+        })
+        const microservice = new ElementArchetype(
+            'microservice',
+            'container',
+            {
+                tags: ['Microservice'],
+            },
+            springBoot
+        )
+
+        const sys = model.defineSoftwareSystem('mySystem')
+        sys.defineContainer('Web App', springBoot)
+        sys.defineContainer('API', microservice, { description: 'REST API' })
+
+        const views = new Views()
+        const writer = new StructurizrDSLWriter(model, views)
+        const dsl = writer.write()
+
+        // Should contain archetypes block
+        expect(dsl).toContain('archetypes {')
+        expect(dsl).toContain('springBootApp = container {')
+        expect(dsl).toContain('technology "Spring Boot"')
+        expect(dsl).toContain('tags "Application"')
+        // Child archetype uses parent name as base type
+        expect(dsl).toContain('microservice = springBootApp {')
+        expect(dsl).toContain('tags "Microservice"')
+
+        // Elements should use archetype name
+        expect(dsl).toContain('webApp = springBootApp "Web App"')
+        expect(dsl).toContain('api = microservice "API"')
+        // Override description should appear on the element
+        expect(dsl).toContain('description "REST API"')
+    })
+
+    test('should output relationship archetypes when used', () => {
+        const model = new Model('relArchModel')
+        const sync = new RelationshipArchetype('sync', { tags: ['Synchronous'] })
+        const https = new RelationshipArchetype('https', { technology: 'HTTPS' }, sync)
+
+        const person = model.definePerson('user')
+        const sys = model.defineSoftwareSystem('mySystem')
+        person.uses(sys, https, { description: 'Makes API calls' })
+
+        const views = new Views()
+        const writer = new StructurizrDSLWriter(model, views)
+        const dsl = writer.write()
+
+        // Should contain relationship archetypes
+        expect(dsl).toContain('sync = -> {')
+        expect(dsl).toContain('tags "Synchronous"')
+        expect(dsl).toContain('https = --sync-> {')
+        expect(dsl).toContain('technology "HTTPS"')
+
+        // Relationship should use archetype arrow
+        expect(dsl).toContain('user --https-> mySystem "Makes API calls"')
+    })
+
+    test('should not output archetypes block when no archetypes are used', () => {
+        const model = new Model('noArchModel')
+        model.defineSoftwareSystem('sys1')
+        const views = new Views()
+        const writer = new StructurizrDSLWriter(model, views)
+        const dsl = writer.write()
+
+        expect(dsl).not.toContain('archetypes')
     })
 })

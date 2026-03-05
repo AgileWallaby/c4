@@ -7,6 +7,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 import { Group } from './core'
 import { SoftwareSystem, SoftwareSystemDefinition } from './softwareSystem'
 import { Person, PersonDefinition } from './person'
+import { ElementArchetype, mergeArchetypeWithOverride } from './archetype'
 
 // Finds every key in TRoot whose value is assignable to TModule.
 // Unconstrained generics so concrete catalog interfaces (which lack index signatures) satisfy it.
@@ -24,11 +25,15 @@ export interface C4Module<TRoot, TLocal> {
 }
 
 interface DefineSoftwareSystem {
-    defineSoftwareSystem(name: string, definition?: SoftwareSystemDefinition): SoftwareSystem
+    defineSoftwareSystem(
+        name: string,
+        archetypeOrDef?: ElementArchetype | SoftwareSystemDefinition,
+        override?: SoftwareSystemDefinition
+    ): SoftwareSystem
 }
 
 interface DefinePerson {
-    definePerson(name: string, definition?: PersonDefinition): Person
+    definePerson(name: string, archetypeOrDef?: ElementArchetype | PersonDefinition, override?: PersonDefinition): Person
 }
 
 // TODO: This will be a Group of type <SoftwareSystem | Person> if that is added back in
@@ -43,14 +48,18 @@ export class ModelGroup extends Group implements DefineSoftwareSystem, DefinePer
         super(name)
     }
 
-    public defineSoftwareSystem(name: string, definition?: SoftwareSystemDefinition): SoftwareSystem {
-        const softwareSystem = this.model.defineSoftwareSystem(name, definition)
+    public defineSoftwareSystem(
+        name: string,
+        archetypeOrDef?: ElementArchetype | SoftwareSystemDefinition,
+        override?: SoftwareSystemDefinition
+    ): SoftwareSystem {
+        const softwareSystem = this.model.defineSoftwareSystem(name, archetypeOrDef, override)
         this.softwareSystems.set(name, softwareSystem)
         return softwareSystem
     }
 
-    public definePerson(name: string, definition?: PersonDefinition): Person {
-        const person = this.model.definePerson(name, definition)
+    public definePerson(name: string, archetypeOrDef?: ElementArchetype | PersonDefinition, override?: PersonDefinition): Person {
+        const person = this.model.definePerson(name, archetypeOrDef, override)
         this.people.set(name, person)
         return person
     }
@@ -65,8 +74,12 @@ export class ModelGroup extends Group implements DefineSoftwareSystem, DefinePer
 }
 
 export interface ModelDefinitions {
-    defineSoftwareSystem(name: string, definition?: SoftwareSystemDefinition): SoftwareSystem
-    definePerson(name: string, definition?: PersonDefinition): Person
+    defineSoftwareSystem(
+        name: string,
+        archetypeOrDef?: ElementArchetype | SoftwareSystemDefinition,
+        override?: SoftwareSystemDefinition
+    ): SoftwareSystem
+    definePerson(name: string, archetypeOrDef?: ElementArchetype | PersonDefinition, override?: PersonDefinition): Person
 }
 
 export class Model {
@@ -76,11 +89,23 @@ export class Model {
     private people = new Map<string, Person>()
     private groups = new Map<string, ModelGroup>()
 
-    defineSoftwareSystem(name: string, definition?: SoftwareSystemDefinition): SoftwareSystem {
+    defineSoftwareSystem(
+        name: string,
+        archetypeOrDef?: ElementArchetype | SoftwareSystemDefinition,
+        override?: SoftwareSystemDefinition
+    ): SoftwareSystem {
         if (this.softwareSystems.has(name)) {
             throw Error(`A SoftwareSystem named '${name}' is defined elsewhere in this Model. A SoftwareSystem can be defined only once.`)
         }
-        const system = new SoftwareSystem(name, definition)
+        let definition: SoftwareSystemDefinition | undefined
+        let archetype: ElementArchetype | undefined
+        if (archetypeOrDef instanceof ElementArchetype) {
+            archetype = archetypeOrDef
+            definition = mergeArchetypeWithOverride(archetypeOrDef, override)
+        } else {
+            definition = archetypeOrDef
+        }
+        const system = new SoftwareSystem(name, definition, archetype, override)
         this.softwareSystems.set(name, system)
         return system
     }
@@ -95,11 +120,19 @@ export class Model {
         return group
     }
 
-    definePerson(name: string, definition?: PersonDefinition): Person {
+    definePerson(name: string, archetypeOrDef?: ElementArchetype | PersonDefinition, override?: PersonDefinition): Person {
         if (this.people.has(name)) {
             throw Error(`A Person named '${name}' is defined elsewhere in this Model. A Person can be defined only once.`)
         }
-        const person = new Person(name, definition)
+        let definition: PersonDefinition | undefined
+        let archetype: ElementArchetype | undefined
+        if (archetypeOrDef instanceof ElementArchetype) {
+            archetype = archetypeOrDef
+            definition = mergeArchetypeWithOverride(archetypeOrDef, override)
+        } else {
+            definition = archetypeOrDef
+        }
+        const person = new Person(name, definition, archetype, override)
         this.people.set(name, person)
         return person
     }

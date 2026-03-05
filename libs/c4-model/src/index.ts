@@ -1,3 +1,4 @@
+export * from './archetype'
 export * from './model'
 export * from './person'
 export * from './softwareSystem'

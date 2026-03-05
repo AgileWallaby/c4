@@ -1,4 +1,5 @@
 import { camelCase } from 'change-case'
+import { ElementArchetype, RelationshipArchetype, mergeArchetypeWithOverride } from './archetype'
 
 export interface Definition {
     description?: string
@@ -12,24 +13,42 @@ export interface TechnologyDefinition extends Definition {
 export abstract class Element {
     public readonly description?: string
     public readonly tags: ReadonlyArray<string>
+    public readonly archetype?: ElementArchetype
+    public readonly overrideDefinition?: TechnologyDefinition
 
     private _relationships: Relationship[] = []
 
     constructor(
         public readonly name: string,
         defaultTags: string[] = [],
-        definition?: Definition
+        definition?: Definition,
+        archetype?: ElementArchetype,
+        overrideDefinition?: TechnologyDefinition
     ) {
         this.description = definition?.description
         this.tags = (definition?.tags ?? []).concat(['Element']).concat(defaultTags)
+        this.archetype = archetype
+        this.overrideDefinition = overrideDefinition
     }
 
     public get canonicalName(): string {
         return camelCase(this.name)
     }
 
-    public uses(otherElement: Element, definition?: TechnologyDefinition): void {
-        const relationship = new Relationship(this, otherElement, definition)
+    public uses(
+        otherElement: Element,
+        archetypeOrDef?: RelationshipArchetype | TechnologyDefinition,
+        override?: TechnologyDefinition
+    ): void {
+        let definition: TechnologyDefinition | undefined
+        let archetype: RelationshipArchetype | undefined
+        if (archetypeOrDef instanceof RelationshipArchetype) {
+            archetype = archetypeOrDef
+            definition = mergeArchetypeWithOverride(archetypeOrDef, override)
+        } else {
+            definition = archetypeOrDef
+        }
+        const relationship = new Relationship(this, otherElement, definition, archetype, override)
         this._relationships.push(relationship)
     }
 
@@ -55,8 +74,14 @@ export abstract class Element {
 export abstract class TechnicalElement extends Element {
     public readonly technology?: string
 
-    constructor(name: string, defaultTags: string[] = [], definition?: TechnologyDefinition) {
-        super(name, defaultTags, definition)
+    constructor(
+        name: string,
+        defaultTags: string[] = [],
+        definition?: TechnologyDefinition,
+        archetype?: ElementArchetype,
+        overrideDefinition?: TechnologyDefinition
+    ) {
+        super(name, defaultTags, definition, archetype, overrideDefinition)
         this.technology = definition?.technology
     }
 }
@@ -65,15 +90,21 @@ export class Relationship {
     public readonly description?: string
     public readonly tags: ReadonlyArray<string>
     public readonly technology?: string
+    public readonly archetype?: RelationshipArchetype
+    public readonly overrideDefinition?: TechnologyDefinition
 
     constructor(
         public readonly source: Element,
         public readonly destination: Element,
-        definition?: TechnologyDefinition
+        definition?: TechnologyDefinition,
+        archetype?: RelationshipArchetype,
+        overrideDefinition?: TechnologyDefinition
     ) {
         this.description = definition?.description
         this.technology = definition?.technology
         this.tags = (definition?.tags ?? []).concat(['Relationship'])
+        this.archetype = archetype
+        this.overrideDefinition = overrideDefinition
     }
 }
 
