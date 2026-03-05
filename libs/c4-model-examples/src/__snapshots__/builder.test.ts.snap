@@ -93,3 +93,97 @@ exports[`build model > can build model 1`] = `
 }
 "
 `;
+
+exports[`build model > can build model with explicit modules 1`] = `
+"workspace "model" {
+  archetypes {
+    nodeService = container {
+      technology "Node.js"
+      tags "Service"
+    }
+    httpsJson = -> {
+      technology "HTTPS/JSON"
+      tags "Synchronous"
+    }
+    amqp = -> {
+      technology "AMQP"
+      tags "Asynchronous"
+    }
+  }
+  model {
+    // Elements
+    customer = person "Customer" {
+      description "A user of the web platform"
+      tags "Element" "Person"
+    }
+    webPlatform = softwareSystem "Web Platform" {
+      description "Allows customers to manage their account and send notifications"
+      tags "Element" "Software System"
+      webApp = container "Web App" {
+        description "Serves the single-page application"
+        tags "Element" "Container"
+        technology "React"
+      }
+      apiServer = nodeService "API Server" {
+        description "Provides the REST API"
+      }
+      database = container "Database" {
+        description "Stores user data and notification history"
+        tags "Element" "Container"
+        technology "PostgreSQL"
+      }
+    }
+    emailService = softwareSystem "Email Service" {
+      description "Handles sending and tracking email notifications"
+      tags "Element" "Software System"
+      emailApi = nodeService "Email API" {
+        description "Accepts email send requests"
+      }
+      messageQueue = container "Message Queue" {
+        description "Queues outbound email jobs"
+        tags "Element" "Container"
+        technology "RabbitMQ"
+      }
+      emailWorker = nodeService "Email Worker" {
+        description "Processes queued emails and delivers them"
+        templateEngine = component "Template Engine" {
+          description "Renders email templates with dynamic content"
+          tags "Element" "Component"
+          technology "Handlebars"
+        }
+        deliveryTracker = component "Delivery Tracker" {
+          description "Tracks delivery status and handles retries"
+          tags "Element" "Component"
+          technology "TypeScript"
+        }
+      }
+    }
+    // Relationships
+    customer -> webApp "Manages account and sends notifications using" {
+      tags "Relationship"
+    }
+    webApp --httpsJson-> apiServer "Makes API calls to" {
+    }
+    apiServer -> database "Reads from and writes to" "SQL" {
+      tags "Relationship"
+    }
+    apiServer --httpsJson-> emailApi "Sends emails via" {
+    }
+    emailApi --amqp-> messageQueue "Enqueues email jobs to" {
+    }
+    emailWorker --amqp-> messageQueue "Consumes email jobs from" {
+    }
+    templateEngine -> deliveryTracker "Passes rendered emails to" {
+      tags "Relationship"
+    }
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    // Container Views
+    // Component Views
+    theme default
+  }
+}
+"
+`;

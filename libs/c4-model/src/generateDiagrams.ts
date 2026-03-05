@@ -4,7 +4,7 @@ import * as path from 'path'
 
 import { GenericContainer, Wait } from 'testcontainers'
 
-import { BuildModelOptions, buildModelWithCatalog } from './model'
+import { BuildModelOptions, buildModelWithCatalog } from './buildModel'
 import { StructurizrDSLWriter } from './structurizrDslWriter'
 import { Views } from './views'
 

@@ -1,9 +1,3 @@
-import { glob } from 'glob'
-import { join, dirname } from 'path'
-import { fileURLToPath } from 'url'
-
-const __dirname = dirname(fileURLToPath(import.meta.url))
-
 import { Group } from './core'
 import { SoftwareSystem, SoftwareSystemDefinition } from './softwareSystem'
 import { Person, PersonDefinition } from './person'
@@ -162,57 +156,3 @@ export class Model {
     }
 }
 
-export interface BuildModelOptions {
-    modelName?: string
-    globPath?: string
-    searchRoot?: string
-}
-
-export async function buildModelWithCatalog<TRoot>(options: BuildModelOptions = {}): Promise<{ model: Model; catalog: TRoot }> {
-    const { modelName = 'model', globPath = 'c4.dsl.ts', searchRoot = __dirname } = options
-    const model = new Model(modelName)
-
-    const result = await glob(`**/${globPath}`, { cwd: searchRoot })
-
-    if (result.length === 0) {
-        throw new Error(`No ${globPath} files found`)
-    }
-
-    type Catalog = Record<string, unknown>
-    type RootCatalog = Record<string, Catalog>
-    interface AnyC4Module {
-        readonly key: string
-        registerDefinitions(model: Model): Catalog
-        buildRelationships(local: Catalog, dependencies: RootCatalog): void
-    }
-    const modules = await Promise.all(result.map((file) => import(join(searchRoot, file))))
-    const registrations: Array<{ instance: AnyC4Module; key: string; local: Catalog }> = []
-    const rootCatalog: RootCatalog = {}
-
-    // Phase 1: each module registers its own definitions; results are nested under the module's key
-    for (const module of modules) {
-        if (!module.c4Module) {
-            continue
-        }
-        const instance = module.c4Module as AnyC4Module
-        const local: Catalog = instance.registerDefinitions(model)
-        rootCatalog[instance.key] = local
-        registrations.push({ instance, key: instance.key, local })
-    }
-
-    if (registrations.length === 0) {
-        throw new Error(`No c4Module exports found in any ${globPath} files`)
-    }
-
-    // Phase 2: each module receives its own slice (local) and every other module's slice (dependencies) to build relationships
-    for (const { instance, key, local } of registrations) {
-        const dependencies = Object.fromEntries(Object.entries(rootCatalog).filter(([k]) => k !== key)) as Record<string, Catalog>
-        instance.buildRelationships(local, dependencies)
-    }
-
-    return { model, catalog: rootCatalog as TRoot }
-}
-
-export async function buildModel(options: BuildModelOptions = {}): Promise<Model> {
-    return (await buildModelWithCatalog(options)).model
-}
