@@ -14,10 +14,10 @@ export type CatalogKeyOf<TRoot, TModule> = {
 // Everything in the root catalog expect the module's own slice.
 export type Dependencies<TRoot, TModule> = Omit<TRoot, CatalogKeyOf<TRoot, TModule>>
 
-export interface C4Module<TLocal, TOthers> {
-    readonly key: string
+export interface C4Module<TRoot, TLocal> {
+    readonly key: CatalogKeyOf<TRoot, TLocal>
     registerDefinitions(model: Model): TLocal
-    buildRelationships(local: TLocal, dependencies: TOthers): void
+    buildRelationships(local: TLocal, dependencies: Dependencies<TRoot, TLocal>): void
 }
 
 interface DefineSoftwareSystem {
@@ -188,9 +188,13 @@ export async function buildModel(options: BuildModelOptions = {}): Promise<Model
 
     type Catalog = Record<string, unknown>
     type RootCatalog = Record<string, Catalog>
-    type AnyModule = C4Module<Catalog, Record<string, Catalog>>
+    interface AnyC4Module {
+        readonly key: string
+        registerDefinitions(model: Model): Catalog
+        buildRelationships(local: Catalog, dependencies: RootCatalog): void
+    }
     const modules = await Promise.all(result.map((file) => import(join(searchRoot, file))))
-    const registrations: Array<{ instance: AnyModule; key: string; local: Catalog }> = []
+    const registrations: Array<{ instance: AnyC4Module; key: string; local: Catalog }> = []
     const rootCatalog: RootCatalog = {}
 
     // Phase 1: each module registers its own definitions; results are nested under the module's key
@@ -198,7 +202,7 @@ export async function buildModel(options: BuildModelOptions = {}): Promise<Model
         if (!module.c4Module) {
             continue
         }
-        const instance = module.c4Module as AnyModule
+        const instance = module.c4Module as AnyC4Module
         const local: Catalog = instance.registerDefinitions(model)
         rootCatalog[instance.key] = local
         registrations.push({ instance, key: instance.key, local })

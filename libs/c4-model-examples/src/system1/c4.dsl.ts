@@ -1,4 +1,4 @@
-import { C4Module, Dependencies, Model, Person } from '@agilewallaby/c4-model'
+import { C4Module, Model, Person } from '@agilewallaby/c4-model'
 import type { ExampleSystemCatalog } from '../catalog'
 
 export function buildModel(model: Model) {
@@ -8,7 +8,7 @@ export function buildModel(model: Model) {
 
 export type System1Catalog = { person1: Person }
 
-export const c4Module: C4Module<System1Catalog, Dependencies<ExampleSystemCatalog, System1Catalog>> = {
+export const c4Module: C4Module<ExampleSystemCatalog, System1Catalog> = {
     key: 'system1',
     registerDefinitions(model: Model): System1Catalog {
         const person1 = model.definePerson('person1')
