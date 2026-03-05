@@ -132,7 +132,7 @@ export interface BuildModelOptions {
     searchRoot?: string
 }
 
-export async function buildModel(options: BuildModelOptions = {}): Promise<Model> {
+export async function buildModelWithCatalog<TRoot>(options: BuildModelOptions = {}): Promise<{ model: Model; catalog: TRoot }> {
     const { modelName = 'model', globPath = 'c4.dsl.ts', searchRoot = __dirname } = options
     const model = new Model(modelName)
 
@@ -174,5 +174,9 @@ export async function buildModel(options: BuildModelOptions = {}): Promise<Model
         instance.buildRelationships(local, dependencies)
     }
 
-    return model
+    return { model, catalog: rootCatalog as TRoot }
+}
+
+export async function buildModel(options: BuildModelOptions = {}): Promise<Model> {
+    return (await buildModelWithCatalog(options)).model
 }

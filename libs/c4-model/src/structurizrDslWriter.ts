@@ -99,15 +99,11 @@ export class StructurizrDSLWriter {
 
         elements.forEach((element) => {
             element.getRelationshipsInHierarchy().forEach((relationship) => {
+                const tech = relationship.technology ? ` "${relationship.technology}"` : ''
                 relationshipsDsl += this.writeLine(
-                    `${relationship.source.canonicalName} -> ${relationship.destination.canonicalName} "${
-                        relationship.description ?? 'uses'
-                    }" {`,
+                    `${relationship.source.canonicalName} -> ${relationship.destination.canonicalName} "${relationship.description ?? 'uses'}"${tech} {`,
                     level
                 )
-                if (relationship.technology) {
-                    relationshipsDsl += this.writeLine(`technology "${relationship.technology}"`, level + 1)
-                }
                 relationshipsDsl += this.writeLine(`tags ${relationship.tags.map((tag) => `"${tag}"`).join(' ')}`, level + 1)
                 relationshipsDsl += this.writeLine(`}`, level)
             })
@@ -156,9 +152,10 @@ export class StructurizrDSLWriter {
 
     private writeView(view: View<Element>, viewType: string, level: number): string {
         let viewDsl = this.writeLine(
-            `${viewType}${view.subject ? ' "' + view.subject.canonicalName + '"' : ''} "${view.key}" "${view.description}" {`,
+            `${viewType}${view.subject ? ' "' + view.subject.canonicalName + '"' : ''} "${view.key}" {`,
             level
         )
+        viewDsl += this.writeLine(`description "${view.description}"`, level + 1)
         if (view.title) {
             viewDsl += this.writeLine(`title "${view.title}"`, level + 1)
         }

@@ -1,13 +1,15 @@
 # c4-model
 
+## About
+
+TypeScript library for defining C4 architecture models and generating Structurizr DSL.
+
 ## Structurizr DSL Reference
 
 Structurizr DSL docs are available locally at `docs/structurizr/` (run
 `pnpm fetch-structurizr-docs` to populate). When working on `structurizrDslWriter.ts`,
 read the relevant files from that directory. If not present locally, source is:
 https://github.com/structurizr/structurizr.github.io/tree/main/dsl
-
-TypeScript library for defining C4 architecture models and generating Structurizr DSL.
 
 ## Running tasks
 
