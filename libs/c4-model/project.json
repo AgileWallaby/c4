@@ -6,13 +6,17 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@nx/js:tsc",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/c4-model",
         "main": "libs/c4-model/src/index.ts",
         "tsConfig": "libs/c4-model/tsconfig.lib.json",
-        "assets": ["libs/c4-model/*.md"]
+        "format": ["esm"],
+        "bundle": true,
+        "declaration": true,
+        "outputFileName": "src/index.js",
+        "assets": ["libs/c4-model/README.md"]
       }
     },
     "lint": {
