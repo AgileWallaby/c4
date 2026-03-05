@@ -5,11 +5,6 @@ import { Group } from './core'
 import { ReferencedSoftwareSystem, SoftwareSystem, SoftwareSystemDefinition } from './softwareSystem'
 import { Person, PersonDefinition, ReferencedPerson } from './person'
 
-export type Catalog = Record<string, unknown>
-
-// Top-level map of module keys ot their catalog slices (used internally in buildModel)
-export type RootCatalog = Record<string, Catalog>
-
 // Finds every key in TRoot whose value is assignable to TModule.
 // Unconstrained generics so concrete catalog interfaces (which lack index signatures) satisfy it.
 export type CatalogKeyOf<TRoot, TModule> = {
@@ -191,10 +186,11 @@ export async function buildModel(options: BuildModelOptions = {}): Promise<Model
         throw new Error(`No ${globPath} files found`)
     }
 
+    type Catalog = Record<string, unknown>
+    type RootCatalog = Record<string, Catalog>
+    type AnyModule = C4Module<Catalog, Record<string, Catalog>>
     const modules = await Promise.all(result.map((file) => import(join(searchRoot, file))))
     const registrations: Array<{ instance: AnyModule; key: string; local: Catalog }> = []
-
-    type AnyModule = C4Module<Catalog, Record<string, Catalog>>
     const rootCatalog: RootCatalog = {}
 
     // Phase 1: each module registers its own definitions; results are nested under the module's key
