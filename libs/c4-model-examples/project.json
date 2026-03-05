@@ -19,17 +19,22 @@
       "executor": "@nx/eslint:lint"
     },
     "test": {
-      "executor": "@nx/jest:jest",
+      "executor": "@nx/vitest:test",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/c4-model-examples/jest.config.cts"
+        "configFile": "libs/c4-model-examples/vitest.config.ts"
+      },
+      "configurations": {
+        "ci": {
+          "coverage": true
+        }
       }
     },
     "generate-diagrams": {
       "executor": "nx:run-commands",
       "dependsOn": [{ "projects": ["c4-model"], "target": "build" }],
       "options": {
-        "command": "TS_NODE_PROJECT=tsconfig.base.json TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' node -r tsconfig-paths/register -r ts-node/register libs/c4-model-examples/src/generate.ts",
+        "command": "node --import tsx/esm libs/c4-model-examples/src/generate.ts",
         "cwd": "{workspaceRoot}"
       }
     }

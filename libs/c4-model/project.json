@@ -15,10 +15,6 @@
         "assets": ["libs/c4-model/*.md"]
       }
     },
-    "publish": {
-      "command": "node tools/scripts/publish.mjs c4-model {args.ver} {args.tag}",
-      "dependsOn": ["build"]
-    },
     "lint": {
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
@@ -30,16 +26,15 @@
       }
     },
     "test": {
-      "executor": "@nx/jest:jest",
+      "executor": "@nx/vitest:test",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/c4-model/jest.config.ts",
+        "configFile": "libs/c4-model/vitest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {
         "ci": {
-          "ci": true,
-          "codeCoverage": true
+          "coverage": true
         }
       }
     }
