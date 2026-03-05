@@ -270,6 +270,7 @@ export class StructurizrDSLWriter {
         let modelDsl = ''
 
         modelDsl += this.writeLine(`model {`, level)
+        modelDsl += this.writeArchetypes(level + 1)
         modelDsl += this.writeLine('// Elements', level + 1)
 
         model.getPeopleNotInGroups().forEach((person) => {
@@ -341,7 +342,6 @@ export class StructurizrDSLWriter {
         this.model.validate()
 
         dsl += this.writeLine(`workspace "${this.model.name}" {`, 0)
-        dsl += this.writeArchetypes(1)
         dsl += this.writeModel(this.model, 1)
         dsl += this.writeViews(this.views, 1)
         dsl += this.writeLine(`}`, 0)

@@ -2,21 +2,21 @@
 
 exports[`build model > can build model 1`] = `
 "workspace "model" {
-  archetypes {
-    nodeService = container {
-      technology "Node.js"
-      tags "Service"
-    }
-    httpsJson = -> {
-      technology "HTTPS/JSON"
-      tags "Synchronous"
-    }
-    amqp = -> {
-      technology "AMQP"
-      tags "Asynchronous"
-    }
-  }
   model {
+    archetypes {
+      nodeService = container {
+        technology "Node.js"
+        tags "Service"
+      }
+      httpsJson = -> {
+        technology "HTTPS/JSON"
+        tags "Synchronous"
+      }
+      amqp = -> {
+        technology "AMQP"
+        tags "Asynchronous"
+      }
+    }
     // Elements
     customer = person "Customer" {
       description "A user of the web platform"
@@ -96,21 +96,21 @@ exports[`build model > can build model 1`] = `
 
 exports[`build model > can build model with explicit modules 1`] = `
 "workspace "model" {
-  archetypes {
-    nodeService = container {
-      technology "Node.js"
-      tags "Service"
-    }
-    httpsJson = -> {
-      technology "HTTPS/JSON"
-      tags "Synchronous"
-    }
-    amqp = -> {
-      technology "AMQP"
-      tags "Asynchronous"
-    }
-  }
   model {
+    archetypes {
+      nodeService = container {
+        technology "Node.js"
+        tags "Service"
+      }
+      httpsJson = -> {
+        technology "HTTPS/JSON"
+        tags "Synchronous"
+      }
+      amqp = -> {
+        technology "AMQP"
+        tags "Asynchronous"
+      }
+    }
     // Elements
     customer = person "Customer" {
       description "A user of the web platform"
