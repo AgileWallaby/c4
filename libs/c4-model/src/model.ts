@@ -221,29 +221,3 @@ export async function buildModel(options: BuildModelOptions = {}): Promise<Model
     model.validate()
     return model
 }
-
-export async function buildModelOld(options: BuildModelOptions = {}): Promise<Model> {
-    const { modelName = 'model', globPath = 'c4.dsl.ts', searchRoot = __dirname } = options
-    const model = new Model(modelName)
-
-    const result = await glob(`**/${globPath}`, { cwd: searchRoot })
-
-    if (result.length === 0) {
-        throw new Error(`No ${globPath} files found`)
-    }
-
-    for (const file of result) {
-        const moduleFile = join(searchRoot, file)
-
-        const module = await import(moduleFile)
-        if (typeof module.buildModel === 'function') {
-            module.buildModel(model)
-        } else {
-            throw new Error(`No buildModel function found in ${moduleFile}`)
-        }
-    }
-
-    model.validate()
-
-    return model
-}

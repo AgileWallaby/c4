@@ -1,3 +1,4 @@
+import { camelCase } from 'change-case'
 import { Component, ReferencedComponent } from './component'
 import { Container, ReferencedContainer } from './container'
 import { ReferencedSoftwareSystem, SoftwareSystem } from './softwareSystem'
@@ -28,7 +29,7 @@ export abstract class Element {
     }
 
     public get canonicalName(): string {
-        return this.name.toLowerCase()
+        return camelCase(this.name)
     }
 
     public uses(otherElement: RelationshipTarget, definition?: TechnologyDefinition): void {
@@ -86,7 +87,7 @@ export class Reference<T> {
     constructor(public readonly name: string) {}
 
     public get canonicalName(): string {
-        return this.name.toLowerCase()
+        return camelCase(this.name)
     }
 
     protected referenceChild(name: string, createChild: (childName: string) => Reference<T>): Reference<T> {
