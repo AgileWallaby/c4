@@ -1,5 +1,5 @@
-import { Definition, Element, Group, Reference } from './core'
-import { Container, ContainerDefinition, ReferencedContainer } from './container'
+import { Definition, Element, Group } from './core'
+import { Container, ContainerDefinition } from './container'
 
 export type SoftwareSystemDefinition = Definition
 
@@ -46,9 +46,7 @@ export class SoftwareSystem extends Element implements DefineContainer {
 
     public defineContainer(name: string, definition?: ContainerDefinition): Container {
         if (this._containers.has(name)) {
-            throw Error(
-                `A Container named '${name}' is defined elsewhere in this SoftwareSystem. A Container can be defined only once, but can be referenced multiple times.`
-            )
+            throw Error(`A Container named '${name}' is defined elsewhere in this SoftwareSystem. A Container can be defined only once.`)
         }
 
         const container = new Container(name, definition)
@@ -78,12 +76,5 @@ export class SoftwareSystem extends Element implements DefineContainer {
     public getContainersNotInGroups(): ReadonlyArray<Container> {
         const containersInGroups = Array.from(this._groups.values()).flatMap((group) => group.getContainers())
         return Array.from(this._containers.values()).filter((container) => !containersInGroups.includes(container))
-    }
-}
-
-export class ReferencedSoftwareSystem extends Reference<Container> {
-    public referenceContainer(name: string): ReferencedContainer {
-        const containerReference = this.referenceChild(name, (name: string) => new ReferencedContainer(name))
-        return containerReference as ReferencedContainer
     }
 }

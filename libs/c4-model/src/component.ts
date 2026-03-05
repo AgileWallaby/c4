@@ -1,4 +1,4 @@
-import { Element, Reference, TechnicalElement, TechnologyDefinition } from './core'
+import { Element, TechnicalElement, TechnologyDefinition } from './core'
 
 export type ComponentDefinition = TechnologyDefinition
 
@@ -14,5 +14,3 @@ export class Component extends TechnicalElement {
         return []
     }
 }
-
-export class ReferencedComponent extends Reference<undefined> {}

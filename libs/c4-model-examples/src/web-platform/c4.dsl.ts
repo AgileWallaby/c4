@@ -1,11 +1,6 @@
 import { C4Module, Container, Model, Person, SoftwareSystem } from '@agilewallaby/c4-model'
 import type { ExampleSystemCatalog } from '../catalog'
 
-export function buildModel(model: Model) {
-    model.definePerson('person1')
-    model.referenceSoftwareSystem('softwareSystem1')
-}
-
 export type WebPlatformCatalog = {
     customer: Person
     webPlatform: SoftwareSystem

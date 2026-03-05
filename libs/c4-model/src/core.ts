@@ -1,8 +1,4 @@
 import { camelCase } from 'change-case'
-import { Component, ReferencedComponent } from './component'
-import { Container, ReferencedContainer } from './container'
-import { ReferencedSoftwareSystem, SoftwareSystem } from './softwareSystem'
-import { Person } from './person'
 
 export interface Definition {
     description?: string
@@ -32,7 +28,7 @@ export abstract class Element {
         return camelCase(this.name)
     }
 
-    public uses(otherElement: RelationshipTarget, definition?: TechnologyDefinition): void {
+    public uses(otherElement: Element, definition?: TechnologyDefinition): void {
         const relationship = new Relationship(this, otherElement, definition)
         this._relationships.push(relationship)
     }
@@ -72,7 +68,7 @@ export class Relationship {
 
     constructor(
         public readonly source: Element,
-        public readonly destination: Element | Reference<SoftwareSystem | Container | Component>,
+        public readonly destination: Element,
         definition?: TechnologyDefinition
     ) {
         this.description = definition?.description
@@ -80,46 +76,6 @@ export class Relationship {
         this.tags = (definition?.tags ?? []).concat(['Relationship'])
     }
 }
-
-export class Reference<T> {
-    private readonly _references = new Map<string, Reference<T>>()
-
-    constructor(public readonly name: string) {}
-
-    public get canonicalName(): string {
-        return camelCase(this.name)
-    }
-
-    protected referenceChild(name: string, createChild: (childName: string) => Reference<T>): Reference<T> {
-        let reference = this._references.get(name)
-        if (!reference) {
-            reference = createChild(name)
-            this._references.set(name, reference)
-        }
-        return reference
-    }
-
-    public get references(): ReadonlyArray<Reference<T>> {
-        return Array.from(this._references.values())
-    }
-
-    public getChildElementNames(path?: string): ReadonlyArray<string> {
-        const result = Array.from(this._references.values()).flatMap((reference) => {
-            const currentPath = `${path ? path : '' + this.name}.${reference.name}`
-            return [currentPath, ...reference.getChildElementNames(currentPath)]
-        })
-        return result
-    }
-}
-
-export type RelationshipTarget =
-    | Person
-    | SoftwareSystem
-    | ReferencedSoftwareSystem
-    | Container
-    | ReferencedContainer
-    | Component
-    | ReferencedComponent
 
 export class Group {
     public constructor(public readonly name: string) {}

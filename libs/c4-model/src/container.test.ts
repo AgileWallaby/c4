@@ -1,7 +1,7 @@
-import { Component, ReferencedComponent } from './component'
-import { Container, ReferencedContainer } from './container'
+import { Component } from './component'
+import { Container } from './container'
 import { faker } from '@faker-js/faker'
-import { ReferencedSoftwareSystem, SoftwareSystem } from './softwareSystem'
+import { SoftwareSystem } from './softwareSystem'
 import { Person } from './person'
 
 describe('Container', () => {
@@ -57,23 +57,18 @@ describe('Container', () => {
             container.defineComponent(componentName)
 
             expect(() => container.defineComponent(componentName)).toThrow(
-                `A Component named '${componentName}' is defined elsewhere in this Container. A Component can be defined only once, but can be referenced multiple times.`
+                `A Component named '${componentName}' is defined elsewhere in this Container. A Component can be defined only once.`
             )
         })
     })
 
-    test.each([
-        new Container('otherContainer'),
-        new Component('component'),
-        new SoftwareSystem('softwareSystem'),
-        new Person('person'),
-        new ReferencedContainer('referencedContainer'),
-        new ReferencedComponent('referencedComponent'),
-        new ReferencedSoftwareSystem('referencedSoftwareSystem'),
-    ])('can use other elements', (element) => {
-        const container = new Container('container')
-        container.uses(element)
-        expect(container.relationships).toHaveLength(1)
-        expect(container.relationships[0].destination).toBe(element)
-    })
+    test.each([new Container('otherContainer'), new Component('component'), new SoftwareSystem('softwareSystem'), new Person('person')])(
+        'can use other elements',
+        (element) => {
+            const container = new Container('container')
+            container.uses(element)
+            expect(container.relationships).toHaveLength(1)
+            expect(container.relationships[0].destination).toBe(element)
+        }
+    )
 })

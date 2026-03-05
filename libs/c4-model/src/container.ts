@@ -1,5 +1,5 @@
-import { Element, Group, Reference, TechnicalElement, TechnologyDefinition } from './core'
-import { Component, ComponentDefinition, ReferencedComponent } from './component'
+import { Element, Group, TechnicalElement, TechnologyDefinition } from './core'
+import { Component, ComponentDefinition } from './component'
 
 export type ContainerDefinition = TechnologyDefinition
 
@@ -42,9 +42,7 @@ export class Container extends TechnicalElement implements DefineComponent {
 
     public defineComponent(name: string, definition?: ComponentDefinition): Component {
         if (this._components.has(name)) {
-            throw Error(
-                `A Component named '${name}' is defined elsewhere in this Container. A Component can be defined only once, but can be referenced multiple times.`
-            )
+            throw Error(`A Component named '${name}' is defined elsewhere in this Container. A Component can be defined only once.`)
         }
 
         const component = new Component(name, definition)
@@ -74,12 +72,5 @@ export class Container extends TechnicalElement implements DefineComponent {
 
     public getChildElements(): ReadonlyArray<Element> {
         return Array.from(this._components.values())
-    }
-}
-
-export class ReferencedContainer extends Reference<Component> {
-    public referenceComponent(name: string): ReferencedComponent {
-        const componentReference = this.referenceChild(name, (name: string) => new ReferencedComponent(name))
-        return componentReference as ReferencedComponent
     }
 }

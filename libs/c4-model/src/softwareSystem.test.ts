@@ -69,7 +69,7 @@ describe('SoftwareSystem', () => {
             system.defineContainer(containerName)
 
             expect(() => system.defineContainer(containerName)).toThrow(
-                `A Container named '${containerName}' is defined elsewhere in this SoftwareSystem. A Container can be defined only once, but can be referenced multiple times.`
+                `A Container named '${containerName}' is defined elsewhere in this SoftwareSystem. A Container can be defined only once.`
             )
         })
     })

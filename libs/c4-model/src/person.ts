@@ -1,4 +1,4 @@
-import { Definition, Element, Reference, RelationshipTarget } from './core'
+import { Definition, Element } from './core'
 
 export type PersonDefinition = Definition
 
@@ -13,10 +13,4 @@ export class Person extends Element {
     public getChildElements(): ReadonlyArray<Element> {
         return []
     }
-
-    public override uses(otherElement: RelationshipTarget, definition?: Definition): void {
-        super.uses(otherElement, definition)
-    }
 }
-
-export class ReferencedPerson extends Reference<undefined> {}

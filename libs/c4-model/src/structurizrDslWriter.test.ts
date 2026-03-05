@@ -27,14 +27,8 @@ describe('can write to dsl', () => {
         cont4.defineComponent('component5')
         cont4.addGroup('anotherGroup').defineComponent('component4')
 
-        const sys2ref = model.referenceSoftwareSystem('softwareSystem2')
-        const cont3ref = sys2ref.referenceContainer('container3')
-        const comp3ref = cont3ref.referenceComponent('component3')
-
-        const person1ref = model.referencePerson('person1')
-
         person1.uses(person2, { description: 'description', tags: ['tag1', 'tag2'] })
-        person2.uses(person1ref, { description: 'description', tags: ['tag1', 'tag2'] })
+        person2.uses(person1, { description: 'description', tags: ['tag1', 'tag2'] })
 
         person1.uses(sys1)
         person1.uses(sys2)
