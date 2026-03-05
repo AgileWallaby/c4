@@ -1,5 +1,7 @@
 export * from './model'
 export * from './person'
 export * from './softwareSystem'
+export * from './container'
+export * from './component'
 export * from './views'
 export * from './structurizrDslWriter'
