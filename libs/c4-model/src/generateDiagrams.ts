@@ -47,21 +47,20 @@ export async function generateDiagrams<TRoot>(options: GenerateDiagramsOptions<T
 
     const generatedFiles: string[] = mmdFiles.map((f) => path.join(outputDir, f))
 
-    // g) For each .mmd file, run Mermaid CLI container to produce .png
+    // g) For each .mmd file, render to .png via minlag/mermaid-cli container
     for (const file of mmdFiles) {
         const baseName = path.basename(file, '.mmd')
+        const pngFile = `${baseName}.png`
         await new GenericContainer('minlag/mermaid-cli')
             .withBindMounts([{ source: tmpDir, target: '/data', mode: 'rw' }])
-            .withCommand(['-i', `/data/${file}`, '-o', `/data/${baseName}.png`])
+            .withCommand(['-i', `/data/${file}`, '-o', `/data/${pngFile}`])
             .withWaitStrategy(Wait.forOneShotStartup())
             .start()
 
-        // h) Copy .png to outputDir
-        const pngFile = `${baseName}.png`
         await fs.promises.copyFile(path.join(tmpDir, pngFile), path.join(outputDir, pngFile))
         generatedFiles.push(path.join(outputDir, pngFile))
     }
 
-    // i) Return all generated file paths
+    // h) Return all generated file paths
     return generatedFiles
 }
