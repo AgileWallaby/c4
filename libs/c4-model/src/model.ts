@@ -5,6 +5,26 @@ import { Group } from './core'
 import { ReferencedSoftwareSystem, SoftwareSystem, SoftwareSystemDefinition } from './softwareSystem'
 import { Person, PersonDefinition, ReferencedPerson } from './person'
 
+export type Catalog = Record<string, unknown>
+
+// Top-level map of module keys ot their catalog slices (used internally in buildModel)
+export type RootCatalog = Record<string, Catalog>
+
+// Finds every key in TRoot whose value is assignable to TModule.
+// Unconstrained generics so concrete catalog interfaces (which lack index signatures) satisfy it.
+export type CatalogKeyOf<TRoot, TModule> = {
+    [K in keyof TRoot]: TRoot[K] extends TModule ? K : never
+}[keyof TRoot]
+
+// Everything in the root catalog expect the module's own slice.
+export type Dependencies<TRoot, TModule> = Omit<TRoot, CatalogKeyOf<TRoot, TModule>>
+
+export interface C4Module<TLocal, TOthers> {
+    readonly key: string
+    registerDefinitions(model: Model): TLocal
+    buildRelationships(local: TLocal, dependencies: TOthers): void
+}
+
 interface DefineSoftwareSystem {
     defineSoftwareSystem(name: string, definition?: SoftwareSystemDefinition): SoftwareSystem
 }
@@ -162,6 +182,47 @@ export interface BuildModelOptions {
 }
 
 export async function buildModel(options: BuildModelOptions = {}): Promise<Model> {
+    const { modelName = 'model', globPath = 'c4.dsl.ts', searchRoot = __dirname } = options
+    const model = new Model(modelName)
+
+    const result = await glob(`**/${globPath}`, { cwd: searchRoot })
+
+    if (result.length === 0) {
+        throw new Error(`No ${globPath} files found`)
+    }
+
+    const modules = await Promise.all(result.map((file) => import(join(searchRoot, file))))
+    const registrations: Array<{ instance: AnyModule; key: string; local: Catalog }> = []
+
+    type AnyModule = C4Module<Catalog, Record<string, Catalog>>
+    const rootCatalog: RootCatalog = {}
+
+    // Phase 1: each module registers its own definitions; results are nested under the module's key
+    for (const module of modules) {
+        if (!module.c4Module) {
+            continue
+        }
+        const instance = module.c4Module as AnyModule
+        const local: Catalog = instance.registerDefinitions(model)
+        rootCatalog[instance.key] = local
+        registrations.push({ instance, key: instance.key, local })
+    }
+
+    if (registrations.length === 0) {
+        throw new Error(`No c4Module exports found in any ${globPath} files`)
+    }
+
+    // Phase 2: each module receives its own slice (local) and every other module's slice (dependencies) to build relationships
+    for (const { instance, key, local } of registrations) {
+        const dependencies = Object.fromEntries(Object.entries(rootCatalog).filter(([k]) => k !== key)) as Record<string, Catalog>
+        instance.buildRelationships(local, dependencies)
+    }
+
+    model.validate()
+    return model
+}
+
+export async function buildModelOld(options: BuildModelOptions = {}): Promise<Model> {
     const { modelName = 'model', globPath = 'c4.dsl.ts', searchRoot = __dirname } = options
     const model = new Model(modelName)
 
