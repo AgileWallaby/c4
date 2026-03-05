@@ -1,5 +1,6 @@
 import { C4Module, Container, Model, Person, SoftwareSystem } from '@agilewallaby/c4-model'
 import type { ExampleSystemCatalog } from '../catalog'
+import { nodeService, httpsJson } from '../archetypes'
 
 export type WebPlatformCatalog = {
     customer: Person
@@ -21,9 +22,8 @@ export const c4Module: C4Module<ExampleSystemCatalog, WebPlatformCatalog> = {
             description: 'Serves the single-page application',
             technology: 'React',
         })
-        const apiServer = webPlatform.defineContainer('API Server', {
+        const apiServer = webPlatform.defineContainer('API Server', nodeService, {
             description: 'Provides the REST API',
-            technology: 'Node.js',
         })
         const database = webPlatform.defineContainer('Database', {
             description: 'Stores user data and notification history',
@@ -34,8 +34,8 @@ export const c4Module: C4Module<ExampleSystemCatalog, WebPlatformCatalog> = {
     },
     buildRelationships(local, dependencies): void {
         local.customer.uses(local.webApp, { description: 'Manages account and sends notifications using' })
-        local.webApp.uses(local.apiServer, { description: 'Makes API calls to', technology: 'HTTPS/JSON' })
+        local.webApp.uses(local.apiServer, httpsJson, { description: 'Makes API calls to' })
         local.apiServer.uses(local.database, { description: 'Reads from and writes to', technology: 'SQL' })
-        local.apiServer.uses(dependencies.emailService.emailApi, { description: 'Sends emails via', technology: 'HTTPS/JSON' })
+        local.apiServer.uses(dependencies.emailService.emailApi, httpsJson, { description: 'Sends emails via' })
     },
 }

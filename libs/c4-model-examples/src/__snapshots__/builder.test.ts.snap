@@ -2,6 +2,20 @@
 
 exports[`build model > can build model 1`] = `
 "workspace "model" {
+  archetypes {
+    nodeService = container {
+      technology "Node.js"
+      tags "Service"
+    }
+    httpsJson = -> {
+      technology "HTTPS/JSON"
+      tags "Synchronous"
+    }
+    amqp = -> {
+      technology "AMQP"
+      tags "Asynchronous"
+    }
+  }
   model {
     // Elements
     customer = person "Customer" {
@@ -16,10 +30,8 @@ exports[`build model > can build model 1`] = `
         tags "Element" "Container"
         technology "React"
       }
-      apiServer = container "API Server" {
+      apiServer = nodeService "API Server" {
         description "Provides the REST API"
-        tags "Element" "Container"
-        technology "Node.js"
       }
       database = container "Database" {
         description "Stores user data and notification history"
@@ -30,20 +42,16 @@ exports[`build model > can build model 1`] = `
     emailService = softwareSystem "Email Service" {
       description "Handles sending and tracking email notifications"
       tags "Element" "Software System"
-      emailApi = container "Email API" {
+      emailApi = nodeService "Email API" {
         description "Accepts email send requests"
-        tags "Element" "Container"
-        technology "Node.js"
       }
       messageQueue = container "Message Queue" {
         description "Queues outbound email jobs"
         tags "Element" "Container"
         technology "RabbitMQ"
       }
-      emailWorker = container "Email Worker" {
+      emailWorker = nodeService "Email Worker" {
         description "Processes queued emails and delivers them"
-        tags "Element" "Container"
-        technology "Node.js"
         templateEngine = component "Template Engine" {
           description "Renders email templates with dynamic content"
           tags "Element" "Component"
@@ -60,110 +68,16 @@ exports[`build model > can build model 1`] = `
     customer -> webApp "Manages account and sends notifications using" {
       tags "Relationship"
     }
-    webApp -> apiServer "Makes API calls to" "HTTPS/JSON" {
-      tags "Relationship"
+    webApp --httpsJson-> apiServer "Makes API calls to" {
     }
     apiServer -> database "Reads from and writes to" "SQL" {
       tags "Relationship"
     }
-    apiServer -> emailApi "Sends emails via" "HTTPS/JSON" {
-      tags "Relationship"
+    apiServer --httpsJson-> emailApi "Sends emails via" {
     }
-    emailApi -> messageQueue "Enqueues email jobs to" "AMQP" {
-      tags "Relationship"
+    emailApi --amqp-> messageQueue "Enqueues email jobs to" {
     }
-    emailWorker -> messageQueue "Consumes email jobs from" "AMQP" {
-      tags "Relationship"
-    }
-    templateEngine -> deliveryTracker "Passes rendered emails to" {
-      tags "Relationship"
-    }
-  }
-  views {
-    // System Landscape Views
-    // System Context Views
-    // Container Views
-    // Component Views
-    theme default
-  }
-}
-"
-`;
-
-exports[`build model can build model 1`] = `
-"workspace "model" {
-  model {
-    // Elements
-    customer = person "Customer" {
-      description "A user of the web platform"
-      tags "Element" "Person"
-    }
-    webPlatform = softwareSystem "Web Platform" {
-      description "Allows customers to manage their account and send notifications"
-      tags "Element" "Software System"
-      webApp = container "Web App" {
-        description "Serves the single-page application"
-        tags "Element" "Container"
-        technology "React"
-      }
-      apiServer = container "API Server" {
-        description "Provides the REST API"
-        tags "Element" "Container"
-        technology "Node.js"
-      }
-      database = container "Database" {
-        description "Stores user data and notification history"
-        tags "Element" "Container"
-        technology "PostgreSQL"
-      }
-    }
-    emailService = softwareSystem "Email Service" {
-      description "Handles sending and tracking email notifications"
-      tags "Element" "Software System"
-      emailApi = container "Email API" {
-        description "Accepts email send requests"
-        tags "Element" "Container"
-        technology "Node.js"
-      }
-      messageQueue = container "Message Queue" {
-        description "Queues outbound email jobs"
-        tags "Element" "Container"
-        technology "RabbitMQ"
-      }
-      emailWorker = container "Email Worker" {
-        description "Processes queued emails and delivers them"
-        tags "Element" "Container"
-        technology "Node.js"
-        templateEngine = component "Template Engine" {
-          description "Renders email templates with dynamic content"
-          tags "Element" "Component"
-          technology "Handlebars"
-        }
-        deliveryTracker = component "Delivery Tracker" {
-          description "Tracks delivery status and handles retries"
-          tags "Element" "Component"
-          technology "TypeScript"
-        }
-      }
-    }
-    // Relationships
-    customer -> webApp "Manages account and sends notifications using" {
-      tags "Relationship"
-    }
-    webApp -> apiServer "Makes API calls to" "HTTPS/JSON" {
-      tags "Relationship"
-    }
-    apiServer -> database "Reads from and writes to" "SQL" {
-      tags "Relationship"
-    }
-    apiServer -> emailApi "Sends emails via" "HTTPS/JSON" {
-      tags "Relationship"
-    }
-    emailApi -> messageQueue "Enqueues email jobs to" "AMQP" {
-      tags "Relationship"
-    }
-    emailWorker -> messageQueue "Consumes email jobs from" "AMQP" {
-      tags "Relationship"
+    emailWorker --amqp-> messageQueue "Consumes email jobs from" {
     }
     templateEngine -> deliveryTracker "Passes rendered emails to" {
       tags "Relationship"
