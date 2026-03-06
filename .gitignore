@@ -45,3 +45,4 @@ Thumbs.db
 
 docs/structurizr/
 libs/c4-model-examples/diagrams/*
+.npmrc
