@@ -3,6 +3,7 @@ import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 
 import { Model } from './model'
+import { ElementArchetype, RelationshipArchetype } from './archetype'
 
 declare const __dirname: string | undefined
 const _dirname: string = typeof __dirname !== 'undefined' ? __dirname : dirname(fileURLToPath(import.meta.url))
@@ -12,8 +13,12 @@ type RootCatalog = Record<string, Catalog>
 
 export interface AnyC4Module {
     readonly key: string
-    registerDefinitions(model: Model): Catalog
-    buildRelationships(local: Catalog, dependencies: RootCatalog): void
+    registerDefinitions(model: Model, archetypes: Record<string, ElementArchetype | RelationshipArchetype>): Catalog
+    buildRelationships(
+        local: Catalog,
+        dependencies: RootCatalog,
+        archetypes: Record<string, ElementArchetype | RelationshipArchetype>
+    ): void
 }
 
 export interface BuildModelOptions {
@@ -21,10 +26,11 @@ export interface BuildModelOptions {
     modules?: ReadonlyArray<AnyC4Module>
     globPath?: string
     searchRoot?: string
+    archetypes?: Record<string, ElementArchetype | RelationshipArchetype>
 }
 
 export async function buildModelWithCatalog<TRoot>(options: BuildModelOptions = {}): Promise<{ model: Model; catalog: TRoot }> {
-    const { modelName = 'model', modules: explicitModules } = options
+    const { modelName = 'model', modules: explicitModules, archetypes = {} } = options
     const model = new Model(modelName)
 
     let c4Modules: AnyC4Module[]
@@ -50,7 +56,7 @@ export async function buildModelWithCatalog<TRoot>(options: BuildModelOptions = 
 
     // Phase 1: each module registers its own definitions; results are nested under the module's key
     for (const instance of c4Modules) {
-        const local: Catalog = instance.registerDefinitions(model)
+        const local: Catalog = instance.registerDefinitions(model, archetypes)
         rootCatalog[instance.key] = local
         registrations.push({ instance, key: instance.key, local })
     }
@@ -58,7 +64,7 @@ export async function buildModelWithCatalog<TRoot>(options: BuildModelOptions = 
     // Phase 2: each module receives its own slice (local) and every other module's slice (dependencies) to build relationships
     for (const { instance, key, local } of registrations) {
         const dependencies = Object.fromEntries(Object.entries(rootCatalog).filter(([k]) => k !== key)) as Record<string, Catalog>
-        instance.buildRelationships(local, dependencies)
+        instance.buildRelationships(local, dependencies, archetypes)
     }
 
     return { model, catalog: rootCatalog as TRoot }

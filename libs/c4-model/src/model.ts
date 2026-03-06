@@ -1,7 +1,7 @@
 import { Group } from './core'
 import { SoftwareSystem, SoftwareSystemDefinition } from './softwareSystem'
 import { Person, PersonDefinition } from './person'
-import { ElementArchetype, mergeArchetypeWithOverride } from './archetype'
+import { ElementArchetype, RelationshipArchetype, mergeArchetypeWithOverride } from './archetype'
 
 // Finds every key in TRoot whose value is assignable to TModule.
 // Unconstrained generics so concrete catalog interfaces (which lack index signatures) satisfy it.
@@ -12,10 +12,10 @@ export type CatalogKeyOf<TRoot, TModule> = {
 // Everything in the root catalog expect the module's own slice.
 export type Dependencies<TRoot, TModule> = Omit<TRoot, CatalogKeyOf<TRoot, TModule>>
 
-export interface C4Module<TRoot, TLocal> {
+export interface C4Module<TRoot, TLocal, TArchetypes = Record<string, ElementArchetype | RelationshipArchetype>> {
     readonly key: CatalogKeyOf<TRoot, TLocal>
-    registerDefinitions(model: Model): TLocal
-    buildRelationships(local: TLocal, dependencies: Dependencies<TRoot, TLocal>): void
+    registerDefinitions(model: Model, archetypes: TArchetypes): TLocal
+    buildRelationships(local: TLocal, dependencies: Dependencies<TRoot, TLocal>, archetypes: TArchetypes): void
 }
 
 interface DefineSoftwareSystem {

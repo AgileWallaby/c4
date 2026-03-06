@@ -5,12 +5,13 @@ import * as path from 'path'
 import { buildModel, buildModelWithCatalog, generateDiagrams, StructurizrDSLWriter, Views } from '@agilewallaby/c4-model'
 
 import type { ExampleSystemCatalog } from './catalog'
+import { exampleArchetypes } from './catalog'
 import { c4Module as webPlatformModule } from './web-platform/c4.dsl'
 import { c4Module as emailServiceModule } from './email-service/c4.dsl'
 
 describe('build model', () => {
     test('can build model', async () => {
-        const model = await buildModel({ searchRoot: __dirname })
+        const model = await buildModel({ searchRoot: __dirname, archetypes: exampleArchetypes })
         const writer = new StructurizrDSLWriter(model, new Views())
         const dsl = writer.write()
         expect(dsl).toMatchSnapshot()
@@ -19,6 +20,7 @@ describe('build model', () => {
     test('can build model with explicit modules', async () => {
         const { model, catalog } = await buildModelWithCatalog<ExampleSystemCatalog>({
             modules: [webPlatformModule, emailServiceModule],
+            archetypes: exampleArchetypes,
         })
         const writer = new StructurizrDSLWriter(model, new Views())
         const dsl = writer.write()
@@ -34,6 +36,7 @@ describe('generateDiagrams', () => {
 
         const files = await generateDiagrams<ExampleSystemCatalog>({
             searchRoot: __dirname,
+            archetypes: exampleArchetypes,
             views: (catalog) => {
                 const views = new Views()
                 const v = views.addSystemLandscapeView('landscape', { description: 'Landscape' })
