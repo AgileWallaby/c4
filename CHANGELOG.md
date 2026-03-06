@@ -1,3 +1,13 @@
+## 2.3.0 (2026-03-06)
+
+### 🩹 Fixes
+
+- reenable cjs ([6ba3471](https://github.com/AgileWallaby/c4/commit/6ba3471))
+
+### ❤️ Thank You
+
+- James Webster @jimmcslim
+
 ## 2.2.0 (2026-03-06)
 
 ### 🚀 Features
