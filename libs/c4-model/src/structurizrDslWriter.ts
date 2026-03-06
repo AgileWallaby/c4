@@ -330,7 +330,6 @@ export class StructurizrDSLWriter {
             viewDsl += this.writeView(view, 'component', level + 1)
         })
 
-        viewDsl += this.writeLine(`theme default`, level + 1)
         viewDsl += this.writeLine(`}`, level)
 
         return viewDsl
