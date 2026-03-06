@@ -14,24 +14,24 @@ export type EmailServiceCatalog = {
 export const c4Module: C4Module<ExampleSystemCatalog, EmailServiceCatalog> = {
     key: 'emailService',
     registerDefinitions(model: Model): EmailServiceCatalog {
-        const emailService = model.defineSoftwareSystem('Email Service', {
+        const emailService = model.softwareSystem('Email Service', {
             description: 'Handles sending and tracking email notifications',
         })
-        const emailApi = emailService.defineContainer('Email API', nodeService, {
+        const emailApi = emailService.container('Email API', nodeService, {
             description: 'Accepts email send requests',
         })
-        const messageQueue = emailService.defineContainer('Message Queue', {
+        const messageQueue = emailService.container('Message Queue', {
             description: 'Queues outbound email jobs',
             technology: 'RabbitMQ',
         })
-        const emailWorker = emailService.defineContainer('Email Worker', nodeService, {
+        const emailWorker = emailService.container('Email Worker', nodeService, {
             description: 'Processes queued emails and delivers them',
         })
-        const templateEngine = emailWorker.defineComponent('Template Engine', {
+        const templateEngine = emailWorker.component('Template Engine', {
             description: 'Renders email templates with dynamic content',
             technology: 'Handlebars',
         })
-        const deliveryTracker = emailWorker.defineComponent('Delivery Tracker', {
+        const deliveryTracker = emailWorker.component('Delivery Tracker', {
             description: 'Tracks delivery status and handles retries',
             technology: 'TypeScript',
         })

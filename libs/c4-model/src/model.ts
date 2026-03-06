@@ -19,7 +19,7 @@ export interface C4Module<TRoot, TLocal> {
 }
 
 interface DefineSoftwareSystem {
-    defineSoftwareSystem(
+    softwareSystem(
         name: string,
         archetypeOrDef?: ElementArchetype | SoftwareSystemDefinition,
         override?: SoftwareSystemDefinition
@@ -27,7 +27,7 @@ interface DefineSoftwareSystem {
 }
 
 interface DefinePerson {
-    definePerson(name: string, archetypeOrDef?: ElementArchetype | PersonDefinition, override?: PersonDefinition): Person
+    person(name: string, archetypeOrDef?: ElementArchetype | PersonDefinition, override?: PersonDefinition): Person
 }
 
 // TODO: This will be a Group of type <SoftwareSystem | Person> if that is added back in
@@ -42,18 +42,18 @@ export class ModelGroup extends Group implements DefineSoftwareSystem, DefinePer
         super(name)
     }
 
-    public defineSoftwareSystem(
+    public softwareSystem(
         name: string,
         archetypeOrDef?: ElementArchetype | SoftwareSystemDefinition,
         override?: SoftwareSystemDefinition
     ): SoftwareSystem {
-        const softwareSystem = this.model.defineSoftwareSystem(name, archetypeOrDef, override)
+        const softwareSystem = this.model.softwareSystem(name, archetypeOrDef, override)
         this.softwareSystems.set(name, softwareSystem)
         return softwareSystem
     }
 
-    public definePerson(name: string, archetypeOrDef?: ElementArchetype | PersonDefinition, override?: PersonDefinition): Person {
-        const person = this.model.definePerson(name, archetypeOrDef, override)
+    public person(name: string, archetypeOrDef?: ElementArchetype | PersonDefinition, override?: PersonDefinition): Person {
+        const person = this.model.person(name, archetypeOrDef, override)
         this.people.set(name, person)
         return person
     }
@@ -68,12 +68,12 @@ export class ModelGroup extends Group implements DefineSoftwareSystem, DefinePer
 }
 
 export interface ModelDefinitions {
-    defineSoftwareSystem(
+    softwareSystem(
         name: string,
         archetypeOrDef?: ElementArchetype | SoftwareSystemDefinition,
         override?: SoftwareSystemDefinition
     ): SoftwareSystem
-    definePerson(name: string, archetypeOrDef?: ElementArchetype | PersonDefinition, override?: PersonDefinition): Person
+    person(name: string, archetypeOrDef?: ElementArchetype | PersonDefinition, override?: PersonDefinition): Person
 }
 
 export class Model {
@@ -83,7 +83,7 @@ export class Model {
     private people = new Map<string, Person>()
     private groups = new Map<string, ModelGroup>()
 
-    defineSoftwareSystem(
+    softwareSystem(
         name: string,
         archetypeOrDef?: ElementArchetype | SoftwareSystemDefinition,
         override?: SoftwareSystemDefinition
@@ -114,7 +114,7 @@ export class Model {
         return group
     }
 
-    definePerson(name: string, archetypeOrDef?: ElementArchetype | PersonDefinition, override?: PersonDefinition): Person {
+    person(name: string, archetypeOrDef?: ElementArchetype | PersonDefinition, override?: PersonDefinition): Person {
         if (this.people.has(name)) {
             throw Error(`A Person named '${name}' is defined elsewhere in this Model. A Person can be defined only once.`)
         }

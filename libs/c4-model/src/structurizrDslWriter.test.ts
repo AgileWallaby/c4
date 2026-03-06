@@ -9,24 +9,24 @@ import { ElementArchetype, RelationshipArchetype } from './archetype'
 describe('can write to dsl', () => {
     test('', () => {
         const model = new Model('name')
-        const person1 = model.definePerson('person1')
-        const person2 = model.definePerson('person2')
+        const person1 = model.person('person1')
+        const person2 = model.person('person2')
         const grp1 = model.addGroup('myGroup')
-        const person3 = grp1.definePerson('person3')
-        const person4 = grp1.definePerson('person4')
-        const sys1 = model.defineSoftwareSystem('softwareSystem1', { description: 'description', tags: ['tag1', 'tag2'] })
-        const cont1 = sys1.defineContainer('container1', { description: 'description', technology: 'technology', tags: ['tag1', 'tag2'] })
-        const comp1 = cont1.defineComponent('component1', { description: 'description', technology: 'technology', tags: ['tag1', 'tag2'] })
+        const person3 = grp1.person('person3')
+        const person4 = grp1.person('person4')
+        const sys1 = model.softwareSystem('softwareSystem1', { description: 'description', tags: ['tag1', 'tag2'] })
+        const cont1 = sys1.container('container1', { description: 'description', technology: 'technology', tags: ['tag1', 'tag2'] })
+        const comp1 = cont1.component('component1', { description: 'description', technology: 'technology', tags: ['tag1', 'tag2'] })
 
-        const cont2 = sys1.defineContainer('container2', { description: 'description', technology: 'technology', tags: ['tag1', 'tag2'] })
-        const comp2 = cont2.defineComponent('component2', { description: 'description', technology: 'technology', tags: ['tag1', 'tag2'] })
-        const sys2 = model.defineSoftwareSystem('softwareSystem2')
+        const cont2 = sys1.container('container2', { description: 'description', technology: 'technology', tags: ['tag1', 'tag2'] })
+        const comp2 = cont2.component('component2', { description: 'description', technology: 'technology', tags: ['tag1', 'tag2'] })
+        const sys2 = model.softwareSystem('softwareSystem2')
         const grp2 = sys2.addGroup('grp2')
-        const cont3 = grp2.defineContainer('container3')
-        const comp3 = cont3.defineComponent('component3')
-        const cont4 = grp2.defineContainer('container4')
-        cont4.defineComponent('component5')
-        cont4.addGroup('anotherGroup').defineComponent('component4')
+        const cont3 = grp2.container('container3')
+        const comp3 = cont3.component('component3')
+        const cont4 = grp2.container('container4')
+        cont4.component('component5')
+        cont4.addGroup('anotherGroup').component('component4')
 
         person1.uses(person2, { description: 'description', tags: ['tag1', 'tag2'] })
         person2.uses(person1, { description: 'description', tags: ['tag1', 'tag2'] })
@@ -76,9 +76,9 @@ describe('can write to dsl', () => {
             springBoot
         )
 
-        const sys = model.defineSoftwareSystem('mySystem')
-        sys.defineContainer('Web App', springBoot)
-        sys.defineContainer('API', microservice, { description: 'REST API' })
+        const sys = model.softwareSystem('mySystem')
+        sys.container('Web App', springBoot)
+        sys.container('API', microservice, { description: 'REST API' })
 
         const views = new Views()
         const writer = new StructurizrDSLWriter(model, views)
@@ -105,8 +105,8 @@ describe('can write to dsl', () => {
         const sync = new RelationshipArchetype('sync', { tags: ['Synchronous'] })
         const https = new RelationshipArchetype('https', { technology: 'HTTPS' }, sync)
 
-        const person = model.definePerson('user')
-        const sys = model.defineSoftwareSystem('mySystem')
+        const person = model.person('user')
+        const sys = model.softwareSystem('mySystem')
         person.uses(sys, https, { description: 'Makes API calls' })
 
         const views = new Views()
@@ -125,7 +125,7 @@ describe('can write to dsl', () => {
 
     test('should not output archetypes block when no archetypes are used', () => {
         const model = new Model('noArchModel')
-        model.defineSoftwareSystem('sys1')
+        model.softwareSystem('sys1')
         const views = new Views()
         const writer = new StructurizrDSLWriter(model, views)
         const dsl = writer.write()

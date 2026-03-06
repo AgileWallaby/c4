@@ -13,19 +13,19 @@ export type WebPlatformCatalog = {
 export const c4Module: C4Module<ExampleSystemCatalog, WebPlatformCatalog> = {
     key: 'webPlatform',
     registerDefinitions(model: Model): WebPlatformCatalog {
-        const customer = model.definePerson('Customer', { description: 'A user of the web platform' })
+        const customer = model.person('Customer', { description: 'A user of the web platform' })
 
-        const webPlatform = model.defineSoftwareSystem('Web Platform', {
+        const webPlatform = model.softwareSystem('Web Platform', {
             description: 'Allows customers to manage their account and send notifications',
         })
-        const webApp = webPlatform.defineContainer('Web App', {
+        const webApp = webPlatform.container('Web App', {
             description: 'Serves the single-page application',
             technology: 'React',
         })
-        const apiServer = webPlatform.defineContainer('API Server', nodeService, {
+        const apiServer = webPlatform.container('API Server', nodeService, {
             description: 'Provides the REST API',
         })
-        const database = webPlatform.defineContainer('Database', {
+        const database = webPlatform.container('Database', {
             description: 'Stores user data and notification history',
             technology: 'PostgreSQL',
         })

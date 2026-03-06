@@ -5,7 +5,7 @@ import { ElementArchetype, mergeArchetypeWithOverride } from './archetype'
 export type SoftwareSystemDefinition = Definition
 
 interface DefineContainer {
-    defineContainer(name: string, archetypeOrDef?: ElementArchetype | ContainerDefinition, override?: ContainerDefinition): Container
+    container(name: string, archetypeOrDef?: ElementArchetype | ContainerDefinition, override?: ContainerDefinition): Container
 }
 
 export interface SoftwareSystemReference {
@@ -23,12 +23,12 @@ export class SoftwareSystemGroup extends Group implements DefineContainer {
         super(name)
     }
 
-    public defineContainer(
+    public container(
         name: string,
         archetypeOrDef?: ElementArchetype | ContainerDefinition,
         override?: ContainerDefinition
     ): Container {
-        const container = this.softwareSystem.defineContainer(name, archetypeOrDef, override)
+        const container = this.softwareSystem.container(name, archetypeOrDef, override)
         this._containers.set(name, container)
         return container
     }
@@ -51,7 +51,7 @@ export class SoftwareSystem extends Element implements DefineContainer {
         super(name, ['Software System'], definition, archetype, overrideDefinition)
     }
 
-    public defineContainer(
+    public container(
         name: string,
         archetypeOrDef?: ElementArchetype | ContainerDefinition,
         override?: ContainerDefinition

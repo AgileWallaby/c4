@@ -5,7 +5,7 @@ import { ElementArchetype, mergeArchetypeWithOverride } from './archetype'
 export type ContainerDefinition = TechnologyDefinition
 
 interface DefineComponent {
-    defineComponent(name: string, archetypeOrDef?: ElementArchetype | ComponentDefinition, override?: ComponentDefinition): Component
+    component(name: string, archetypeOrDef?: ElementArchetype | ComponentDefinition, override?: ComponentDefinition): Component
 }
 
 // TODO: This will be a Group<Container> if that is added back in
@@ -19,12 +19,12 @@ export class ContainerGroup extends Group implements DefineComponent {
         super(name)
     }
 
-    public defineComponent(
+    public component(
         name: string,
         archetypeOrDef?: ElementArchetype | ComponentDefinition,
         override?: ComponentDefinition
     ): Component {
-        const component = this.container.defineComponent(name, archetypeOrDef, override)
+        const component = this.container.component(name, archetypeOrDef, override)
         this._components.set(name, component)
         return component
     }
@@ -47,7 +47,7 @@ export class Container extends TechnicalElement implements DefineComponent {
         super(name, ['Container'], definition, archetype, overrideDefinition)
     }
 
-    public defineComponent(
+    public component(
         name: string,
         archetypeOrDef?: ElementArchetype | ComponentDefinition,
         override?: ComponentDefinition

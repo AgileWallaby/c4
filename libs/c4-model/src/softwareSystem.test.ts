@@ -50,7 +50,7 @@ describe('SoftwareSystem', () => {
 
         test('can define a container', () => {
             const system = new SoftwareSystem('system')
-            const container = system.defineContainer(containerName)
+            const container = system.container(containerName)
             expect(container.name).toBe(containerName)
             expect(container.tags).toHaveLength(2)
             expect(container.tags).toEqual(expect.arrayContaining(defaultContainerTags))
@@ -58,7 +58,7 @@ describe('SoftwareSystem', () => {
 
         test('can define a container with definition', () => {
             const system = new SoftwareSystem('system')
-            const container = system.defineContainer(containerName, { description: containerDescription, tags: containerTags })
+            const container = system.container(containerName, { description: containerDescription, tags: containerTags })
             expect(container.name).toBe(containerName)
             expect(container.description).toBe(containerDescription)
             expect(container.tags).toHaveLength(2 + containerTags.length)
@@ -71,7 +71,7 @@ describe('SoftwareSystem', () => {
                 tags: ['Application'],
             })
             const system = new SoftwareSystem('system')
-            const container = system.defineContainer('api', arch)
+            const container = system.container('api', arch)
             expect(container.name).toBe('api')
             expect(container.technology).toBe('Spring Boot')
             expect(container.tags).toEqual(expect.arrayContaining(['Application', 'Element', 'Container']))
@@ -84,7 +84,7 @@ describe('SoftwareSystem', () => {
                 tags: ['Application'],
             })
             const system = new SoftwareSystem('system')
-            const container = system.defineContainer('api', arch, { description: 'REST API', tags: ['REST'] })
+            const container = system.container('api', arch, { description: 'REST API', tags: ['REST'] })
             expect(container.technology).toBe('Spring Boot')
             expect(container.description).toBe('REST API')
             expect(container.tags).toEqual(expect.arrayContaining(['Application', 'REST', 'Element', 'Container']))
@@ -92,9 +92,9 @@ describe('SoftwareSystem', () => {
 
         test('should not permit a container to be defined multiple times in the same software system', () => {
             const system = new SoftwareSystem('system')
-            system.defineContainer(containerName)
+            system.container(containerName)
 
-            expect(() => system.defineContainer(containerName)).toThrow(
+            expect(() => system.container(containerName)).toThrow(
                 `A Container named '${containerName}' is defined elsewhere in this SoftwareSystem. A Container can be defined only once.`
             )
         })

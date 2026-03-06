@@ -38,7 +38,7 @@ describe('Container', () => {
 
         test('can define a component', () => {
             const container = new Container('system')
-            const component = container.defineComponent(componentName)
+            const component = container.component(componentName)
             expect(component.name).toBe(componentName)
             expect(component.tags).toHaveLength(2)
             expect(component.tags).toEqual(expect.arrayContaining(defaultComponentTags))
@@ -46,7 +46,7 @@ describe('Container', () => {
 
         test('can define a container with definition', () => {
             const container = new Container('system')
-            const component = container.defineComponent(componentName, { description: componentDescription, tags: componentTags })
+            const component = container.component(componentName, { description: componentDescription, tags: componentTags })
             expect(component.name).toBe(componentName)
             expect(component.description).toBe(componentDescription)
             expect(component.tags).toHaveLength(2 + componentTags.length)
@@ -59,7 +59,7 @@ describe('Container', () => {
                 tags: ['Controller'],
             })
             const container = new Container('api')
-            const component = container.defineComponent('UserController', arch)
+            const component = container.component('UserController', arch)
             expect(component.name).toBe('UserController')
             expect(component.technology).toBe('Spring MVC Controller')
             expect(component.tags).toEqual(expect.arrayContaining(['Controller', 'Element', 'Component']))
@@ -72,16 +72,16 @@ describe('Container', () => {
                 tags: ['Controller'],
             })
             const container = new Container('api')
-            const component = container.defineComponent('UserController', arch, { description: 'Handles user requests' })
+            const component = container.component('UserController', arch, { description: 'Handles user requests' })
             expect(component.technology).toBe('Spring MVC Controller')
             expect(component.description).toBe('Handles user requests')
         })
 
         test('should not permit a component to be defined multiple times in the same container', () => {
             const container = new Container('system')
-            container.defineComponent(componentName)
+            container.component(componentName)
 
-            expect(() => container.defineComponent(componentName)).toThrow(
+            expect(() => container.component(componentName)).toThrow(
                 `A Component named '${componentName}' is defined elsewhere in this Container. A Component can be defined only once.`
             )
         })
