@@ -108,9 +108,6 @@ importers:
       testcontainers:
         specifier: ^10.28.0
         version: 10.28.0
-      tslib:
-        specifier: ^2.3.0
-        version: 2.8.1
 
   libs/c4-model-examples:
     dependencies:
