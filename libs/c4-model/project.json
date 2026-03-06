@@ -12,10 +12,11 @@
         "outputPath": "dist/libs/c4-model",
         "main": "libs/c4-model/src/index.ts",
         "tsConfig": "libs/c4-model/tsconfig.lib.json",
-        "format": ["esm"],
+        "format": ["esm", "cjs"],
         "bundle": true,
         "declaration": true,
         "outputFileName": "src/index.js",
+        "excludeFromExternal": ["change-case"],
         "assets": ["libs/c4-model/README.md"]
       }
     },

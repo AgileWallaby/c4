@@ -4,7 +4,8 @@ import { fileURLToPath } from 'url'
 
 import { Model } from './model'
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
+declare const __dirname: string | undefined
+const _dirname: string = typeof __dirname !== 'undefined' ? __dirname : dirname(fileURLToPath(import.meta.url))
 
 type Catalog = Record<string, unknown>
 type RootCatalog = Record<string, Catalog>
@@ -31,7 +32,7 @@ export async function buildModelWithCatalog<TRoot>(options: BuildModelOptions = 
     if (explicitModules) {
         c4Modules = [...explicitModules]
     } else {
-        const { globPath = 'c4.dsl.ts', searchRoot = __dirname } = options
+        const { globPath = 'c4.dsl.ts', searchRoot = _dirname } = options
         const result = await glob(`**/${globPath}`, { cwd: searchRoot })
         if (result.length === 0) {
             throw new Error(`No ${globPath} files found`)

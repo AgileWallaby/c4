@@ -14,12 +14,14 @@
     "testcontainers": "^10.28.0"
   },
   "type": "module",
-  "main": "./src/index.js",
+  "main": "./src/index.cjs",
+  "module": "./src/index.js",
   "types": "./src/index.d.ts",
   "exports": {
     ".": {
+      "types": "./src/index.d.ts",
       "import": "./src/index.js",
-      "types": "./src/index.d.ts"
+      "require": "./src/index.cjs"
     }
   }
 }
