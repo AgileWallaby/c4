@@ -120,6 +120,11 @@ export class Group {
         return camelCase(this.name)
     }
 
+    public with<TChildren extends Record<string, unknown>>(callback: (self: this) => TChildren): this & TChildren {
+        const children = callback(this)
+        return Object.assign(this, children) as this & TChildren
+    }
+
     // TODO: Implement this in some useful way?
     // public addToGroup(groupCollection: string, groupMember: T) {}
 }

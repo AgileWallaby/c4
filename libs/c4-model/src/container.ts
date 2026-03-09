@@ -64,7 +64,7 @@ export class Container extends TechnicalElement implements DefineComponent {
         return component
     }
 
-    public addGroup(groupName: string): ContainerGroup {
+    public group(groupName: string): ContainerGroup {
         let group = this._groups.get(groupName)
         if (!group) {
             group = new ContainerGroup(groupName, this)

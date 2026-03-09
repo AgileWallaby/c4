@@ -68,7 +68,7 @@ export class SoftwareSystem extends Element implements DefineContainer {
         return container
     }
 
-    public addGroup(groupName: string): SoftwareSystemGroup {
+    public group(groupName: string): SoftwareSystemGroup {
         let group = this._groups.get(groupName)
         if (!group) {
             group = new SoftwareSystemGroup(groupName, this)

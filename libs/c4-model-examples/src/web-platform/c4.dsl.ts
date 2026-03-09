@@ -15,32 +15,43 @@ export type WebPlatformCatalog = {
 export const c4Module: C4Module<ExampleSystemCatalog, WebPlatformCatalog, ExampleArchetypes> = {
     key: 'webPlatform',
     registerDefinitions(model: Model, archetypes: ExampleArchetypes): WebPlatformCatalog {
-        const customer = model.person('Customer', { description: 'A user of the web platform' })
+        const { customer } = model.group('External Users').with((g) => ({
+            customer: g.person('Customer', { description: 'A user of the web platform' }),
+        }))
 
         const webPlatform = model
             .softwareSystem('Web Platform', {
                 description: 'Allows customers to manage their account and send notifications',
             })
-            .with((ss) => ({
-                webApp: ss.container('Web App', {
-                    description: 'Serves the single-page application',
-                    technology: 'React',
-                }),
-                apiServer: ss
-                    .container('API Server', archetypes.nodeService, {
-                        description: 'Provides the REST API',
-                    })
-                    .with((c) => ({
-                        notificationService: c.component('Notification Service', {
-                            description: 'Handles notification logic and integrates with third-party services',
-                            technology: 'Node.js',
+            .with((ss) => {
+                const { webApp, apiServer } = ss.group('Application Tier').with((g) => ({
+                    webApp: g.container('Web App', {
+                        description: 'Serves the single-page application',
+                        technology: 'React',
+                    }),
+                    apiServer: g
+                        .container('API Server', archetypes.nodeService, {
+                            description: 'Provides the REST API',
+                        })
+                        .with((c) => {
+                            const { notificationService } = c.group('Integrations').with((ig) => ({
+                                notificationService: ig.component('Notification Service', {
+                                    description: 'Handles notification logic and integrates with third-party services',
+                                    technology: 'Node.js',
+                                }),
+                            }))
+                            return { notificationService }
                         }),
-                    })),
-                database: ss.container('Database', {
-                    description: 'Stores user data and notification history',
-                    technology: 'PostgreSQL',
-                }),
-            }))
+                }))
+                return {
+                    webApp,
+                    apiServer,
+                    database: ss.container('Database', {
+                        description: 'Stores user data and notification history',
+                        technology: 'PostgreSQL',
+                    }),
+                }
+            })
 
         return { customer, webPlatform }
     },

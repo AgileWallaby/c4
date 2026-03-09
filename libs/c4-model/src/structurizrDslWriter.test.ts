@@ -11,7 +11,7 @@ describe('can write to dsl', () => {
         const model = new Model('name')
         const person1 = model.person('person1')
         const person2 = model.person('person2')
-        const grp1 = model.addGroup('myGroup')
+        const grp1 = model.group('myGroup')
         const person3 = grp1.person('person3')
         const person4 = grp1.person('person4')
         const sys1 = model.softwareSystem('softwareSystem1', { description: 'description', tags: ['tag1', 'tag2'] })
@@ -21,12 +21,12 @@ describe('can write to dsl', () => {
         const cont2 = sys1.container('container2', { description: 'description', technology: 'technology', tags: ['tag1', 'tag2'] })
         const comp2 = cont2.component('component2', { description: 'description', technology: 'technology', tags: ['tag1', 'tag2'] })
         const sys2 = model.softwareSystem('softwareSystem2')
-        const grp2 = sys2.addGroup('grp2')
+        const grp2 = sys2.group('grp2')
         const cont3 = grp2.container('container3')
         const comp3 = cont3.component('component3')
         const cont4 = grp2.container('container4')
         cont4.component('component5')
-        cont4.addGroup('anotherGroup').component('component4')
+        cont4.group('anotherGroup').component('component4')
 
         person1.uses(person2, { description: 'description', tags: ['tag1', 'tag2'] })
         person2.uses(person1, { description: 'description', tags: ['tag1', 'tag2'] })
@@ -125,14 +125,14 @@ describe('can write to dsl', () => {
 
     test('should use camelCase identifiers for multi-word group names', () => {
         const model = new Model('groupModel')
-        const modelGroup = model.addGroup('External Systems')
+        const modelGroup = model.group('External Systems')
         modelGroup.softwareSystem('Email Service')
 
         const sys = model.softwareSystem('My System')
-        const ssGroup = sys.addGroup('Core Services')
+        const ssGroup = sys.group('Core Services')
         const container = ssGroup.container('API Server')
 
-        const containerGroup = container.addGroup('Domain Services')
+        const containerGroup = container.group('Domain Services')
         containerGroup.component('Auth Service')
 
         const views = new Views()

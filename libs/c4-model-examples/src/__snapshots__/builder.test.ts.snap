@@ -18,30 +18,30 @@ exports[`build model > can build model 1`] = `
       }
     }
     // Elements
-    customer = person "Customer" {
-      description "A user of the web platform"
-      tags "Element" "Person"
-    }
     webPlatform = softwareSystem "Web Platform" {
       description "Allows customers to manage their account and send notifications"
       tags "Element" "Software System"
-      webApp = container "Web App" {
-        description "Serves the single-page application"
-        tags "Element" "Container"
-        technology "React"
-      }
-      apiServer = nodeService "API Server" {
-        description "Provides the REST API"
-        notificationService = component "Notification Service" {
-          description "Handles notification logic and integrates with third-party services"
-          tags "Element" "Component"
-          technology "Node.js"
-        }
-      }
       database = container "Database" {
         description "Stores user data and notification history"
         tags "Element" "Container"
         technology "PostgreSQL"
+      }
+      applicationTier = group "Application Tier" {
+        webApp = container "Web App" {
+          description "Serves the single-page application"
+          tags "Element" "Container"
+          technology "React"
+        }
+        apiServer = nodeService "API Server" {
+          description "Provides the REST API"
+          integrations = group "Integrations" {
+            notificationService = component "Notification Service" {
+              description "Handles notification logic and integrates with third-party services"
+              tags "Element" "Component"
+              technology "Node.js"
+            }
+          }
+        }
       }
     }
     emailService = softwareSystem "Email Service" {
@@ -67,6 +67,12 @@ exports[`build model > can build model 1`] = `
           tags "Element" "Component"
           technology "TypeScript"
         }
+      }
+    }
+    externalUsers = group "External Users" {
+      customer = person "Customer" {
+        description "A user of the web platform"
+        tags "Element" "Person"
       }
     }
     // Relationships
@@ -116,30 +122,30 @@ exports[`build model > can build model with explicit modules 1`] = `
       }
     }
     // Elements
-    customer = person "Customer" {
-      description "A user of the web platform"
-      tags "Element" "Person"
-    }
     webPlatform = softwareSystem "Web Platform" {
       description "Allows customers to manage their account and send notifications"
       tags "Element" "Software System"
-      webApp = container "Web App" {
-        description "Serves the single-page application"
-        tags "Element" "Container"
-        technology "React"
-      }
-      apiServer = nodeService "API Server" {
-        description "Provides the REST API"
-        notificationService = component "Notification Service" {
-          description "Handles notification logic and integrates with third-party services"
-          tags "Element" "Component"
-          technology "Node.js"
-        }
-      }
       database = container "Database" {
         description "Stores user data and notification history"
         tags "Element" "Container"
         technology "PostgreSQL"
+      }
+      applicationTier = group "Application Tier" {
+        webApp = container "Web App" {
+          description "Serves the single-page application"
+          tags "Element" "Container"
+          technology "React"
+        }
+        apiServer = nodeService "API Server" {
+          description "Provides the REST API"
+          integrations = group "Integrations" {
+            notificationService = component "Notification Service" {
+              description "Handles notification logic and integrates with third-party services"
+              tags "Element" "Component"
+              technology "Node.js"
+            }
+          }
+        }
       }
     }
     emailService = softwareSystem "Email Service" {
@@ -165,6 +171,12 @@ exports[`build model > can build model with explicit modules 1`] = `
           tags "Element" "Component"
           technology "TypeScript"
         }
+      }
+    }
+    externalUsers = group "External Users" {
+      customer = person "Customer" {
+        description "A user of the web platform"
+        tags "Element" "Person"
       }
     }
     // Relationships
