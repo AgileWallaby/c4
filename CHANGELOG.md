@@ -1,3 +1,16 @@
+## 2.7.0 (2026-03-09)
+
+### 🚀 Features
+
+- add Element.with() for hierarchical catalog types and fix group DSL identifiers ([b262898](https://github.com/AgileWallaby/c4/commit/b262898))
+- refactor group handling in model and DSL, update snapshots for new structure ([e0a5325](https://github.com/AgileWallaby/c4/commit/e0a5325))
+- update with() method to enforce Element and Group types for children ([d873c33](https://github.com/AgileWallaby/c4/commit/d873c33))
+- enforce generic types for Group and Element classes in container and software system models ([0a433e6](https://github.com/AgileWallaby/c4/commit/0a433e6))
+
+### ❤️ Thank You
+
+- James Webster @jimmcslim
+
 ## 2.6.0 (2026-03-09)
 
 ### 🚀 Features
