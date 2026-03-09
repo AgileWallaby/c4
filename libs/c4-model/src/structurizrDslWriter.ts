@@ -155,7 +155,7 @@ export class StructurizrDSLWriter {
 
     private writeContainerGroup(group: ContainerGroup, level: number): string {
         let containerGroupDsl = ''
-        containerGroupDsl += this.writeLine(`${group.name} = group "${group.name}" {`, level)
+        containerGroupDsl += this.writeLine(`${group.canonicalName} = group "${group.name}" {`, level)
         group.getComponents().forEach((component) => {
             containerGroupDsl += this.writeComponent(component, level + 1)
         })
@@ -186,7 +186,7 @@ export class StructurizrDSLWriter {
 
     private writeSoftwareSystemGroup(group: SoftwareSystemGroup, level: number): string {
         let softwareSystemGroupDsl = ''
-        softwareSystemGroupDsl += this.writeLine(`${group.name} = group "${group.name}" {`, level)
+        softwareSystemGroupDsl += this.writeLine(`${group.canonicalName} = group "${group.name}" {`, level)
         group.getContainers().forEach((container) => {
             softwareSystemGroupDsl += this.writeContainer(container, level + 1)
         })
@@ -255,7 +255,7 @@ export class StructurizrDSLWriter {
 
     private writeModelGroup(group: ModelGroup, level: number): string {
         let modelGroupDsl = ''
-        modelGroupDsl += this.writeLine(`${group.name} = group "${group.name}" {`, level)
+        modelGroupDsl += this.writeLine(`${group.canonicalName} = group "${group.name}" {`, level)
         group.getPeople().forEach((person) => {
             modelGroupDsl += this.writeElement('person', person, level + 1)
         })

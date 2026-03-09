@@ -1,5 +1,6 @@
 import { Relationship } from './core'
 import { Container } from './container'
+import { SoftwareSystem } from './softwareSystem'
 import { RelationshipArchetype } from './archetype'
 
 describe('Core', () => {
@@ -57,5 +58,55 @@ describe('Core', () => {
         expect(rel.description).toBe('sends data')
         expect(rel.technology).toBe('REST')
         expect(rel.archetype).toBeUndefined()
+    })
+
+    describe('with()', () => {
+        test('attaches children onto the element and returns the element', () => {
+            const ss = new SoftwareSystem('My System')
+            const result = ss.with((s) => ({
+                webApp: s.container('Web App', { technology: 'React' }),
+            }))
+
+            expect(result).toBe(ss)
+            expect(result.webApp.name).toBe('Web App')
+            expect(result.webApp.technology).toBe('React')
+        })
+
+        test('children are registered in the parent internal map', () => {
+            const ss = new SoftwareSystem('My System')
+            const result = ss.with((s) => ({
+                webApp: s.container('Web App'),
+                database: s.container('Database'),
+            }))
+
+            const childNames = result.getChildElements().map((e) => e.name)
+            expect(childNames).toContain('Web App')
+            expect(childNames).toContain('Database')
+        })
+
+        test('works at Container→Component level', () => {
+            const ss = new SoftwareSystem('My System')
+            const result = ss.with((s) => ({
+                api: s.container('API').with((c) => ({
+                    notifier: c.component('Notifier', { technology: 'Node.js' }),
+                })),
+            }))
+
+            expect(result.api.notifier.name).toBe('Notifier')
+            expect(result.api.notifier.technology).toBe('Node.js')
+            const apiChildren = result.api.getChildElements().map((e) => e.name)
+            expect(apiChildren).toContain('Notifier')
+        })
+
+        test('TypeScript infers the full nested type', () => {
+            const ss = new SoftwareSystem('My System')
+            const result = ss.with((s) => ({
+                webApp: s.container('Web App'),
+            }))
+
+            // If TypeScript didn't infer correctly this would be a type error
+            const webApp: Container = result.webApp
+            expect(webApp).toBeDefined()
+        })
     })
 })

@@ -131,6 +131,7 @@ export class Model {
         return person
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     validate() {}
 
     getPeople(): ReadonlyArray<Person> {
@@ -155,4 +156,3 @@ export class Model {
         return Array.from(this.groups.values())
     }
 }
-

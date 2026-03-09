@@ -23,11 +23,7 @@ export class SoftwareSystemGroup extends Group implements DefineContainer {
         super(name)
     }
 
-    public container(
-        name: string,
-        archetypeOrDef?: ElementArchetype | ContainerDefinition,
-        override?: ContainerDefinition
-    ): Container {
+    public container(name: string, archetypeOrDef?: ElementArchetype | ContainerDefinition, override?: ContainerDefinition): Container {
         const container = this.softwareSystem.container(name, archetypeOrDef, override)
         this._containers.set(name, container)
         return container
@@ -51,11 +47,7 @@ export class SoftwareSystem extends Element implements DefineContainer {
         super(name, ['Software System'], definition, archetype, overrideDefinition)
     }
 
-    public container(
-        name: string,
-        archetypeOrDef?: ElementArchetype | ContainerDefinition,
-        override?: ContainerDefinition
-    ): Container {
+    public container(name: string, archetypeOrDef?: ElementArchetype | ContainerDefinition, override?: ContainerDefinition): Container {
         if (this._containers.has(name)) {
             throw Error(`A Container named '${name}' is defined elsewhere in this SoftwareSystem. A Container can be defined only once.`)
         }

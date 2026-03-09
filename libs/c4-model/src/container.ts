@@ -19,11 +19,7 @@ export class ContainerGroup extends Group implements DefineComponent {
         super(name)
     }
 
-    public component(
-        name: string,
-        archetypeOrDef?: ElementArchetype | ComponentDefinition,
-        override?: ComponentDefinition
-    ): Component {
+    public component(name: string, archetypeOrDef?: ElementArchetype | ComponentDefinition, override?: ComponentDefinition): Component {
         const component = this.container.component(name, archetypeOrDef, override)
         this._components.set(name, component)
         return component
@@ -47,11 +43,7 @@ export class Container extends TechnicalElement implements DefineComponent {
         super(name, ['Container'], definition, archetype, overrideDefinition)
     }
 
-    public component(
-        name: string,
-        archetypeOrDef?: ElementArchetype | ComponentDefinition,
-        override?: ComponentDefinition
-    ): Component {
+    public component(name: string, archetypeOrDef?: ElementArchetype | ComponentDefinition, override?: ComponentDefinition): Component {
         if (this._components.has(name)) {
             throw Error(`A Component named '${name}' is defined elsewhere in this Container. A Component can be defined only once.`)
         }

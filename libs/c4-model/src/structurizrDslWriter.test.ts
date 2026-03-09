@@ -123,6 +123,27 @@ describe('can write to dsl', () => {
         expect(dsl).toContain('user --https-> mySystem "Makes API calls"')
     })
 
+    test('should use camelCase identifiers for multi-word group names', () => {
+        const model = new Model('groupModel')
+        const modelGroup = model.addGroup('External Systems')
+        modelGroup.softwareSystem('Email Service')
+
+        const sys = model.softwareSystem('My System')
+        const ssGroup = sys.addGroup('Core Services')
+        const container = ssGroup.container('API Server')
+
+        const containerGroup = container.addGroup('Domain Services')
+        containerGroup.component('Auth Service')
+
+        const views = new Views()
+        const writer = new StructurizrDSLWriter(model, views)
+        const dsl = writer.write()
+
+        expect(dsl).toContain('externalSystems = group "External Systems"')
+        expect(dsl).toContain('coreServices = group "Core Services"')
+        expect(dsl).toContain('domainServices = group "Domain Services"')
+    })
+
     test('should not output archetypes block when no archetypes are used', () => {
         const model = new Model('noArchModel')
         model.softwareSystem('sys1')

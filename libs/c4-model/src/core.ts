@@ -56,6 +56,11 @@ export abstract class Element {
         return this._relationships
     }
 
+    public with<TChildren extends Record<string, unknown>>(callback: (self: this) => TChildren): this & TChildren {
+        const children = callback(this)
+        return Object.assign(this, children) as this & TChildren
+    }
+
     public abstract getChildElements(): ReadonlyArray<Element>
 
     public getRelationshipsInHierarchy(): ReadonlyArray<Relationship> {
@@ -110,6 +115,10 @@ export class Relationship {
 
 export class Group {
     public constructor(public readonly name: string) {}
+
+    public get canonicalName(): string {
+        return camelCase(this.name)
+    }
 
     // TODO: Implement this in some useful way?
     // public addToGroup(groupCollection: string, groupMember: T) {}

@@ -32,6 +32,11 @@ exports[`build model > can build model 1`] = `
       }
       apiServer = nodeService "API Server" {
         description "Provides the REST API"
+        notificationService = component "Notification Service" {
+          description "Handles notification logic and integrates with third-party services"
+          tags "Element" "Component"
+          technology "Node.js"
+        }
       }
       database = container "Database" {
         description "Stores user data and notification history"
@@ -125,6 +130,11 @@ exports[`build model > can build model with explicit modules 1`] = `
       }
       apiServer = nodeService "API Server" {
         description "Provides the REST API"
+        notificationService = component "Notification Service" {
+          description "Handles notification logic and integrates with third-party services"
+          tags "Element" "Component"
+          technology "Node.js"
+        }
       }
       database = container "Database" {
         description "Stores user data and notification history"
