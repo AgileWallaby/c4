@@ -56,7 +56,7 @@ export abstract class Element {
         return this._relationships
     }
 
-    public with<TChildren extends Record<string, unknown>>(callback: (self: this) => TChildren): this & TChildren {
+    public with<TChildren extends Record<string, Element | Group>>(callback: (self: this) => TChildren): this & TChildren {
         const children = callback(this)
         return Object.assign(this, children) as this & TChildren
     }
@@ -120,7 +120,7 @@ export class Group {
         return camelCase(this.name)
     }
 
-    public with<TChildren extends Record<string, unknown>>(callback: (self: this) => TChildren): this & TChildren {
+    public with<TChildren extends Record<string, Element | Group>>(callback: (self: this) => TChildren): this & TChildren {
         const children = callback(this)
         return Object.assign(this, children) as this & TChildren
     }
