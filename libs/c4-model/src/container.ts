@@ -9,7 +9,7 @@ interface DefineComponent {
 }
 
 // TODO: This will be a Group<Container> if that is added back in
-export class ContainerGroup extends Group implements DefineComponent {
+export class ContainerGroup extends Group<Component> implements DefineComponent {
     private _components = new Map<string, Component>()
 
     public constructor(
@@ -30,7 +30,7 @@ export class ContainerGroup extends Group implements DefineComponent {
     }
 }
 
-export class Container extends TechnicalElement implements DefineComponent {
+export class Container extends TechnicalElement<Component> implements DefineComponent {
     private _components = new Map<string, Component>()
     private _groups = new Map<string, ContainerGroup>()
 

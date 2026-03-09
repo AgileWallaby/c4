@@ -31,7 +31,7 @@ interface DefinePerson {
 }
 
 // TODO: This will be a Group of type <SoftwareSystem | Person> if that is added back in
-export class ModelGroup extends Group implements DefineSoftwareSystem, DefinePerson {
+export class ModelGroup extends Group<Person | SoftwareSystem> implements DefineSoftwareSystem, DefinePerson {
     private softwareSystems = new Map<string, SoftwareSystem>()
     private people = new Map<string, Person>()
 

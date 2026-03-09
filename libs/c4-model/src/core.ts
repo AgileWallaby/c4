@@ -10,7 +10,7 @@ export interface TechnologyDefinition extends Definition {
     technology?: string
 }
 
-export abstract class Element {
+export abstract class Element<TChild extends Element = never> {
     public readonly description?: string
     public readonly tags: ReadonlyArray<string>
     public readonly archetype?: ElementArchetype
@@ -56,7 +56,7 @@ export abstract class Element {
         return this._relationships
     }
 
-    public with<TChildren extends Record<string, Element | Group>>(callback: (self: this) => TChildren): this & TChildren {
+    public with<TChildren extends Record<string, TChild>>(callback: (self: this) => TChildren): this & TChildren {
         const children = callback(this)
         return Object.assign(this, children) as this & TChildren
     }
@@ -76,7 +76,7 @@ export abstract class Element {
     }
 }
 
-export abstract class TechnicalElement extends Element {
+export abstract class TechnicalElement<TChild extends Element = never> extends Element<TChild> {
     public readonly technology?: string
 
     constructor(
@@ -113,14 +113,14 @@ export class Relationship {
     }
 }
 
-export class Group {
+export class Group<TChild extends Element | Group = never> {
     public constructor(public readonly name: string) {}
 
     public get canonicalName(): string {
         return camelCase(this.name)
     }
 
-    public with<TChildren extends Record<string, Element | Group>>(callback: (self: this) => TChildren): this & TChildren {
+    public with<TChildren extends Record<string, TChild>>(callback: (self: this) => TChildren): this & TChildren {
         const children = callback(this)
         return Object.assign(this, children) as this & TChildren
     }

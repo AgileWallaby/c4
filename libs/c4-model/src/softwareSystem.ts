@@ -13,7 +13,7 @@ export interface SoftwareSystemReference {
 }
 
 // TODO: This will be a Group<Container> if that is added back in
-export class SoftwareSystemGroup extends Group implements DefineContainer {
+export class SoftwareSystemGroup extends Group<Container> implements DefineContainer {
     private _containers = new Map<string, Container>()
 
     public constructor(
@@ -34,7 +34,7 @@ export class SoftwareSystemGroup extends Group implements DefineContainer {
     }
 }
 
-export class SoftwareSystem extends Element implements DefineContainer {
+export class SoftwareSystem extends Element<Container> implements DefineContainer {
     private _containers = new Map<string, Container>()
     private _groups = new Map<string, SoftwareSystemGroup>()
 
