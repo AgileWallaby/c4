@@ -1,3 +1,14 @@
+## 2.6.0 (2026-03-09)
+
+### 🚀 Features
+
+- dropped the define prefix ([bcd3e2f](https://github.com/AgileWallaby/c4/commit/bcd3e2f))
+- added support for providing archetypes to buildModel ([85a5ba5](https://github.com/AgileWallaby/c4/commit/85a5ba5))
+
+### ❤️ Thank You
+
+- James Webster @jimmcslim
+
 ## 2.3.0 (2026-03-06)
 
 ### 🩹 Fixes
