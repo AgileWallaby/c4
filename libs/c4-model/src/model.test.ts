@@ -43,6 +43,18 @@ describe('Model', () => {
             expect(person.tags.length).toBe(4)
             expect(person.tags).toEqual(expect.arrayContaining(['tag1', 'Element', 'Person', 'tag2']))
         })
+
+        test('can define grouped model elements with with()', () => {
+            const grouped = model.group('External Users').with((group) => ({
+                customer: group.person('Customer'),
+                supportPortal: group.softwareSystem('Support Portal'),
+            }))
+
+            expect(grouped.customer.name).toBe('Customer')
+            expect(grouped.supportPortal.name).toBe('Support Portal')
+            expect(model.getPeopleNotInGroups()).toHaveLength(0)
+            expect(model.getSoftwareSystemsNotInGroups()).toHaveLength(0)
+        })
     })
 
     describe('can define SoftwareSystems with archetypes', () => {

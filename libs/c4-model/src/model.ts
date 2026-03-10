@@ -104,8 +104,7 @@ export class Model {
         return system
     }
 
-    // TODO:Should be a Group<SoftwareSystem | Person> if that is added back in
-    group(groupName: string): Group & ModelDefinitions {
+    group(groupName: string): ModelGroup {
         let group = this.groups.get(groupName)
         if (!group) {
             group = new ModelGroup(groupName, this)
