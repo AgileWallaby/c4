@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-import { generateDiagrams, Views } from '@agilewallaby/c4-model'
+import { generateDiagrams } from '@agilewallaby/c4-model'
 
 import type { ExampleSystemCatalog } from './catalog'
 import { exampleArchetypes } from './catalog'
@@ -12,13 +12,9 @@ import { exampleArchetypes } from './catalog'
 generateDiagrams<ExampleSystemCatalog>({
     searchRoot: __dirname,
     archetypes: exampleArchetypes,
-    views: () => {
-        const views = new Views()
-
+    viewsFactory: (views) => {
         const landscape = views.addSystemLandscapeView('landscape', { description: 'System Landscape' })
         landscape.includeAll()
-
-        return views
     },
     outputDir: path.join(__dirname, '..', 'diagrams'),
 })

@@ -37,11 +37,9 @@ describe('generateDiagrams', () => {
         const files = await generateDiagrams<ExampleSystemCatalog>({
             searchRoot: __dirname,
             archetypes: exampleArchetypes,
-            views: (catalog) => {
-                const views = new Views()
+            viewsFactory: (views, catalog) => {
                 const v = views.addSystemLandscapeView('landscape', { description: 'Landscape' })
                 v.includeAll()
-                return views
             },
             outputDir,
         })

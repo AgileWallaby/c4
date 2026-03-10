@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url'
 
 import { Model } from './model'
 import { ElementArchetype, RelationshipArchetype } from './archetype'
+import { Views } from './views'
 
 declare const __dirname: string | undefined
 const _dirname: string = typeof __dirname !== 'undefined' ? __dirname : dirname(fileURLToPath(import.meta.url))
@@ -19,6 +20,7 @@ export interface AnyC4Module {
         dependencies: RootCatalog,
         archetypes: Record<string, ElementArchetype | RelationshipArchetype>
     ): void
+    addViews?(views: Views, local: Catalog, dependencies: RootCatalog): void
 }
 
 export interface BuildModelOptions {
@@ -29,7 +31,9 @@ export interface BuildModelOptions {
     archetypes?: Record<string, ElementArchetype | RelationshipArchetype>
 }
 
-export async function buildModelWithCatalog<TRoot>(options: BuildModelOptions = {}): Promise<{ model: Model; catalog: TRoot }> {
+export async function buildModelWithCatalog<TRoot>(
+    options: BuildModelOptions = {}
+): Promise<{ model: Model; catalog: TRoot; buildViews: (views: Views) => void }> {
     const { modelName = 'model', modules: explicitModules, archetypes = {} } = options
     const model = new Model(modelName)
 
@@ -61,13 +65,22 @@ export async function buildModelWithCatalog<TRoot>(options: BuildModelOptions = 
         registrations.push({ instance, key: instance.key, local })
     }
 
+    const dependenciesFor = (key: string): RootCatalog =>
+        Object.fromEntries(Object.entries(rootCatalog).filter(([k]) => k !== key)) as RootCatalog
+
     // Phase 2: each module receives its own slice (local) and every other module's slice (dependencies) to build relationships
     for (const { instance, key, local } of registrations) {
-        const dependencies = Object.fromEntries(Object.entries(rootCatalog).filter(([k]) => k !== key)) as Record<string, Catalog>
-        instance.buildRelationships(local, dependencies, archetypes)
+        instance.buildRelationships(local, dependenciesFor(key), archetypes)
     }
 
-    return { model, catalog: rootCatalog as TRoot }
+    // Phase 3: each module may contribute views using its own slice (local) and every other module's slice (dependencies)
+    const buildViews = (views: Views): void => {
+        for (const { instance, key, local } of registrations) {
+            instance.addViews?.(views, local, dependenciesFor(key))
+        }
+    }
+
+    return { model, catalog: rootCatalog as TRoot, buildViews }
 }
 
 export async function buildModel(options: BuildModelOptions = {}): Promise<Model> {

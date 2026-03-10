@@ -9,18 +9,20 @@ import { StructurizrDSLWriter } from './structurizrDslWriter'
 import { Views } from './views'
 
 export interface GenerateDiagramsOptions<TRoot> extends BuildModelOptions {
-    views: (catalog: TRoot) => Views
+    viewsFactory?: (views: Views, catalog: TRoot) => void
     outputDir: string
 }
 
 export async function generateDiagrams<TRoot>(options: GenerateDiagramsOptions<TRoot>): Promise<string[]> {
-    const { views: viewsFactory, outputDir, ...buildOptions } = options
+    const { viewsFactory, outputDir, ...buildOptions } = options
 
     // a) Build model + catalog
-    const { model, catalog } = await buildModelWithCatalog<TRoot>(buildOptions)
+    const { model, catalog, buildViews } = await buildModelWithCatalog<TRoot>(buildOptions)
 
-    // b) Build views from catalog via callback
-    const views = viewsFactory(catalog)
+    // b) Create Views, apply top-level viewsFactory, then each module's addViews
+    const views = new Views()
+    viewsFactory?.(views, catalog)
+    buildViews(views)
 
     // c) Generate DSL string
     const dsl = new StructurizrDSLWriter(model, views).write()
