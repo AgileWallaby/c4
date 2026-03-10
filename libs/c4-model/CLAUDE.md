@@ -34,12 +34,14 @@ Modules are defined in `c4.dsl.ts` files discovered by `buildModel()` via glob. 
 ```ts
 export const c4Module: C4Module<RootCatalog, LocalCatalog> = {
     key: 'myModule',
-    registerDefinitions(model) { /* define elements, return catalog */ },
-    buildRelationships(local, dependencies) { /* wire up cross-module relationships */ },
+    registerDefinitions(model, archetypes) { /* define elements, return catalog */ },
+    addRelationships(local, dependencies, archetypes) { /* wire up cross-module relationships */ },
+    addViews(views, local, dependencies) { /* optional: contribute views for this module's elements */ },
 }
 ```
 
 - **Phase 1**: All modules register definitions; results stored in a root catalog keyed by module key
 - **Phase 2**: Each module receives its own catalog and all other modules' catalogs to build relationships
+- **Phase 3**: Each module may optionally contribute views via `addViews`
 - `CatalogKeyOf` and `Dependencies` utility types ensure type-safe keys and dependency access
 - See `libs/c4-model-examples` for integration tests using `buildModel()`

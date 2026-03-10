@@ -37,7 +37,7 @@ export const c4Module: C4Module<ExampleSystemCatalog, EmailServiceCatalog, Examp
 
         return { emailService, emailApi, emailWorker, messageQueue, templateEngine, deliveryTracker }
     },
-    buildRelationships(local, _dependencies, archetypes): void {
+    addRelationships(local, _dependencies, archetypes): void {
         local.emailApi.uses(local.messageQueue, archetypes.amqp, { description: 'Enqueues email jobs to' })
         local.emailWorker.uses(local.messageQueue, archetypes.amqp, { description: 'Consumes email jobs from' })
         local.templateEngine.uses(local.deliveryTracker, { description: 'Passes rendered emails to' })

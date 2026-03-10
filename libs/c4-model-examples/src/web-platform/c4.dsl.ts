@@ -55,7 +55,7 @@ export const c4Module: C4Module<ExampleSystemCatalog, WebPlatformCatalog, Exampl
 
         return { customer, webPlatform }
     },
-    buildRelationships(local, dependencies, archetypes): void {
+    addRelationships(local, dependencies, archetypes): void {
         const { webApp, apiServer, database } = local.webPlatform
         local.customer.uses(webApp, { description: 'Manages account and sends notifications using' })
         webApp.uses(apiServer, archetypes.httpsJson, { description: 'Makes API calls to' })

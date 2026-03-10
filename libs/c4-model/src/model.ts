@@ -16,7 +16,7 @@ export type Dependencies<TRoot, TModule> = Omit<TRoot, CatalogKeyOf<TRoot, TModu
 export interface C4Module<TRoot, TLocal, TArchetypes = Record<string, ElementArchetype | RelationshipArchetype>> {
     readonly key: CatalogKeyOf<TRoot, TLocal>
     registerDefinitions(model: Model, archetypes: TArchetypes): TLocal
-    buildRelationships(local: TLocal, dependencies: Dependencies<TRoot, TLocal>, archetypes: TArchetypes): void
+    addRelationships(local: TLocal, dependencies: Dependencies<TRoot, TLocal>, archetypes: TArchetypes): void
     addViews?(views: Views, local: TLocal, dependencies: Dependencies<TRoot, TLocal>): void
 }
 

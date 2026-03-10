@@ -15,11 +15,7 @@ type RootCatalog = Record<string, Catalog>
 export interface AnyC4Module {
     readonly key: string
     registerDefinitions(model: Model, archetypes: Record<string, ElementArchetype | RelationshipArchetype>): Catalog
-    buildRelationships(
-        local: Catalog,
-        dependencies: RootCatalog,
-        archetypes: Record<string, ElementArchetype | RelationshipArchetype>
-    ): void
+    addRelationships(local: Catalog, dependencies: RootCatalog, archetypes: Record<string, ElementArchetype | RelationshipArchetype>): void
     addViews?(views: Views, local: Catalog, dependencies: RootCatalog): void
 }
 
@@ -70,7 +66,7 @@ export async function buildModelWithCatalog<TRoot>(
 
     // Phase 2: each module receives its own slice (local) and every other module's slice (dependencies) to build relationships
     for (const { instance, key, local } of registrations) {
-        instance.buildRelationships(local, dependenciesFor(key), archetypes)
+        instance.addRelationships(local, dependenciesFor(key), archetypes)
     }
 
     // Phase 3: each module may contribute views using its own slice (local) and every other module's slice (dependencies)
