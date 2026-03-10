@@ -298,11 +298,66 @@ export class StructurizrDSLWriter {
         if (view.title) {
             viewDsl += this.writeLine(`title "${view.title}"`, level + 1)
         }
+        if (view.isDefault) {
+            viewDsl += this.writeLine('default', level + 1)
+        }
         view.scopes.forEach((scope) => {
             viewDsl += this.writeLine(`${scope}`, level + 1)
         })
+        if (view.autoLayoutConfig) {
+            const { direction, rankSeparation, nodeSeparation } = view.autoLayoutConfig
+            let line = 'autoLayout'
+            if (direction) line += ` ${direction}`
+            if (rankSeparation !== undefined) line += ` ${rankSeparation}`
+            if (nodeSeparation !== undefined) line += ` ${nodeSeparation}`
+            viewDsl += this.writeLine(line, level + 1)
+        }
+        if (view.properties.size > 0) {
+            viewDsl += this.writeLine('properties {', level + 1)
+            for (const [name, value] of view.properties) {
+                viewDsl += this.writeLine(`"${name}" "${value}"`, level + 2)
+            }
+            viewDsl += this.writeLine('}', level + 1)
+        }
         viewDsl += this.writeLine(`}`, level)
         return viewDsl
+    }
+
+    private writeStyles(views: Views, level: number): string {
+        const { elementStyles, relationshipStyles } = views
+        if (elementStyles.length === 0 && relationshipStyles.length === 0) return ''
+        let dsl = this.writeLine('styles {', level)
+        for (const { tag, definition: d } of elementStyles) {
+            dsl += this.writeLine(`element "${tag}" {`, level + 1)
+            if (d.shape) dsl += this.writeLine(`shape ${d.shape}`, level + 2)
+            if (d.icon) dsl += this.writeLine(`icon "${d.icon}"`, level + 2)
+            if (d.width) dsl += this.writeLine(`width ${d.width}`, level + 2)
+            if (d.height) dsl += this.writeLine(`height ${d.height}`, level + 2)
+            if (d.background) dsl += this.writeLine(`background "${d.background}"`, level + 2)
+            if (d.color) dsl += this.writeLine(`color "${d.color}"`, level + 2)
+            if (d.stroke) dsl += this.writeLine(`stroke "${d.stroke}"`, level + 2)
+            if (d.strokeWidth) dsl += this.writeLine(`strokeWidth ${d.strokeWidth}`, level + 2)
+            if (d.fontSize) dsl += this.writeLine(`fontSize ${d.fontSize}`, level + 2)
+            if (d.border) dsl += this.writeLine(`border ${d.border}`, level + 2)
+            if (d.opacity !== undefined) dsl += this.writeLine(`opacity ${d.opacity}`, level + 2)
+            if (d.metadata !== undefined) dsl += this.writeLine(`metadata ${d.metadata}`, level + 2)
+            if (d.description !== undefined) dsl += this.writeLine(`description ${d.description}`, level + 2)
+            dsl += this.writeLine('}', level + 1)
+        }
+        for (const { tag, definition: d } of relationshipStyles) {
+            dsl += this.writeLine(`relationship "${tag}" {`, level + 1)
+            if (d.thickness) dsl += this.writeLine(`thickness ${d.thickness}`, level + 2)
+            if (d.color) dsl += this.writeLine(`color "${d.color}"`, level + 2)
+            if (d.style) dsl += this.writeLine(`style ${d.style}`, level + 2)
+            if (d.routing) dsl += this.writeLine(`routing ${d.routing}`, level + 2)
+            if (d.fontSize) dsl += this.writeLine(`fontSize ${d.fontSize}`, level + 2)
+            if (d.width) dsl += this.writeLine(`width ${d.width}`, level + 2)
+            if (d.position !== undefined) dsl += this.writeLine(`position ${d.position}`, level + 2)
+            if (d.opacity !== undefined) dsl += this.writeLine(`opacity ${d.opacity}`, level + 2)
+            dsl += this.writeLine('}', level + 1)
+        }
+        dsl += this.writeLine('}', level)
+        return dsl
     }
 
     private writeViews(views: Views, level: number): string {
@@ -329,6 +384,22 @@ export class StructurizrDSLWriter {
         views.componentViews.forEach((view) => {
             viewDsl += this.writeView(view, 'component', level + 1)
         })
+
+        viewDsl += this.writeStyles(views, level + 1)
+
+        if (views.themes.length === 1) {
+            viewDsl += this.writeLine(`theme ${views.themes[0]}`, level + 1)
+        } else if (views.themes.length > 1) {
+            viewDsl += this.writeLine(`themes ${views.themes.join(' ')}`, level + 1)
+        }
+
+        if (views.properties.size > 0) {
+            viewDsl += this.writeLine('properties {', level + 1)
+            for (const [name, value] of views.properties) {
+                viewDsl += this.writeLine(`"${name}" "${value}"`, level + 2)
+            }
+            viewDsl += this.writeLine('}', level + 1)
+        }
 
         viewDsl += this.writeLine(`}`, level)
 

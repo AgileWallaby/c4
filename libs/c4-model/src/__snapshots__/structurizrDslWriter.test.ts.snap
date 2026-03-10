@@ -1,0 +1,465 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`can write to dsl > autoLayout - bare 1`] = `
+"workspace "m" {
+  model {
+    // Elements
+    // Relationships
+  }
+  views {
+    // System Landscape Views
+    systemLandscape "sl" {
+      description "desc"
+      autoLayout
+    }
+    // System Context Views
+    // Container Views
+    // Component Views
+  }
+}
+"
+`;
+
+exports[`can write to dsl > autoLayout - with direction 1`] = `
+"workspace "m" {
+  model {
+    // Elements
+    // Relationships
+  }
+  views {
+    // System Landscape Views
+    systemLandscape "sl" {
+      description "desc"
+      autoLayout lr
+    }
+    // System Context Views
+    // Container Views
+    // Component Views
+  }
+}
+"
+`;
+
+exports[`can write to dsl > autoLayout - with direction and separations 1`] = `
+"workspace "m" {
+  model {
+    // Elements
+    // Relationships
+  }
+  views {
+    // System Landscape Views
+    systemLandscape "sl" {
+      description "desc"
+      autoLayout tb 300 100
+    }
+    // System Context Views
+    // Container Views
+    // Component Views
+  }
+}
+"
+`;
+
+exports[`can write to dsl > default - marks view as default 1`] = `
+"workspace "m" {
+  model {
+    // Elements
+    // Relationships
+  }
+  views {
+    // System Landscape Views
+    systemLandscape "sl" {
+      description "desc"
+      default
+    }
+    // System Context Views
+    // Container Views
+    // Component Views
+  }
+}
+"
+`;
+
+exports[`can write to dsl > full model with all view types 1`] = `
+"workspace "name" {
+  model {
+    // Elements
+    person1 = person "person1" {
+      tags "Element" "Person"
+    }
+    person2 = person "person2" {
+      tags "Element" "Person"
+    }
+    softwareSystem1 = softwareSystem "softwareSystem1" {
+      description "description"
+      tags "tag1" "tag2" "Element" "Software System"
+      container1 = container "container1" {
+        description "description"
+        tags "tag1" "tag2" "Element" "Container"
+        technology "technology"
+        component1 = component "component1" {
+          description "description"
+          tags "tag1" "tag2" "Element" "Component"
+          technology "technology"
+        }
+      }
+      container2 = container "container2" {
+        description "description"
+        tags "tag1" "tag2" "Element" "Container"
+        technology "technology"
+        component2 = component "component2" {
+          description "description"
+          tags "tag1" "tag2" "Element" "Component"
+          technology "technology"
+        }
+      }
+    }
+    softwareSystem2 = softwareSystem "softwareSystem2" {
+      tags "Element" "Software System"
+      grp2 = group "grp2" {
+        container3 = container "container3" {
+          tags "Element" "Container"
+          component3 = component "component3" {
+            tags "Element" "Component"
+          }
+        }
+        container4 = container "container4" {
+          tags "Element" "Container"
+          component5 = component "component5" {
+            tags "Element" "Component"
+          }
+          anotherGroup = group "anotherGroup" {
+            component4 = component "component4" {
+              tags "Element" "Component"
+            }
+          }
+        }
+      }
+    }
+    myGroup = group "myGroup" {
+      person3 = person "person3" {
+        tags "Element" "Person"
+      }
+      person4 = person "person4" {
+        tags "Element" "Person"
+      }
+    }
+    // Relationships
+    person1 -> person2 "description" {
+      tags "tag1" "tag2" "Relationship"
+    }
+    person1 -> softwareSystem1 "uses" {
+      tags "Relationship"
+    }
+    person1 -> softwareSystem2 "uses" {
+      tags "Relationship"
+    }
+    person2 -> person1 "description" {
+      tags "tag1" "tag2" "Relationship"
+    }
+    person2 -> softwareSystem1 "uses" {
+      tags "Relationship"
+    }
+    softwareSystem1 -> softwareSystem2 "uses" {
+      tags "Relationship"
+    }
+    softwareSystem2 -> softwareSystem1 "uses" {
+      tags "Relationship"
+    }
+  }
+  views {
+    // System Landscape Views
+    systemLandscape "someName1" {
+      description "someDescription"
+      include *
+    }
+    // System Context Views
+    systemContext "softwareSystem1" "someName" {
+      description "someDescription"
+      title "My Title"
+      include *
+    }
+    // Container Views
+    container "softwareSystem1" "someName2s" {
+      description "someDescription"
+      include *
+    }
+    // Component Views
+    component "container1" "someName3" {
+      description "someOtherDescripgtion"
+      title "The Other Title"
+      include *
+    }
+  }
+}
+"
+`;
+
+exports[`can write to dsl > includeElement accepts Person on container view 1`] = `
+"workspace "m" {
+  model {
+    // Elements
+    alice = person "alice" {
+      tags "Element" "Person"
+    }
+    mySystem = softwareSystem "MySystem" {
+      tags "Element" "Software System"
+    }
+    // Relationships
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    // Container Views
+    container "mySystem" "cv" {
+      description "desc"
+      include alice
+    }
+    // Component Views
+  }
+}
+"
+`;
+
+exports[`can write to dsl > per-view properties - emitted inside view block 1`] = `
+"workspace "m" {
+  model {
+    // Elements
+    // Relationships
+  }
+  views {
+    // System Landscape Views
+    systemLandscape "sl" {
+      description "desc"
+      properties {
+        "structurizr.sort" "created"
+        "custom.key" "some value"
+      }
+    }
+    // System Context Views
+    // Container Views
+    // Component Views
+  }
+}
+"
+`;
+
+exports[`can write to dsl > should not output archetypes block when no archetypes are used 1`] = `
+"workspace "noArchModel" {
+  model {
+    // Elements
+    sys1 = softwareSystem "sys1" {
+      tags "Element" "Software System"
+    }
+    // Relationships
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    // Container Views
+    // Component Views
+  }
+}
+"
+`;
+
+exports[`can write to dsl > should output archetypes block when archetypes are used 1`] = `
+"workspace "archModel" {
+  model {
+    archetypes {
+      springBootApp = container {
+        technology "Spring Boot"
+        tags "Application"
+      }
+      microservice = springBootApp {
+        tags "Microservice"
+      }
+    }
+    // Elements
+    mySystem = softwareSystem "mySystem" {
+      tags "Element" "Software System"
+      webApp = springBootApp "Web App" {
+      }
+      api = microservice "API" {
+        description "REST API"
+      }
+    }
+    // Relationships
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    // Container Views
+    // Component Views
+  }
+}
+"
+`;
+
+exports[`can write to dsl > should output relationship archetypes when used 1`] = `
+"workspace "relArchModel" {
+  model {
+    archetypes {
+      sync = -> {
+        tags "Synchronous"
+      }
+      https = --sync-> {
+        technology "HTTPS"
+      }
+    }
+    // Elements
+    user = person "user" {
+      tags "Element" "Person"
+    }
+    mySystem = softwareSystem "mySystem" {
+      tags "Element" "Software System"
+    }
+    // Relationships
+    user --https-> mySystem "Makes API calls" {
+    }
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    // Container Views
+    // Component Views
+  }
+}
+"
+`;
+
+exports[`can write to dsl > should use camelCase identifiers for multi-word group names 1`] = `
+"workspace "groupModel" {
+  model {
+    // Elements
+    mySystem = softwareSystem "My System" {
+      tags "Element" "Software System"
+      coreServices = group "Core Services" {
+        apiServer = container "API Server" {
+          tags "Element" "Container"
+          domainServices = group "Domain Services" {
+            authService = component "Auth Service" {
+              tags "Element" "Component"
+            }
+          }
+        }
+      }
+    }
+    externalSystems = group "External Systems" {
+      emailService = softwareSystem "Email Service" {
+        tags "Element" "Software System"
+      }
+    }
+    // Relationships
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    // Container Views
+    // Component Views
+  }
+}
+"
+`;
+
+exports[`can write to dsl > styles - element style with multiple fields 1`] = `
+"workspace "m" {
+  model {
+    // Elements
+    // Relationships
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    // Container Views
+    // Component Views
+    styles {
+      element "Database" {
+        shape Cylinder
+        background "#336791"
+        color "#ffffff"
+        fontSize 14
+        border solid
+      }
+    }
+  }
+}
+"
+`;
+
+exports[`can write to dsl > styles - relationship style 1`] = `
+"workspace "m" {
+  model {
+    // Elements
+    // Relationships
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    // Container Views
+    // Component Views
+    styles {
+      relationship "Synchronous" {
+        thickness 2
+        color "#0000ff"
+        style solid
+        routing Curved
+      }
+    }
+  }
+}
+"
+`;
+
+exports[`can write to dsl > themes - multiple themes uses "themes" keyword 1`] = `
+"workspace "m" {
+  model {
+    // Elements
+    // Relationships
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    // Container Views
+    // Component Views
+    themes default https://static.structurizr.com/themes/default/theme.json
+  }
+}
+"
+`;
+
+exports[`can write to dsl > themes - single theme uses "theme" keyword 1`] = `
+"workspace "m" {
+  model {
+    // Elements
+    // Relationships
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    // Container Views
+    // Component Views
+    theme https://static.structurizr.com/themes/default/theme.json
+  }
+}
+"
+`;
+
+exports[`can write to dsl > views-level properties - emitted inside views block 1`] = `
+"workspace "m" {
+  model {
+    // Elements
+    // Relationships
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    // Container Views
+    // Component Views
+    properties {
+      "structurizr.timezone" "UTC"
+    }
+  }
+}
+"
+`;
