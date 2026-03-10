@@ -12,7 +12,7 @@ import { exampleArchetypes } from './catalog'
 generateDiagrams<ExampleSystemCatalog>({
     searchRoot: __dirname,
     archetypes: exampleArchetypes,
-    viewsFactory: (views) => {
+    addViews: (views) => {
         const landscape = views.addSystemLandscapeView('landscape', { description: 'System Landscape' })
         landscape.includeAll()
     },

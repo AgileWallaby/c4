@@ -2,7 +2,7 @@ import * as fs from 'fs'
 import * as os from 'os'
 import * as path from 'path'
 
-import { buildModel, generateDiagrams, StructurizrDSLWriter, validateModel, Views } from '@agilewallaby/c4-model'
+import { buildModel, generateDiagrams, StructurizrDSLWriter, validateModel } from '@agilewallaby/c4-model'
 
 import type { ExampleSystemCatalog } from './catalog'
 import { exampleArchetypes } from './catalog'
@@ -11,9 +11,7 @@ import { c4Module as emailServiceModule } from './email-service/c4.dsl'
 
 describe('build model', () => {
     test('can build model', async () => {
-        const { model, buildViews } = await buildModel({ searchRoot: __dirname, archetypes: exampleArchetypes })
-        const views = new Views()
-        buildViews(views)
+        const { model, views } = await buildModel({ searchRoot: __dirname, archetypes: exampleArchetypes })
         const writer = new StructurizrDSLWriter(model, views)
         const dsl = writer.write()
         expect(dsl).toMatchSnapshot()
@@ -21,12 +19,10 @@ describe('build model', () => {
     }, 120_000)
 
     test('can build model with explicit modules', async () => {
-        const { model, catalog, buildViews } = await buildModel<ExampleSystemCatalog>({
+        const { model, catalog, views } = await buildModel<ExampleSystemCatalog>({
             modules: [webPlatformModule, emailServiceModule],
             archetypes: exampleArchetypes,
         })
-        const views = new Views()
-        buildViews(views)
         const writer = new StructurizrDSLWriter(model, views)
         const dsl = writer.write()
         expect(dsl).toMatchSnapshot()
@@ -43,7 +39,7 @@ describe('generateDiagrams', () => {
         const files = await generateDiagrams<ExampleSystemCatalog>({
             searchRoot: __dirname,
             archetypes: exampleArchetypes,
-            viewsFactory: (views) => {
+            addViews: (views) => {
                 const v = views.addSystemLandscapeView('landscape', { description: 'Landscape' })
                 v.includeAll()
             },

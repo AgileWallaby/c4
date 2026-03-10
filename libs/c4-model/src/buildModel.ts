@@ -19,18 +19,19 @@ export interface AnyC4Module {
     addViews?(views: Views, local: Catalog, dependencies: RootCatalog): void
 }
 
-export interface BuildModelOptions {
+export interface BuildModelOptions<TRoot = Record<string, unknown>> {
     modelName?: string
     modules?: ReadonlyArray<AnyC4Module>
     globPath?: string
     searchRoot?: string
     archetypes?: Record<string, ElementArchetype | RelationshipArchetype>
+    addViews?: (views: Views, catalog: TRoot) => void
 }
 
 export async function buildModel<TRoot>(
-    options: BuildModelOptions = {}
-): Promise<{ model: Model; catalog: TRoot; buildViews: (views: Views) => void }> {
-    const { modelName = 'model', modules: explicitModules, archetypes = {} } = options
+    options: BuildModelOptions<TRoot> = {}
+): Promise<{ model: Model; catalog: TRoot; views: Views }> {
+    const { modelName = 'model', modules: explicitModules, archetypes = {}, addViews } = options
     const model = new Model(modelName)
 
     let c4Modules: AnyC4Module[]
@@ -69,13 +70,13 @@ export async function buildModel<TRoot>(
         instance.addRelationships(local, dependenciesFor(key), archetypes)
     }
 
-    // Phase 3: each module may contribute views using its own slice (local) and every other module's slice (dependencies)
-    const buildViews = (views: Views): void => {
-        for (const { instance, key, local } of registrations) {
-            instance.addViews?.(views, local, dependenciesFor(key))
-        }
+    // Phase 3: create views, apply top-level addViews, then each module may contribute views
+    const views = new Views()
+    addViews?.(views, rootCatalog as TRoot)
+    for (const { instance, key, local } of registrations) {
+        instance.addViews?.(views, local, dependenciesFor(key))
     }
 
-    return { model, catalog: rootCatalog as TRoot, buildViews }
+    return { model, catalog: rootCatalog as TRoot, views }
 }
 

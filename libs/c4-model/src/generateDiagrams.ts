@@ -6,23 +6,16 @@ import { GenericContainer, Wait } from 'testcontainers'
 
 import { BuildModelOptions, buildModel } from './buildModel'
 import { StructurizrDSLWriter } from './structurizrDslWriter'
-import { Views } from './views'
 
-export interface GenerateDiagramsOptions<TRoot> extends BuildModelOptions {
-    viewsFactory?: (views: Views, catalog: TRoot) => void
+export interface GenerateDiagramsOptions<TRoot> extends BuildModelOptions<TRoot> {
     outputDir: string
 }
 
 export async function generateDiagrams<TRoot>(options: GenerateDiagramsOptions<TRoot>): Promise<string[]> {
-    const { viewsFactory, outputDir, ...buildOptions } = options
+    const { outputDir, ...buildOptions } = options
 
-    // a) Build model + catalog
-    const { model, catalog, buildViews } = await buildModel<TRoot>(buildOptions)
-
-    // b) Create Views, apply top-level viewsFactory, then each module's addViews
-    const views = new Views()
-    viewsFactory?.(views, catalog)
-    buildViews(views)
+    // a) Build model, catalog, and views
+    const { model, views } = await buildModel<TRoot>(buildOptions)
 
     // c) Generate DSL string
     const dsl = new StructurizrDSLWriter(model, views).write()
