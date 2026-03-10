@@ -27,7 +27,7 @@ export interface BuildModelOptions {
     archetypes?: Record<string, ElementArchetype | RelationshipArchetype>
 }
 
-export async function buildModelWithCatalog<TRoot>(
+export async function buildModel<TRoot>(
     options: BuildModelOptions = {}
 ): Promise<{ model: Model; catalog: TRoot; buildViews: (views: Views) => void }> {
     const { modelName = 'model', modules: explicitModules, archetypes = {} } = options
@@ -79,6 +79,3 @@ export async function buildModelWithCatalog<TRoot>(
     return { model, catalog: rootCatalog as TRoot, buildViews }
 }
 
-export async function buildModel(options: BuildModelOptions = {}): Promise<Model> {
-    return (await buildModelWithCatalog(options)).model
-}

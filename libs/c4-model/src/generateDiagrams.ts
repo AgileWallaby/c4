@@ -4,7 +4,7 @@ import * as path from 'path'
 
 import { GenericContainer, Wait } from 'testcontainers'
 
-import { BuildModelOptions, buildModelWithCatalog } from './buildModel'
+import { BuildModelOptions, buildModel } from './buildModel'
 import { StructurizrDSLWriter } from './structurizrDslWriter'
 import { Views } from './views'
 
@@ -17,7 +17,7 @@ export async function generateDiagrams<TRoot>(options: GenerateDiagramsOptions<T
     const { viewsFactory, outputDir, ...buildOptions } = options
 
     // a) Build model + catalog
-    const { model, catalog, buildViews } = await buildModelWithCatalog<TRoot>(buildOptions)
+    const { model, catalog, buildViews } = await buildModel<TRoot>(buildOptions)
 
     // b) Create Views, apply top-level viewsFactory, then each module's addViews
     const views = new Views()

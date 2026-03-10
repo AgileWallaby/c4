@@ -2,7 +2,7 @@ import * as fs from 'fs'
 import * as os from 'os'
 import * as path from 'path'
 
-import { buildModel, buildModelWithCatalog, generateDiagrams, StructurizrDSLWriter, Views } from '@agilewallaby/c4-model'
+import { buildModel, generateDiagrams, StructurizrDSLWriter, Views } from '@agilewallaby/c4-model'
 
 import type { ExampleSystemCatalog } from './catalog'
 import { exampleArchetypes } from './catalog'
@@ -11,18 +11,22 @@ import { c4Module as emailServiceModule } from './email-service/c4.dsl'
 
 describe('build model', () => {
     test('can build model', async () => {
-        const model = await buildModel({ searchRoot: __dirname, archetypes: exampleArchetypes })
-        const writer = new StructurizrDSLWriter(model, new Views())
+        const { model, buildViews } = await buildModel({ searchRoot: __dirname, archetypes: exampleArchetypes })
+        const views = new Views()
+        buildViews(views)
+        const writer = new StructurizrDSLWriter(model, views)
         const dsl = writer.write()
         expect(dsl).toMatchSnapshot()
     })
 
     test('can build model with explicit modules', async () => {
-        const { model, catalog } = await buildModelWithCatalog<ExampleSystemCatalog>({
+        const { model, catalog, buildViews } = await buildModel<ExampleSystemCatalog>({
             modules: [webPlatformModule, emailServiceModule],
             archetypes: exampleArchetypes,
         })
-        const writer = new StructurizrDSLWriter(model, new Views())
+        const views = new Views()
+        buildViews(views)
+        const writer = new StructurizrDSLWriter(model, views)
         const dsl = writer.write()
         expect(dsl).toMatchSnapshot()
         expect(catalog.webPlatform.webPlatform.name).toBe('Web Platform')

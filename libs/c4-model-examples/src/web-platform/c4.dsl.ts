@@ -1,4 +1,4 @@
-import { C4Module, Component, Container, Model, Person, SoftwareSystem } from '@agilewallaby/c4-model'
+import { C4Module, Component, Container, Model, Person, SoftwareSystem, Views } from '@agilewallaby/c4-model'
 import type { ExampleSystemCatalog, ExampleArchetypes } from '../catalog'
 
 export type WebPlatformCatalog = {
@@ -54,6 +54,10 @@ export const c4Module: C4Module<ExampleSystemCatalog, WebPlatformCatalog, Exampl
             })
 
         return { customer, webPlatform }
+    },
+    addViews(views: Views, local: WebPlatformCatalog): void {
+        views.addSystemLandscapeView('landscape', { description: 'System Landscape' }).includeAll()
+        views.addContainerView('webPlatform', { subject: local.webPlatform, description: 'Web Platform' }).includeAll()
     },
     addRelationships(local, dependencies, archetypes): void {
         const { webApp, apiServer, database } = local.webPlatform

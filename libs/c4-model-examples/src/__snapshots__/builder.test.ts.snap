@@ -96,8 +96,16 @@ exports[`build model > can build model 1`] = `
   }
   views {
     // System Landscape Views
+    systemLandscape "landscape" {
+      description "System Landscape"
+      include *
+    }
     // System Context Views
     // Container Views
+    container "webPlatform" "webPlatform" {
+      description "Web Platform"
+      include *
+    }
     // Component Views
   }
 }
@@ -200,8 +208,16 @@ exports[`build model > can build model with explicit modules 1`] = `
   }
   views {
     // System Landscape Views
+    systemLandscape "landscape" {
+      description "System Landscape"
+      include *
+    }
     // System Context Views
     // Container Views
+    container "webPlatform" "webPlatform" {
+      description "Web Platform"
+      include *
+    }
     // Component Views
   }
 }
