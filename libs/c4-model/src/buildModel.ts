@@ -28,9 +28,7 @@ export interface BuildModelOptions<TRoot = Record<string, unknown>> {
     addViews?: (views: Views, catalog: TRoot) => void
 }
 
-export async function buildModel<TRoot>(
-    options: BuildModelOptions<TRoot> = {}
-): Promise<{ model: Model; catalog: TRoot; views: Views }> {
+export async function buildModel<TRoot>(options: BuildModelOptions<TRoot> = {}): Promise<{ model: Model; catalog: TRoot; views: Views }> {
     const { modelName = 'model', modules: explicitModules, archetypes = {}, addViews } = options
     const model = new Model(modelName)
 
@@ -79,4 +77,3 @@ export async function buildModel<TRoot>(
 
     return { model, catalog: rootCatalog as TRoot, views }
 }
-
