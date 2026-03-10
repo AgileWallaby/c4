@@ -2,7 +2,7 @@ import * as fs from 'fs'
 import * as os from 'os'
 import * as path from 'path'
 
-import { buildModel, generateDiagrams, StructurizrDSLWriter, Views } from '@agilewallaby/c4-model'
+import { buildModel, generateDiagrams, StructurizrDSLWriter, validateModel, Views } from '@agilewallaby/c4-model'
 
 import type { ExampleSystemCatalog } from './catalog'
 import { exampleArchetypes } from './catalog'
@@ -17,7 +17,8 @@ describe('build model', () => {
         const writer = new StructurizrDSLWriter(model, views)
         const dsl = writer.write()
         expect(dsl).toMatchSnapshot()
-    })
+        await validateModel(model, views)
+    }, 120_000)
 
     test('can build model with explicit modules', async () => {
         const { model, catalog, buildViews } = await buildModel<ExampleSystemCatalog>({
@@ -31,7 +32,8 @@ describe('build model', () => {
         expect(dsl).toMatchSnapshot()
         expect(catalog.webPlatform.webPlatform.name).toBe('Web Platform')
         expect(catalog.emailService.emailService.name).toBe('Email Service')
-    })
+        await validateModel(model, views)
+    }, 120_000)
 })
 
 describe('generateDiagrams', () => {
@@ -41,7 +43,7 @@ describe('generateDiagrams', () => {
         const files = await generateDiagrams<ExampleSystemCatalog>({
             searchRoot: __dirname,
             archetypes: exampleArchetypes,
-            viewsFactory: (views, catalog) => {
+            viewsFactory: (views) => {
                 const v = views.addSystemLandscapeView('landscape', { description: 'Landscape' })
                 v.includeAll()
             },
