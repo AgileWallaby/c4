@@ -103,5 +103,34 @@ describe('cookbook: groups - styling individual groups', () => {
 })
 
 describe('cookbook: groups - nested groups', () => {
-    test.todo('nested groups require structurizr.groupSeparator model property — not yet supported by c4-model')
+    function buildModel() {
+        const model = new Model('NestedGroups')
+        const company1 = model.group('Company 1')
+        const divisionA = company1.group('Division A')
+        const a = divisionA.softwareSystem('A')
+        const company2 = model.group('Company 2')
+        const b = company2.softwareSystem('B')
+        a.uses(b)
+
+        const views = new Views()
+        const view = views.addSystemLandscapeView('Landscape', { description: 'An example of nested groups.' })
+        view.includeAll()
+        view.autoLayout('lr')
+        return { model, views }
+    }
+
+    it('generates expected DSL', () => {
+        const { model, views } = buildModel()
+        const dsl = new StructurizrDSLWriter(model, views).write()
+        expect(dsl).toMatchSnapshot()
+    })
+
+    it(
+        'validates with Structurizr',
+        async () => {
+            const { model, views } = buildModel()
+            await validateModel(model, views)
+        },
+        TEST_TIMEOUT
+    )
 })

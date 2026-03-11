@@ -1,3 +1,4 @@
+import { camelCase } from 'change-case'
 import { Group } from './core'
 import { SoftwareSystem, SoftwareSystemDefinition } from './softwareSystem'
 import { Person, PersonDefinition } from './person'
@@ -36,12 +37,22 @@ interface DefinePerson {
 export class ModelGroup extends Group<Person | SoftwareSystem> implements DefineSoftwareSystem, DefinePerson {
     private softwareSystems = new Map<string, SoftwareSystem>()
     private people = new Map<string, Person>()
+    private _groups = new Map<string, ModelGroup>()
 
     public constructor(
         public override readonly name: string,
-        private readonly model: DefineSoftwareSystem & DefinePerson
+        private readonly model: DefineSoftwareSystem & DefinePerson,
+        private readonly pathSegments: string[] = []
     ) {
         super(name)
+    }
+
+    public override get canonicalName(): string {
+        return camelCase([...this.pathSegments, this.name].join(' '))
+    }
+
+    public get dslName(): string {
+        return [...this.pathSegments, this.name].join('/')
     }
 
     public softwareSystem(
@@ -60,12 +71,39 @@ export class ModelGroup extends Group<Person | SoftwareSystem> implements Define
         return person
     }
 
+    public group(groupName: string): ModelGroup {
+        let group = this._groups.get(groupName)
+        if (!group) {
+            group = new ModelGroup(groupName, this.model, [...this.pathSegments, this.name])
+            this._groups.set(groupName, group)
+        }
+        return group
+    }
+
+    public getGroups(): ReadonlyArray<ModelGroup> {
+        return Array.from(this._groups.values())
+    }
+
     public getSoftwareSystems(): ReadonlyArray<SoftwareSystem> {
         return Array.from(this.softwareSystems.values())
     }
 
     public getPeople(): ReadonlyArray<Person> {
         return Array.from(this.people.values())
+    }
+
+    public getAllSoftwareSystems(): ReadonlyArray<SoftwareSystem> {
+        return [
+            ...this.softwareSystems.values(),
+            ...Array.from(this._groups.values()).flatMap((g) => g.getAllSoftwareSystems()),
+        ]
+    }
+
+    public getAllPeople(): ReadonlyArray<Person> {
+        return [
+            ...this.people.values(),
+            ...Array.from(this._groups.values()).flatMap((g) => g.getAllPeople()),
+        ]
     }
 }
 
@@ -144,12 +182,12 @@ export class Model {
     }
 
     getPeopleNotInGroups(): ReadonlyArray<Person> {
-        const peopleInGroups = Array.from(this.groups.values()).flatMap((group) => group.getPeople())
+        const peopleInGroups = Array.from(this.groups.values()).flatMap((group) => group.getAllPeople())
         return Array.from(this.people.values()).filter((person) => !peopleInGroups.includes(person))
     }
 
     getSoftwareSystemsNotInGroups(): ReadonlyArray<SoftwareSystem> {
-        const systemsInGroups = Array.from(this.groups.values()).flatMap((group) => group.getSoftwareSystems())
+        const systemsInGroups = Array.from(this.groups.values()).flatMap((group) => group.getAllSoftwareSystems())
         return Array.from(this.softwareSystems.values()).filter((system) => !systemsInGroups.includes(system))
     }
 

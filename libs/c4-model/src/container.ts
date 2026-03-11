@@ -1,3 +1,4 @@
+import { camelCase } from 'change-case'
 import { Element, Group, TechnicalElement, TechnologyDefinition } from './core'
 import { Component, ComponentDefinition } from './component'
 import { ElementArchetype, mergeArchetypeWithOverride } from './archetype'
@@ -11,12 +12,22 @@ interface DefineComponent {
 // TODO: This will be a Group<Container> if that is added back in
 export class ContainerGroup extends Group<Component> implements DefineComponent {
     private _components = new Map<string, Component>()
+    private _groups = new Map<string, ContainerGroup>()
 
     public constructor(
         public override readonly name: string,
-        private readonly container: DefineComponent
+        private readonly container: DefineComponent,
+        private readonly pathSegments: string[] = []
     ) {
         super(name)
+    }
+
+    public override get canonicalName(): string {
+        return camelCase([...this.pathSegments, this.name].join(' '))
+    }
+
+    public get dslName(): string {
+        return [...this.pathSegments, this.name].join('/')
     }
 
     public component(name: string, archetypeOrDef?: ElementArchetype | ComponentDefinition, override?: ComponentDefinition): Component {
@@ -25,8 +36,28 @@ export class ContainerGroup extends Group<Component> implements DefineComponent 
         return component
     }
 
+    public group(groupName: string): ContainerGroup {
+        let group = this._groups.get(groupName)
+        if (!group) {
+            group = new ContainerGroup(groupName, this.container, [...this.pathSegments, this.name])
+            this._groups.set(groupName, group)
+        }
+        return group
+    }
+
+    public getGroups(): ReadonlyArray<ContainerGroup> {
+        return Array.from(this._groups.values())
+    }
+
     public getComponents(): ReadonlyArray<Component> {
         return Array.from(this._components.values())
+    }
+
+    public getAllComponents(): ReadonlyArray<Component> {
+        return [
+            ...this._components.values(),
+            ...Array.from(this._groups.values()).flatMap((g) => g.getAllComponents()),
+        ]
     }
 }
 
@@ -78,7 +109,7 @@ export class Container extends TechnicalElement<Component> implements DefineComp
     }
 
     public getComponentsNotInGroups(): ReadonlyArray<Component> {
-        const componentsInGroups = this.getGroups().flatMap((group) => group.getComponents())
+        const componentsInGroups = this.getGroups().flatMap((group) => group.getAllComponents())
         return Array.from(this._components.values()).filter((component) => !componentsInGroups.includes(component))
     }
 

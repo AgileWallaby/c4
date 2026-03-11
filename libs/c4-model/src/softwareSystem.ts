@@ -1,3 +1,4 @@
+import { camelCase } from 'change-case'
 import { Definition, Element, Group, TechnologyDefinition } from './core'
 import { Container, ContainerDefinition } from './container'
 import { ElementArchetype, mergeArchetypeWithOverride } from './archetype'
@@ -15,12 +16,22 @@ export interface SoftwareSystemReference {
 // TODO: This will be a Group<Container> if that is added back in
 export class SoftwareSystemGroup extends Group<Container> implements DefineContainer {
     private _containers = new Map<string, Container>()
+    private _groups = new Map<string, SoftwareSystemGroup>()
 
     public constructor(
         public override readonly name: string,
-        private readonly softwareSystem: DefineContainer
+        private readonly softwareSystem: DefineContainer,
+        private readonly pathSegments: string[] = []
     ) {
         super(name)
+    }
+
+    public override get canonicalName(): string {
+        return camelCase([...this.pathSegments, this.name].join(' '))
+    }
+
+    public get dslName(): string {
+        return [...this.pathSegments, this.name].join('/')
     }
 
     public container(name: string, archetypeOrDef?: ElementArchetype | ContainerDefinition, override?: ContainerDefinition): Container {
@@ -29,8 +40,28 @@ export class SoftwareSystemGroup extends Group<Container> implements DefineConta
         return container
     }
 
+    public group(groupName: string): SoftwareSystemGroup {
+        let group = this._groups.get(groupName)
+        if (!group) {
+            group = new SoftwareSystemGroup(groupName, this.softwareSystem, [...this.pathSegments, this.name])
+            this._groups.set(groupName, group)
+        }
+        return group
+    }
+
+    public getGroups(): ReadonlyArray<SoftwareSystemGroup> {
+        return Array.from(this._groups.values())
+    }
+
     public getContainers(): ReadonlyArray<Container> {
         return Array.from(this._containers.values())
+    }
+
+    public getAllContainers(): ReadonlyArray<Container> {
+        return [
+            ...this._containers.values(),
+            ...Array.from(this._groups.values()).flatMap((g) => g.getAllContainers()),
+        ]
     }
 }
 
@@ -86,7 +117,7 @@ export class SoftwareSystem extends Element<Container> implements DefineContaine
     }
 
     public getContainersNotInGroups(): ReadonlyArray<Container> {
-        const containersInGroups = Array.from(this._groups.values()).flatMap((group) => group.getContainers())
+        const containersInGroups = Array.from(this._groups.values()).flatMap((group) => group.getAllContainers())
         return Array.from(this._containers.values()).filter((container) => !containersInGroups.includes(container))
     }
 }

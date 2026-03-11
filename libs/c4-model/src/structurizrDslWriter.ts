@@ -155,11 +155,17 @@ export class StructurizrDSLWriter {
 
     private writeContainerGroup(group: ContainerGroup, level: number): string {
         let containerGroupDsl = ''
-        containerGroupDsl += this.writeLine(`${group.canonicalName} = group "${group.name}" {`, level)
-        group.getComponents().forEach((component) => {
-            containerGroupDsl += this.writeComponent(component, level + 1)
+        const hasDirect = group.getComponents().length > 0
+        if (hasDirect) {
+            containerGroupDsl += this.writeLine(`${group.canonicalName} = group "${group.dslName}" {`, level)
+            group.getComponents().forEach((component) => {
+                containerGroupDsl += this.writeComponent(component, level + 1)
+            })
+            containerGroupDsl += this.writeLine(`}`, level)
+        }
+        group.getGroups().forEach((nested) => {
+            containerGroupDsl += this.writeContainerGroup(nested, level)
         })
-        containerGroupDsl += this.writeLine(`}`, level)
         return containerGroupDsl
     }
 
@@ -186,11 +192,17 @@ export class StructurizrDSLWriter {
 
     private writeSoftwareSystemGroup(group: SoftwareSystemGroup, level: number): string {
         let softwareSystemGroupDsl = ''
-        softwareSystemGroupDsl += this.writeLine(`${group.canonicalName} = group "${group.name}" {`, level)
-        group.getContainers().forEach((container) => {
-            softwareSystemGroupDsl += this.writeContainer(container, level + 1)
+        const hasDirect = group.getContainers().length > 0
+        if (hasDirect) {
+            softwareSystemGroupDsl += this.writeLine(`${group.canonicalName} = group "${group.dslName}" {`, level)
+            group.getContainers().forEach((container) => {
+                softwareSystemGroupDsl += this.writeContainer(container, level + 1)
+            })
+            softwareSystemGroupDsl += this.writeLine(`}`, level)
+        }
+        group.getGroups().forEach((nested) => {
+            softwareSystemGroupDsl += this.writeSoftwareSystemGroup(nested, level)
         })
-        softwareSystemGroupDsl += this.writeLine(`}`, level)
         return softwareSystemGroupDsl
     }
 
@@ -253,16 +265,45 @@ export class StructurizrDSLWriter {
         return relationshipsDsl
     }
 
+    private hasNestedModelGroups(groups: ReadonlyArray<ModelGroup>): boolean {
+        return groups.some((g) => g.getGroups().length > 0 || this.hasNestedModelGroups(g.getGroups()))
+    }
+
+    private hasNestedSoftwareSystemGroups(groups: ReadonlyArray<SoftwareSystemGroup>): boolean {
+        return groups.some((g) => g.getGroups().length > 0 || this.hasNestedSoftwareSystemGroups(g.getGroups()))
+    }
+
+    private hasNestedContainerGroups(groups: ReadonlyArray<ContainerGroup>): boolean {
+        return groups.some((g) => g.getGroups().length > 0 || this.hasNestedContainerGroups(g.getGroups()))
+    }
+
+    private hasNestedGroups(): boolean {
+        if (this.hasNestedModelGroups(this.model.getGroups())) return true
+        for (const ss of this.model.getSoftwareSystems()) {
+            if (this.hasNestedSoftwareSystemGroups(ss.getGroups())) return true
+            for (const c of ss.getGroups().flatMap((g) => g.getAllContainers())) {
+                if (this.hasNestedContainerGroups(c.getGroups())) return true
+            }
+        }
+        return false
+    }
+
     private writeModelGroup(group: ModelGroup, level: number): string {
         let modelGroupDsl = ''
-        modelGroupDsl += this.writeLine(`${group.canonicalName} = group "${group.name}" {`, level)
-        group.getPeople().forEach((person) => {
-            modelGroupDsl += this.writeElement('person', person, level + 1)
+        const hasDirect = group.getPeople().length > 0 || group.getSoftwareSystems().length > 0
+        if (hasDirect) {
+            modelGroupDsl += this.writeLine(`${group.canonicalName} = group "${group.dslName}" {`, level)
+            group.getPeople().forEach((person) => {
+                modelGroupDsl += this.writeElement('person', person, level + 1)
+            })
+            group.getSoftwareSystems().forEach((softwareSystem) => {
+                modelGroupDsl += this.writeSoftwareSystem(softwareSystem, level + 1)
+            })
+            modelGroupDsl += this.writeLine(`}`, level)
+        }
+        group.getGroups().forEach((nested) => {
+            modelGroupDsl += this.writeModelGroup(nested, level)
         })
-        group.getSoftwareSystems().forEach((softwareSystem) => {
-            modelGroupDsl += this.writeSoftwareSystem(softwareSystem, level + 1)
-        })
-        modelGroupDsl += this.writeLine(`}`, level)
         return modelGroupDsl
     }
 
@@ -270,6 +311,11 @@ export class StructurizrDSLWriter {
         let modelDsl = ''
 
         modelDsl += this.writeLine(`model {`, level)
+        if (this.hasNestedGroups()) {
+            modelDsl += this.writeLine(`properties {`, level + 1)
+            modelDsl += this.writeLine(`"structurizr.groupSeparator" "/"`, level + 2)
+            modelDsl += this.writeLine(`}`, level + 1)
+        }
         modelDsl += this.writeArchetypes(level + 1)
         modelDsl += this.writeLine('// Elements', level + 1)
 

@@ -34,6 +34,43 @@ exports[`cookbook: groups (flat) > generates expected DSL 1`] = `
 "
 `;
 
+exports[`cookbook: groups - nested groups > generates expected DSL 1`] = `
+"workspace "NestedGroups" {
+  model {
+    properties {
+      "structurizr.groupSeparator" "/"
+    }
+    // Elements
+    company_1DivisionA = group "Company 1/Division A" {
+      a = softwareSystem "A" {
+        tags "Element" "Software System"
+      }
+    }
+    company_2 = group "Company 2" {
+      b = softwareSystem "B" {
+        tags "Element" "Software System"
+      }
+    }
+    // Relationships
+    a -> b "uses" {
+      tags "Relationship"
+    }
+  }
+  views {
+    // System Landscape Views
+    systemLandscape "Landscape" {
+      description "An example of nested groups."
+      include *
+      autoLayout lr
+    }
+    // System Context Views
+    // Container Views
+    // Component Views
+  }
+}
+"
+`;
+
 exports[`cookbook: groups - styling all groups > generates expected DSL 1`] = `
 "workspace "GroupStyles" {
   model {
