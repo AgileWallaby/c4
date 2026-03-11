@@ -1,0 +1,9 @@
+{
+  "name": "@c4/c4-model-cookbook",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@agilewallaby/c4-model": "workspace:*"
+  }
+}

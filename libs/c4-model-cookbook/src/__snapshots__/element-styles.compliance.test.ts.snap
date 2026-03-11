@@ -1,0 +1,87 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`cookbook: element-styles - styling all elements > generates expected DSL 1`] = `
+"workspace "ElementStyles" {
+  model {
+    // Elements
+    a = softwareSystem "A" {
+      tags "Element" "Software System"
+    }
+    b = softwareSystem "B" {
+      tags "Element" "Software System"
+    }
+    c = softwareSystem "C" {
+      tags "Element" "Software System"
+    }
+    // Relationships
+    a -> b "uses" {
+      tags "Relationship"
+    }
+    b -> c "uses" {
+      tags "Relationship"
+    }
+  }
+  views {
+    // System Landscape Views
+    systemLandscape "Landscape" {
+      description "Element styles example."
+      include *
+      autoLayout lr
+    }
+    // System Context Views
+    // Container Views
+    // Component Views
+    styles {
+      element "Element" {
+        shape RoundedBox
+        background "#1168bd"
+        color "#ffffff"
+      }
+    }
+  }
+}
+"
+`;
+
+exports[`cookbook: element-styles - styling individual elements > generates expected DSL 1`] = `
+"workspace "IndividualElementStyles" {
+  model {
+    // Elements
+    a = softwareSystem "A" {
+      tags "Tag 1" "Element" "Software System"
+    }
+    b = softwareSystem "B" {
+      tags "Element" "Software System"
+    }
+    c = softwareSystem "C" {
+      tags "Element" "Software System"
+    }
+    // Relationships
+    a -> b "uses" {
+      tags "Relationship"
+    }
+    b -> c "uses" {
+      tags "Relationship"
+    }
+  }
+  views {
+    // System Landscape Views
+    systemLandscape "Landscape" {
+      description "Individual element styles."
+      include *
+      autoLayout lr
+    }
+    // System Context Views
+    // Container Views
+    // Component Views
+    styles {
+      element "Tag 1" {
+        shape RoundedBox
+        background "#1168bd"
+        color "#ffffff"
+      }
+    }
+  }
+}
+"
+`;

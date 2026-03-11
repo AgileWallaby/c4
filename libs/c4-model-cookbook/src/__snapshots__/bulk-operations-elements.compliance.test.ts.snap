@@ -1,0 +1,46 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`cookbook: bulk-operations-elements > generates expected DSL 1`] = `
+"workspace "BulkOperations" {
+  model {
+    // Elements
+    loggingService = softwareSystem "Logging Service" {
+      tags "Element" "Software System"
+    }
+    a = softwareSystem "A" {
+      tags "Element" "Software System"
+      app_1 = container "App 1" {
+        tags "Element" "Container"
+      }
+      app_2 = container "App 2" {
+        tags "Element" "Container"
+      }
+      app_3 = container "App 3" {
+        tags "Element" "Container"
+      }
+    }
+    // Relationships
+    app_1 -> loggingService "Sends logs to" {
+      tags "Relationship"
+    }
+    app_2 -> loggingService "Sends logs to" {
+      tags "Relationship"
+    }
+    app_3 -> loggingService "Sends logs to" {
+      tags "Relationship"
+    }
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    // Container Views
+    container "a" "Containers" {
+      description "Bulk operations example."
+      include *
+      autoLayout
+    }
+    // Component Views
+  }
+}
+"
+`;

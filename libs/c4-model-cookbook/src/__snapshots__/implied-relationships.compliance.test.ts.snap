@@ -1,0 +1,34 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`cookbook: implied-relationships - default behavior > generates expected DSL 1`] = `
+"workspace "ImpliedRelationships" {
+  model {
+    // Elements
+    user = person "User" {
+      tags "Element" "Person"
+    }
+    softwareSystem = softwareSystem "Software System" {
+      tags "Element" "Software System"
+      webApplication = container "Web Application" {
+        tags "Element" "Container"
+      }
+    }
+    // Relationships
+    user -> webApplication "Uses" {
+      tags "Relationship"
+    }
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    systemContext "softwareSystem" "SystemContext" {
+      description "Implied relationships example."
+      include *
+      autoLayout lr
+    }
+    // Container Views
+    // Component Views
+  }
+}
+"
+`;

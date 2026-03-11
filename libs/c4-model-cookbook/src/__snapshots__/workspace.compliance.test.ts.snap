@@ -1,0 +1,17 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`cookbook: workspace - name only > generates expected DSL 1`] = `
+"workspace "My Workspace" {
+  model {
+    // Elements
+    // Relationships
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    // Container Views
+    // Component Views
+  }
+}
+"
+`;

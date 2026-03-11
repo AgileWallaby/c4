@@ -1,0 +1,38 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`cookbook: container-view-multiple-software-systems > generates expected DSL 1`] = `
+"workspace "MultiSystemContainerView" {
+  model {
+    // Elements
+    a = softwareSystem "A" {
+      tags "Element" "Software System"
+      appA = container "App A" {
+        tags "Element" "Container"
+      }
+    }
+    b = softwareSystem "B" {
+      tags "Element" "Software System"
+      appB = container "App B" {
+        tags "Element" "Container"
+      }
+    }
+    // Relationships
+    appA -> appB "Uses" {
+      tags "Relationship"
+    }
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    // Container Views
+    container "a" "Containers" {
+      description "Container view showing multiple software systems."
+      include *
+      include appB
+      autoLayout lr
+    }
+    // Component Views
+  }
+}
+"
+`;

@@ -1,0 +1,49 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`cookbook: component-view > generates expected DSL 1`] = `
+"workspace "Getting Started" {
+  model {
+    // Elements
+    user = person "User" {
+      tags "Element" "Person"
+    }
+    softwareSystem = softwareSystem "Software System" {
+      tags "Element" "Software System"
+      webApplication = container "Web Application" {
+        tags "Element" "Container"
+        component_1 = component "Component 1" {
+          tags "Element" "Component"
+        }
+        component_2 = component "Component 2" {
+          tags "Element" "Component"
+        }
+      }
+      database = container "Database" {
+        tags "Element" "Container"
+      }
+    }
+    // Relationships
+    user -> component_1 "Uses" {
+      tags "Relationship"
+    }
+    component_1 -> component_2 "Uses" {
+      tags "Relationship"
+    }
+    component_2 -> database "Reads from and writes to" {
+      tags "Relationship"
+    }
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    // Container Views
+    // Component Views
+    component "webApplication" "Components" {
+      description "An example of a Component diagram."
+      include *
+      autoLayout lr
+    }
+  }
+}
+"
+`;

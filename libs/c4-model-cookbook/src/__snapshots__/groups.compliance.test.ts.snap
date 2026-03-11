@@ -1,0 +1,113 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`cookbook: groups (flat) > generates expected DSL 1`] = `
+"workspace "Groups" {
+  model {
+    // Elements
+    company_1 = group "Company 1" {
+      a = softwareSystem "A" {
+        tags "Element" "Software System"
+      }
+    }
+    company_2 = group "Company 2" {
+      b = softwareSystem "B" {
+        tags "Element" "Software System"
+      }
+    }
+    // Relationships
+    a -> b "uses" {
+      tags "Relationship"
+    }
+  }
+  views {
+    // System Landscape Views
+    systemLandscape "Landscape" {
+      description "An example of groups."
+      include *
+      autoLayout lr
+    }
+    // System Context Views
+    // Container Views
+    // Component Views
+  }
+}
+"
+`;
+
+exports[`cookbook: groups - styling all groups > generates expected DSL 1`] = `
+"workspace "GroupStyles" {
+  model {
+    // Elements
+    company_1 = group "Company 1" {
+      a = softwareSystem "A" {
+        tags "Element" "Software System"
+      }
+    }
+    company_2 = group "Company 2" {
+      b = softwareSystem "B" {
+        tags "Element" "Software System"
+      }
+    }
+    // Relationships
+    a -> b "uses" {
+      tags "Relationship"
+    }
+  }
+  views {
+    // System Landscape Views
+    systemLandscape "Landscape" {
+      description "Groups with styles."
+      include *
+      autoLayout lr
+    }
+    // System Context Views
+    // Container Views
+    // Component Views
+    styles {
+      element "Group" {
+        color "#ff0000"
+      }
+    }
+  }
+}
+"
+`;
+
+exports[`cookbook: groups - styling individual groups > generates expected DSL 1`] = `
+"workspace "IndividualGroupStyles" {
+  model {
+    // Elements
+    company_1 = group "Company 1" {
+      a = softwareSystem "A" {
+        tags "Element" "Software System"
+      }
+    }
+    company_2 = group "Company 2" {
+      b = softwareSystem "B" {
+        tags "Element" "Software System"
+      }
+    }
+    // Relationships
+    a -> b "uses" {
+      tags "Relationship"
+    }
+  }
+  views {
+    // System Landscape Views
+    systemLandscape "Landscape" {
+      description "Individual group styles."
+      include *
+      autoLayout lr
+    }
+    // System Context Views
+    // Container Views
+    // Component Views
+    styles {
+      element "Group:Company 1" {
+        color "#ff0000"
+      }
+    }
+  }
+}
+"
+`;

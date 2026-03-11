@@ -1,0 +1,31 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`cookbook: system-context-view > generates expected DSL 1`] = `
+"workspace "Getting Started" {
+  model {
+    // Elements
+    user = person "User" {
+      tags "Element" "Person"
+    }
+    softwareSystem = softwareSystem "Software System" {
+      tags "Element" "Software System"
+    }
+    // Relationships
+    user -> softwareSystem "Uses" {
+      tags "Relationship"
+    }
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    systemContext "softwareSystem" "SystemContext" {
+      description "An example of a System Context diagram."
+      include *
+      autoLayout lr
+    }
+    // Container Views
+    // Component Views
+  }
+}
+"
+`;

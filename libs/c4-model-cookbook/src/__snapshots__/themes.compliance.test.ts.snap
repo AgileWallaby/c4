@@ -1,0 +1,56 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`cookbook: themes - single theme > generates expected DSL 1`] = `
+"workspace "Themes" {
+  model {
+    // Elements
+    authenticationService = softwareSystem "Authentication Service" {
+      tags "Element" "Software System"
+    }
+    // Relationships
+  }
+  views {
+    // System Landscape Views
+    systemLandscape "Landscape" {
+      description "Themes example."
+      include *
+      autoLayout lr
+    }
+    // System Context Views
+    // Container Views
+    // Component Views
+    theme https://static.structurizr.com/themes/default/theme.json
+  }
+}
+"
+`;
+
+exports[`cookbook: themes - theme with element styles > generates expected DSL 1`] = `
+"workspace "ThemesWithStyles" {
+  model {
+    // Elements
+    authenticationService = softwareSystem "Authentication Service" {
+      tags "Element" "Software System"
+    }
+    // Relationships
+  }
+  views {
+    // System Landscape Views
+    systemLandscape "Landscape" {
+      description "Theme with styles."
+      include *
+      autoLayout lr
+    }
+    // System Context Views
+    // Container Views
+    // Component Views
+    styles {
+      element "Software System" {
+        shape RoundedBox
+      }
+    }
+    theme https://static.structurizr.com/themes/default/theme.json
+  }
+}
+"
+`;
