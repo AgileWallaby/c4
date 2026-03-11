@@ -1,17 +1,12 @@
 // Reference: https://github.com/structurizr/structurizr.github.io/tree/main/dsl/cookbook/container-view-multiple-software-systems
 
-import * as fs from 'fs'
-import * as path from 'path'
+import { Model, Views } from '@agilewallaby/c4-model'
 
-import { Model, StructurizrDSLWriter, Views, exportWorkspaceJson, exportWorkspaceJsonFromDsl, validateModel } from '@agilewallaby/c4-model'
+import { complianceSuite } from './testUtils/complianceSuite'
 
-import { compareWorkspaceJsonSemantics } from './testUtils/compareWorkspaceJsonSemantics'
-
-const TEST_TIMEOUT = 120_000
-
-describe('cookbook: container-view-multiple-software-systems - include all', () => {
-    // example-1: container view with include * — only containers of the subject system are included
-    function buildModel() {
+// example-1: container view with include * — only containers of the subject system are included
+complianceSuite('cookbook: container-view-multiple-software-systems - include all', {
+    buildModel() {
         const model = new Model()
         const s1 = model.softwareSystem('Software System 1')
         const c1 = s1.container('Container 1')
@@ -24,44 +19,13 @@ describe('cookbook: container-view-multiple-software-systems - include all', () 
         view.includeAll()
         view.autoLayout('lr')
         return { model, views }
-    }
-
-    it('generates expected DSL', () => {
-        const { model, views } = buildModel()
-        const dsl = new StructurizrDSLWriter(model, views).write()
-        expect(dsl).toMatchSnapshot()
-    })
-
-    it(
-        'validates with Structurizr',
-        async () => {
-            const { model, views } = buildModel()
-            await validateModel(model, views)
-        },
-        TEST_TIMEOUT
-    )
-
-    it(
-        'generated DSL is semantically equivalent to original cookbook DSL',
-        async () => {
-            const { model, views } = buildModel()
-            const originalDsl = await fs.promises.readFile(
-                path.join(import.meta.dirname, 'dsl/container-view-multiple-software-systems/example-1.dsl'),
-                'utf8'
-            )
-            const [originalJson, generatedJson] = await Promise.all([
-                exportWorkspaceJsonFromDsl(originalDsl),
-                exportWorkspaceJson(model, views),
-            ])
-            compareWorkspaceJsonSemantics(originalJson, generatedJson)
-        },
-        TEST_TIMEOUT
-    )
+    },
+    dslPath: 'container-view-multiple-software-systems/example-1.dsl',
 })
 
-describe('cookbook: container-view-multiple-software-systems - explicit include', () => {
-    // example-2: container view with explicit include of containers from both systems
-    function buildModel() {
+// example-2: container view with explicit include of containers from both systems
+complianceSuite('cookbook: container-view-multiple-software-systems - explicit include', {
+    buildModel() {
         const model = new Model()
         const s1 = model.softwareSystem('Software System 1')
         const c1 = s1.container('Container 1')
@@ -75,37 +39,6 @@ describe('cookbook: container-view-multiple-software-systems - explicit include'
         view.includeElement(c2)
         view.autoLayout('lr')
         return { model, views }
-    }
-
-    it('generates expected DSL', () => {
-        const { model, views } = buildModel()
-        const dsl = new StructurizrDSLWriter(model, views).write()
-        expect(dsl).toMatchSnapshot()
-    })
-
-    it(
-        'validates with Structurizr',
-        async () => {
-            const { model, views } = buildModel()
-            await validateModel(model, views)
-        },
-        TEST_TIMEOUT
-    )
-
-    it(
-        'generated DSL is semantically equivalent to original cookbook DSL',
-        async () => {
-            const { model, views } = buildModel()
-            const originalDsl = await fs.promises.readFile(
-                path.join(import.meta.dirname, 'dsl/container-view-multiple-software-systems/example-2.dsl'),
-                'utf8'
-            )
-            const [originalJson, generatedJson] = await Promise.all([
-                exportWorkspaceJsonFromDsl(originalDsl),
-                exportWorkspaceJson(model, views),
-            ])
-            compareWorkspaceJsonSemantics(originalJson, generatedJson)
-        },
-        TEST_TIMEOUT
-    )
+    },
+    dslPath: 'container-view-multiple-software-systems/example-2.dsl',
 })

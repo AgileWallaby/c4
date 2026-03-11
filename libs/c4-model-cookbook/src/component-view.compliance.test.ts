@@ -1,16 +1,11 @@
 // Reference: https://github.com/structurizr/structurizr.github.io/tree/main/dsl/cookbook/component-view
 
-import * as fs from 'fs'
-import * as path from 'path'
+import { Model, Views } from '@agilewallaby/c4-model'
 
-import { Model, StructurizrDSLWriter, Views, exportWorkspaceJson, exportWorkspaceJsonFromDsl, validateModel } from '@agilewallaby/c4-model'
+import { complianceSuite } from './testUtils/complianceSuite'
 
-import { compareWorkspaceJsonSemantics } from './testUtils/compareWorkspaceJsonSemantics'
-
-const TEST_TIMEOUT = 120_000
-
-describe('cookbook: component-view', () => {
-    function buildModel() {
+complianceSuite('cookbook: component-view', {
+    buildModel() {
         const model = new Model('Getting Started')
         const user = model.person('User')
         const system = model.softwareSystem('Software System')
@@ -28,34 +23,6 @@ describe('cookbook: component-view', () => {
         view.includeAll()
         view.autoLayout('lr')
         return { model, views }
-    }
-
-    it('generates expected DSL', () => {
-        const { model, views } = buildModel()
-        const dsl = new StructurizrDSLWriter(model, views).write()
-        expect(dsl).toMatchSnapshot()
-    })
-
-    it(
-        'validates with Structurizr',
-        async () => {
-            const { model, views } = buildModel()
-            await validateModel(model, views)
-        },
-        TEST_TIMEOUT
-    )
-
-    it(
-        'generated DSL is semantically equivalent to original cookbook DSL',
-        async () => {
-            const { model, views } = buildModel()
-            const originalDsl = await fs.promises.readFile(path.join(import.meta.dirname, 'dsl/component-view/example-1.dsl'), 'utf8')
-            const [originalJson, generatedJson] = await Promise.all([
-                exportWorkspaceJsonFromDsl(originalDsl),
-                exportWorkspaceJson(model, views),
-            ])
-            compareWorkspaceJsonSemantics(originalJson, generatedJson)
-        },
-        TEST_TIMEOUT
-    )
+    },
+    dslPath: 'component-view/example-1.dsl',
 })
