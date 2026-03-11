@@ -32,3 +32,81 @@ exports[`cookbook: implied-relationships - default behavior > generates expected
 }
 "
 `;
+
+exports[`cookbook: implied-relationships - explicit at both levels > generates expected DSL 1`] = `
+"workspace "undefined" {
+  model {
+    // Elements
+    user = person "User" {
+      tags "Element" "Person"
+    }
+    softwareSystem = softwareSystem "Software System" {
+      tags "Element" "Software System"
+      webApplication = container "Web Application" {
+        tags "Element" "Container"
+      }
+    }
+    // Relationships
+    user -> softwareSystem "Uses 1" {
+      tags "Relationship"
+    }
+    user -> softwareSystem "Uses 2" {
+      tags "Relationship"
+    }
+    user -> webApplication "Uses 1" {
+      tags "Relationship"
+    }
+    user -> webApplication "Uses 2" {
+      tags "Relationship"
+    }
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    systemContext "softwareSystem" "SystemContext" {
+      description "undefined"
+      include *
+      autoLayout lr
+    }
+    // Container Views
+    // Component Views
+  }
+}
+"
+`;
+
+exports[`cookbook: implied-relationships - multiple relationships merged > generates expected DSL 1`] = `
+"workspace "undefined" {
+  model {
+    // Elements
+    user = person "User" {
+      tags "Element" "Person"
+    }
+    softwareSystem = softwareSystem "Software System" {
+      tags "Element" "Software System"
+      webApplication = container "Web Application" {
+        tags "Element" "Container"
+      }
+    }
+    // Relationships
+    user -> webApplication "Uses 1" {
+      tags "Relationship"
+    }
+    user -> webApplication "Uses 2" {
+      tags "Relationship"
+    }
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    systemContext "softwareSystem" "SystemContext" {
+      description "undefined"
+      include *
+      autoLayout lr
+    }
+    // Container Views
+    // Component Views
+  }
+}
+"
+`;

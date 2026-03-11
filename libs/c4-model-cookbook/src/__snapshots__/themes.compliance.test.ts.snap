@@ -1,25 +1,25 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`cookbook: themes - single theme > generates expected DSL 1`] = `
-"workspace "Themes" {
+exports[`cookbook: themes - single theme (azure shorthand) > generates expected DSL 1`] = `
+"workspace "undefined" {
   model {
     // Elements
     authenticationService = softwareSystem "Authentication Service" {
-      tags "Element" "Software System"
+      tags "Microsoft Azure - Azure Active Directory" "Element" "Software System"
     }
     // Relationships
   }
   views {
     // System Landscape Views
     systemLandscape "Landscape" {
-      description "Themes example."
+      description "undefined"
       include *
       autoLayout lr
     }
     // System Context Views
     // Container Views
     // Component Views
-    theme https://static.structurizr.com/themes/default/theme.json
+    theme microsoft-azure-2021.01
   }
 }
 "
@@ -30,14 +30,14 @@ exports[`cookbook: themes - theme with element styles > generates expected DSL 1
   model {
     // Elements
     authenticationService = softwareSystem "Authentication Service" {
-      tags "Element" "Software System"
+      tags "Microsoft Azure - Azure Active Directory" "Element" "Software System"
     }
     // Relationships
   }
   views {
     // System Landscape Views
     systemLandscape "Landscape" {
-      description "Theme with styles."
+      description "Theme with element styles."
       include *
       autoLayout lr
     }
@@ -47,9 +47,10 @@ exports[`cookbook: themes - theme with element styles > generates expected DSL 1
     styles {
       element "Software System" {
         shape RoundedBox
+        background "#ffffff"
       }
     }
-    theme https://static.structurizr.com/themes/default/theme.json
+    theme https://static.structurizr.com/themes/microsoft-azure-2021.01.26/theme.json
   }
 }
 "

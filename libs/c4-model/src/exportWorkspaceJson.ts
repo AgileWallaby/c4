@@ -8,8 +8,7 @@ import { Model } from './model'
 import { StructurizrDSLWriter } from './structurizrDslWriter'
 import { Views } from './views'
 
-export async function exportWorkspaceJson(model: Model, views: Views): Promise<unknown> {
-    const dsl = new StructurizrDSLWriter(model, views).write()
+export async function exportWorkspaceJsonFromDsl(dsl: string): Promise<unknown> {
     const tmpDir = await fs.promises.mkdtemp(path.join(fs.realpathSync(os.tmpdir()), 'c4-export-'))
     try {
         await fs.promises.writeFile(path.join(tmpDir, 'workspace.dsl'), dsl, 'utf8')
@@ -37,4 +36,9 @@ export async function exportWorkspaceJson(model: Model, views: Views): Promise<u
     } finally {
         await fs.promises.rm(tmpDir, { recursive: true, force: true })
     }
+}
+
+export async function exportWorkspaceJson(model: Model, views: Views): Promise<unknown> {
+    const dsl = new StructurizrDSLWriter(model, views).write()
+    return exportWorkspaceJsonFromDsl(dsl)
 }

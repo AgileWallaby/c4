@@ -1,5 +1,41 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`cookbook: relationship-styles - baseline > generates expected DSL 1`] = `
+"workspace "undefined" {
+  model {
+    // Elements
+    a = softwareSystem "A" {
+      tags "Element" "Software System"
+    }
+    b = softwareSystem "B" {
+      tags "Element" "Software System"
+    }
+    c = softwareSystem "C" {
+      tags "Element" "Software System"
+    }
+    // Relationships
+    a -> b "uses" {
+      tags "Relationship"
+    }
+    b -> c "uses" {
+      tags "Relationship"
+    }
+  }
+  views {
+    // System Landscape Views
+    systemLandscape "Landscape" {
+      description "undefined"
+      include *
+      autoLayout lr
+    }
+    // System Context Views
+    // Container Views
+    // Component Views
+  }
+}
+"
+`;
+
 exports[`cookbook: relationship-styles - styling all relationships > generates expected DSL 1`] = `
 "workspace "RelationshipStyles" {
   model {

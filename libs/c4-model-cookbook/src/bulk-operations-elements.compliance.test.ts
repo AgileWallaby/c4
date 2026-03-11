@@ -3,7 +3,12 @@
 // The cookbook uses the !elements DSL keyword for bulk relationship creation.
 // c4-model achieves the same outcome by iterating containers in TypeScript.
 
-import { Model, StructurizrDSLWriter, Views, validateModel } from '@agilewallaby/c4-model'
+import * as fs from 'fs'
+import * as path from 'path'
+
+import { Model, StructurizrDSLWriter, Views, exportWorkspaceJson, exportWorkspaceJsonFromDsl, validateModel } from '@agilewallaby/c4-model'
+
+import { compareWorkspaceJsonSemantics } from './testUtils/compareWorkspaceJsonSemantics'
 
 const TEST_TIMEOUT = 120_000
 
@@ -39,6 +44,23 @@ describe('cookbook: bulk-operations-elements', () => {
         async () => {
             const { model, views } = buildModel()
             await validateModel(model, views)
+        },
+        TEST_TIMEOUT
+    )
+
+    it(
+        'generated DSL is semantically equivalent to original cookbook DSL',
+        async () => {
+            const { model, views } = buildModel()
+            const originalDsl = await fs.promises.readFile(
+                path.join(import.meta.dirname, 'dsl/bulk-operations-elements/example-1.dsl'),
+                'utf8'
+            )
+            const [originalJson, generatedJson] = await Promise.all([
+                exportWorkspaceJsonFromDsl(originalDsl),
+                exportWorkspaceJson(model, views),
+            ])
+            compareWorkspaceJsonSemantics(originalJson, generatedJson)
         },
         TEST_TIMEOUT
     )

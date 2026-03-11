@@ -1,23 +1,23 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`cookbook: container-view-multiple-software-systems > generates expected DSL 1`] = `
-"workspace "MultiSystemContainerView" {
+exports[`cookbook: container-view-multiple-software-systems - explicit include > generates expected DSL 1`] = `
+"workspace "undefined" {
   model {
     // Elements
-    a = softwareSystem "A" {
+    softwareSystem_1 = softwareSystem "Software System 1" {
       tags "Element" "Software System"
-      appA = container "App A" {
+      container_1 = container "Container 1" {
         tags "Element" "Container"
       }
     }
-    b = softwareSystem "B" {
+    softwareSystem_2 = softwareSystem "Software System 2" {
       tags "Element" "Software System"
-      appB = container "App B" {
+      container_2 = container "Container 2" {
         tags "Element" "Container"
       }
     }
     // Relationships
-    appA -> appB "Uses" {
+    container_1 -> container_2 "uses" {
       tags "Relationship"
     }
   }
@@ -25,10 +25,46 @@ exports[`cookbook: container-view-multiple-software-systems > generates expected
     // System Landscape Views
     // System Context Views
     // Container Views
-    container "a" "Containers" {
-      description "Container view showing multiple software systems."
+    container "softwareSystem_1" "Containers" {
+      description "undefined"
+      include container_1
+      include container_2
+      autoLayout lr
+    }
+    // Component Views
+  }
+}
+"
+`;
+
+exports[`cookbook: container-view-multiple-software-systems - include all > generates expected DSL 1`] = `
+"workspace "undefined" {
+  model {
+    // Elements
+    softwareSystem_1 = softwareSystem "Software System 1" {
+      tags "Element" "Software System"
+      container_1 = container "Container 1" {
+        tags "Element" "Container"
+      }
+    }
+    softwareSystem_2 = softwareSystem "Software System 2" {
+      tags "Element" "Software System"
+      container_2 = container "Container 2" {
+        tags "Element" "Container"
+      }
+    }
+    // Relationships
+    container_1 -> container_2 "uses" {
+      tags "Relationship"
+    }
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    // Container Views
+    container "softwareSystem_1" "Containers" {
+      description "undefined"
       include *
-      include appB
       autoLayout lr
     }
     // Component Views

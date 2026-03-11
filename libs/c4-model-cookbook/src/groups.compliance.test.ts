@@ -1,6 +1,11 @@
 // Reference: https://github.com/structurizr/structurizr.github.io/tree/main/dsl/cookbook/groups
 
-import { Model, StructurizrDSLWriter, Views, validateModel } from '@agilewallaby/c4-model'
+import * as fs from 'fs'
+import * as path from 'path'
+
+import { Model, StructurizrDSLWriter, Views, exportWorkspaceJson, exportWorkspaceJsonFromDsl, validateModel } from '@agilewallaby/c4-model'
+
+import { compareWorkspaceJsonSemantics } from './testUtils/compareWorkspaceJsonSemantics'
 
 const TEST_TIMEOUT = 120_000
 
@@ -31,6 +36,20 @@ describe('cookbook: groups (flat)', () => {
         async () => {
             const { model, views } = buildModel()
             await validateModel(model, views)
+        },
+        TEST_TIMEOUT
+    )
+
+    it(
+        'generated DSL is semantically equivalent to original cookbook DSL',
+        async () => {
+            const { model, views } = buildModel()
+            const originalDsl = await fs.promises.readFile(path.join(import.meta.dirname, 'dsl/groups/example-1.dsl'), 'utf8')
+            const [originalJson, generatedJson] = await Promise.all([
+                exportWorkspaceJsonFromDsl(originalDsl),
+                exportWorkspaceJson(model, views),
+            ])
+            compareWorkspaceJsonSemantics(originalJson, generatedJson)
         },
         TEST_TIMEOUT
     )
@@ -67,6 +86,20 @@ describe('cookbook: groups - styling all groups', () => {
         },
         TEST_TIMEOUT
     )
+
+    it(
+        'generated DSL is semantically equivalent to original cookbook DSL',
+        async () => {
+            const { model, views } = buildModel()
+            const originalDsl = await fs.promises.readFile(path.join(import.meta.dirname, 'dsl/groups/example-2.dsl'), 'utf8')
+            const [originalJson, generatedJson] = await Promise.all([
+                exportWorkspaceJsonFromDsl(originalDsl),
+                exportWorkspaceJson(model, views),
+            ])
+            compareWorkspaceJsonSemantics(originalJson, generatedJson)
+        },
+        TEST_TIMEOUT
+    )
 })
 
 describe('cookbook: groups - styling individual groups', () => {
@@ -100,22 +133,38 @@ describe('cookbook: groups - styling individual groups', () => {
         },
         TEST_TIMEOUT
     )
+
+    it(
+        'generated DSL is semantically equivalent to original cookbook DSL',
+        async () => {
+            const { model, views } = buildModel()
+            const originalDsl = await fs.promises.readFile(path.join(import.meta.dirname, 'dsl/groups/example-3.dsl'), 'utf8')
+            const [originalJson, generatedJson] = await Promise.all([
+                exportWorkspaceJsonFromDsl(originalDsl),
+                exportWorkspaceJson(model, views),
+            ])
+            compareWorkspaceJsonSemantics(originalJson, generatedJson)
+        },
+        TEST_TIMEOUT
+    )
 })
 
 describe('cookbook: groups - nested groups', () => {
     function buildModel() {
         const model = new Model('NestedGroups')
         const company1 = model.group('Company 1')
-        const divisionA = company1.group('Division A')
-        const a = divisionA.softwareSystem('A')
-        const company2 = model.group('Company 2')
-        const b = company2.softwareSystem('B')
+        const dept1 = company1.group('Department 1')
+        const a = dept1.softwareSystem('A')
+        const dept2 = company1.group('Department 2')
+        const b = dept2.softwareSystem('B')
         a.uses(b)
 
         const views = new Views()
         const view = views.addSystemLandscapeView('Landscape', { description: 'An example of nested groups.' })
         view.includeAll()
         view.autoLayout('lr')
+        views.addElementStyle('Group:Company 1/Department 1', { color: '#ff0000' })
+        views.addElementStyle('Group:Company 1/Department 2', { color: '#0000ff' })
         return { model, views }
     }
 
@@ -130,6 +179,20 @@ describe('cookbook: groups - nested groups', () => {
         async () => {
             const { model, views } = buildModel()
             await validateModel(model, views)
+        },
+        TEST_TIMEOUT
+    )
+
+    it(
+        'generated DSL is semantically equivalent to original cookbook DSL',
+        async () => {
+            const { model, views } = buildModel()
+            const originalDsl = await fs.promises.readFile(path.join(import.meta.dirname, 'dsl/groups/example-4.dsl'), 'utf8')
+            const [originalJson, generatedJson] = await Promise.all([
+                exportWorkspaceJsonFromDsl(originalDsl),
+                exportWorkspaceJson(model, views),
+            ])
+            compareWorkspaceJsonSemantics(originalJson, generatedJson)
         },
         TEST_TIMEOUT
     )
