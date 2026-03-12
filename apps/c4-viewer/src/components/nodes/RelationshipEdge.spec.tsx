@@ -4,9 +4,8 @@ import { RelationshipEdge } from "./RelationshipEdge";
 import { Position } from "@xyflow/react";
 
 vi.mock("@xyflow/react", async () => {
-  const actual = await vi.importActual<typeof import("@xyflow/react")>(
-    "@xyflow/react",
-  );
+  const actual =
+    await vi.importActual<typeof import("@xyflow/react")>("@xyflow/react");
   return {
     ...actual,
     getBezierPath: () => ["M0 0", 50, 50],
@@ -48,7 +47,9 @@ describe("RelationshipEdge", () => {
   });
 
   it("renders description when provided", () => {
-    render(<RelationshipEdge {...makeProps({ description: "sends data to" })} />);
+    render(
+      <RelationshipEdge {...makeProps({ description: "sends data to" })} />,
+    );
     expect(screen.getByText("sends data to")).toBeTruthy();
   });
 

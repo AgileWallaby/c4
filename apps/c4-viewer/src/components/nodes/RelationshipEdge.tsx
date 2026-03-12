@@ -46,7 +46,9 @@ export function RelationshipEdge({
             className="nodrag nopan rounded bg-white px-1.5 py-0.5 text-center text-xs shadow-sm"
           >
             {data?.description && (
-              <div className="font-medium text-gray-800">{data.description}</div>
+              <div className="font-medium text-gray-800">
+                {data.description}
+              </div>
             )}
             {data?.technology && (
               <div className="italic text-gray-500">[{data.technology}]</div>

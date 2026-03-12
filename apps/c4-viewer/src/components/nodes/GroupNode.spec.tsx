@@ -1,6 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import type { CSSProperties } from "react";
 import { GroupNode } from "./GroupNode";
 
 vi.mock("@xyflow/react", () => ({
@@ -8,9 +7,7 @@ vi.mock("@xyflow/react", () => ({
   Position: { Top: "top", Bottom: "bottom", Left: "left", Right: "right" },
 }));
 
-function makeProps(
-  overrides: Partial<{ label: string; style?: CSSProperties }> = {},
-) {
+function makeProps(overrides: Partial<{ label: string }> = {}) {
   return {
     id: "group-1",
     data: {
@@ -24,7 +21,6 @@ function makeProps(
     isConnectable: true,
     positionAbsoluteX: 0,
     positionAbsoluteY: 0,
-    style: overrides.style,
   };
 }
 
@@ -46,12 +42,10 @@ describe("GroupNode", () => {
     expect(div.className).toContain("bg-transparent");
   });
 
-  it("applies dynamic width/height from style prop", () => {
-    const { container } = render(
-      <GroupNode {...makeProps({ style: { width: 300, height: 200 } })} />,
-    );
+  it("fills its container with h-full w-full so React Flow's style wrapper controls size", () => {
+    const { container } = render(<GroupNode {...makeProps()} />);
     const div = container.querySelector("div")!;
-    expect(div.style.width).toBe("300px");
-    expect(div.style.height).toBe("200px");
+    expect(div.className).toContain("h-full");
+    expect(div.className).toContain("w-full");
   });
 });

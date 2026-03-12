@@ -8,12 +8,9 @@ type GroupNodeType = Node<
   "groupNode"
 >;
 
-export function GroupNode({ data, style }: NodeProps<GroupNodeType>) {
+export function GroupNode({ data }: NodeProps<GroupNodeType>) {
   return (
-    <div
-      className="rounded border-2 border-dashed border-gray-400 bg-transparent"
-      style={style}
-    >
+    <div className="h-full w-full rounded border-2 border-dashed border-gray-400 bg-transparent">
       <Handle type="target" position={Position.Top} />
       <Handle type="source" position={Position.Bottom} />
       <Handle type="target" position={Position.Left} />

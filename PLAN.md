@@ -508,7 +508,7 @@ Fix any lint errors or type errors before considering the implementation complet
 - [x] `Header` + `ViewSelector`
 - [x] `PersonNode`, `SoftwareSystemNode`, `ContainerNode`, `GroupNode`
 - [x] `RelationshipEdge`
-- [ ] `DiagramCanvas` — React Flow canvas with all custom types registered
-- [ ] `App.tsx` — state wiring
-- [ ] Parser unit tests with fixture
-- [ ] `lint`, `test`, `build` all pass
+- [x] `DiagramCanvas` — React Flow canvas with all custom types registered
+- [x] `App.tsx` — state wiring
+- [x] Parser unit tests with fixture
+- [x] `lint`, `test`, `build` all pass
