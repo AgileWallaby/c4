@@ -34,7 +34,19 @@ export function RelationshipEdge({
 
   return (
     <>
-      <BaseEdge id={id} path={edgePath} />
+      <defs>
+        <marker
+          id={`arrow-${id}`}
+          markerWidth="10"
+          markerHeight="10"
+          refX="8"
+          refY="3"
+          orient="auto"
+        >
+          <path d="M0,0 L0,6 L9,3 z" fill="#b1b1b7" />
+        </marker>
+      </defs>
+      <BaseEdge id={id} path={edgePath} markerEnd={`url(#arrow-${id})`} />
       {hasLabel && (
         <EdgeLabelRenderer>
           <div

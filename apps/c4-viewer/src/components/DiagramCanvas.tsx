@@ -49,6 +49,7 @@ export function DiagramCanvas({
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         onNodesChange={onNodesChange}
+        nodesConnectable={false}
         fitView
       >
         <Controls />
