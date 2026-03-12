@@ -18,16 +18,36 @@ export function PersonNode({ data }: NodeProps<PersonNodeType>) {
 
   return (
     <div
-      className={`${bg} flex w-40 flex-col items-center rounded px-3 pb-3 pt-2 text-white shadow`}
+      className={`${bg} flex h-20 w-44 flex-col items-center justify-center rounded px-3 py-2 text-white shadow`}
     >
-      <Handle type="target" position={Position.Top} isConnectable={false} style={hiddenHandle} />
-      <Handle type="source" position={Position.Bottom} isConnectable={false} style={hiddenHandle} />
-      <Handle type="target" position={Position.Left} isConnectable={false} style={hiddenHandle} />
-      <Handle type="source" position={Position.Right} isConnectable={false} style={hiddenHandle} />
+      <Handle
+        type="target"
+        position={Position.Top}
+        isConnectable={false}
+        style={hiddenHandle}
+      />
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        isConnectable={false}
+        style={hiddenHandle}
+      />
+      <Handle
+        type="target"
+        position={Position.Left}
+        isConnectable={false}
+        style={hiddenHandle}
+      />
+      <Handle
+        type="source"
+        position={Position.Right}
+        isConnectable={false}
+        style={hiddenHandle}
+      />
       {/* Person silhouette icon */}
       <svg
         aria-hidden="true"
-        className="mb-1 h-8 w-8"
+        className="h-5 w-5"
         viewBox="0 0 24 24"
         fill="currentColor"
       >

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Header } from "./Header";
 import type { StructurizrView } from "../parser/types";
@@ -8,6 +8,14 @@ const views: StructurizrView[] = [
   { key: "landscape", description: "Landscape" },
   { key: "context" },
 ];
+
+const defaultGridProps = {
+  gridRows: 2,
+  gridCols: 2,
+  minCells: 4,
+  onGridRowsChange: vi.fn(),
+  onGridColsChange: vi.fn(),
+};
 
 describe("Header", () => {
   it("displays the workspace name", () => {
@@ -18,6 +26,7 @@ describe("Header", () => {
         selectedViewKey="landscape"
         onViewChange={vi.fn()}
         onReset={vi.fn()}
+        {...defaultGridProps}
       />,
     );
     expect(screen.getByText("My Workspace")).toBeTruthy();
@@ -31,6 +40,7 @@ describe("Header", () => {
         selectedViewKey="landscape"
         onViewChange={vi.fn()}
         onReset={vi.fn()}
+        {...defaultGridProps}
       />,
     );
     expect(screen.getAllByRole("option")).toHaveLength(2);
@@ -44,6 +54,7 @@ describe("Header", () => {
         selectedViewKey="context"
         onViewChange={vi.fn()}
         onReset={vi.fn()}
+        {...defaultGridProps}
       />,
     );
     const select = screen.getByRole("combobox") as HTMLSelectElement;
@@ -59,6 +70,7 @@ describe("Header", () => {
         selectedViewKey="landscape"
         onViewChange={onViewChange}
         onReset={vi.fn()}
+        {...defaultGridProps}
       />,
     );
     await userEvent.selectOptions(screen.getByRole("combobox"), "context");
@@ -73,6 +85,7 @@ describe("Header", () => {
         selectedViewKey="landscape"
         onViewChange={vi.fn()}
         onReset={vi.fn()}
+        {...defaultGridProps}
       />,
     );
     expect(screen.getByRole("button", { name: /upload new/i })).toBeTruthy();
@@ -87,9 +100,72 @@ describe("Header", () => {
         selectedViewKey="landscape"
         onViewChange={vi.fn()}
         onReset={onReset}
+        {...defaultGridProps}
       />,
     );
     await userEvent.click(screen.getByRole("button", { name: /upload new/i }));
     expect(onReset).toHaveBeenCalledOnce();
+  });
+
+  it("renders rows and cols inputs with correct values", () => {
+    render(
+      <Header
+        workspaceName="My Workspace"
+        views={views}
+        selectedViewKey="landscape"
+        onViewChange={vi.fn()}
+        onReset={vi.fn()}
+        gridRows={3}
+        gridCols={4}
+        minCells={6}
+        onGridRowsChange={vi.fn()}
+        onGridColsChange={vi.fn()}
+      />,
+    );
+    expect((screen.getByLabelText("Rows") as HTMLInputElement).value).toBe("3");
+    expect((screen.getByLabelText("Cols") as HTMLInputElement).value).toBe("4");
+  });
+
+  it("calls onGridRowsChange when rows input changes", async () => {
+    const onGridRowsChange = vi.fn();
+    render(
+      <Header
+        workspaceName="My Workspace"
+        views={views}
+        selectedViewKey="landscape"
+        onViewChange={vi.fn()}
+        onReset={vi.fn()}
+        gridRows={2}
+        gridCols={2}
+        minCells={4}
+        onGridRowsChange={onGridRowsChange}
+        onGridColsChange={vi.fn()}
+      />,
+    );
+    await userEvent.clear(screen.getByLabelText("Rows"));
+    await userEvent.type(screen.getByLabelText("Rows"), "3");
+    expect(onGridRowsChange).toHaveBeenCalled();
+  });
+
+  it("auto-adjusts cols upwards when rows reduced below minimum", () => {
+    const onGridRowsChange = vi.fn();
+    const onGridColsChange = vi.fn();
+    const { getByLabelText } = render(
+      <Header
+        workspaceName="My Workspace"
+        views={views}
+        selectedViewKey="landscape"
+        onViewChange={vi.fn()}
+        onReset={vi.fn()}
+        gridRows={2}
+        gridCols={2}
+        minCells={4}
+        onGridRowsChange={onGridRowsChange}
+        onGridColsChange={onGridColsChange}
+      />,
+    );
+    // Setting rows to 1 with minCells=4 requires cols >= 4
+    fireEvent.change(getByLabelText("Rows"), { target: { value: "1" } });
+    expect(onGridColsChange).toHaveBeenCalledWith(4);
   });
 });
