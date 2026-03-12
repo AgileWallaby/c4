@@ -36,6 +36,10 @@ vi.mock("@xyflow/react", () => ({
   ),
   MiniMap: () => <div data-testid="minimap" />,
   BackgroundVariant: { Dots: "dots" },
+  useNodesState: (initialNodes: Node[]) => {
+    const [nodes, setNodes] = [initialNodes, vi.fn()];
+    return [nodes, setNodes, vi.fn()];
+  },
 }));
 
 vi.mock("@xyflow/react/dist/style.css", () => ({}));

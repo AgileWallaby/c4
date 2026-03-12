@@ -1,9 +1,11 @@
+import { useEffect } from "react";
 import {
   ReactFlow,
   Controls,
   Background,
   MiniMap,
   BackgroundVariant,
+  useNodesState,
 } from "@xyflow/react";
 import type { Node, Edge } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
@@ -29,7 +31,16 @@ interface DiagramCanvasProps {
   edges: Edge[];
 }
 
-export function DiagramCanvas({ nodes, edges }: DiagramCanvasProps) {
+export function DiagramCanvas({
+  nodes: initialNodes,
+  edges,
+}: DiagramCanvasProps) {
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+
+  useEffect(() => {
+    setNodes(initialNodes);
+  }, [initialNodes, setNodes]);
+
   return (
     <div className="h-full w-full">
       <ReactFlow
@@ -37,6 +48,7 @@ export function DiagramCanvas({ nodes, edges }: DiagramCanvasProps) {
         edges={edges}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
+        onNodesChange={onNodesChange}
         fitView
       >
         <Controls />
