@@ -499,8 +499,8 @@ Fix any lint errors or type errors before considering the implementation complet
 - [x] App scaffolded and Tailwind configured
 - [x] Dependencies installed (`@xyflow/react`, `@dagrejs/dagre`, `tailwindcss`)
 - [x] `parser/types.ts` — workspace JSON interfaces
-- [ ] `parser/workspaceJsonParser.ts` — ID map, node/edge building, layout selection
-- [ ] `parser/layoutEngine.ts` — dagre two-pass layout
+- [x] `parser/workspaceJsonParser.ts` — ID map, node/edge building, layout selection
+- [x] `parser/layoutEngine.ts` — dagre two-pass layout
 - [ ] `WorkspaceLoader` — drag-and-drop / file picker
 - [ ] `Header` + `ViewSelector`
 - [ ] `PersonNode`, `SoftwareSystemNode`, `ContainerNode`, `GroupNode`

@@ -170,22 +170,21 @@ export function parseView(workspace: WorkspaceJson, viewKey: string): { nodes: N
     }
 
     // Build edges
-    const edges: Edge[] = viewRelationships
-        .map((vr) => {
-            const rel = relationshipMap.get(vr.id)
-            if (!rel) return null
-            return {
-                id: vr.id,
-                source: rel.sourceId,
-                target: rel.destinationId,
-                type: 'relationshipEdge',
-                data: {
-                    description: rel.description,
-                    technology: rel.technology,
-                },
-            } satisfies Edge
-        })
-        .filter((e): e is Edge => e !== null)
+    const edges: Edge[] = viewRelationships.flatMap((vr) => {
+        const rel = relationshipMap.get(vr.id)
+        if (!rel) return []
+        const edge: Edge = {
+            id: vr.id,
+            source: rel.sourceId,
+            target: rel.destinationId,
+            type: 'relationshipEdge',
+            data: {
+                description: rel.description,
+                technology: rel.technology,
+            },
+        }
+        return [edge]
+    })
 
     const groupNodes = [...groupNodeMap.values()]
     const allNodes = [...groupNodes, ...elementNodes]

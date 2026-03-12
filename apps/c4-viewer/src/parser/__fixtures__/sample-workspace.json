@@ -1,0 +1,170 @@
+{
+  "name": "Banking System",
+  "model": {
+    "people": [
+      {
+        "id": "1",
+        "name": "Customer",
+        "description": "A retail banking customer",
+        "tags": "Person,External",
+        "relationships": [
+          {
+            "id": "r1",
+            "sourceId": "1",
+            "destinationId": "3",
+            "description": "uses",
+            "technology": "HTTPS"
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "name": "Admin",
+        "description": "An internal bank administrator",
+        "tags": "Person",
+        "relationships": [
+          {
+            "id": "r2",
+            "sourceId": "2",
+            "destinationId": "3",
+            "description": "manages"
+          }
+        ]
+      }
+    ],
+    "softwareSystems": [
+      {
+        "id": "3",
+        "name": "Banking System",
+        "description": "The core banking platform",
+        "tags": "SoftwareSystem",
+        "relationships": [
+          {
+            "id": "r3",
+            "sourceId": "3",
+            "destinationId": "4",
+            "description": "sends emails via"
+          }
+        ],
+        "containers": [
+          {
+            "id": "5",
+            "name": "Web App",
+            "description": "Serves the SPA",
+            "technology": "React",
+            "tags": "Container",
+            "relationships": [
+              {
+                "id": "r4",
+                "sourceId": "5",
+                "destinationId": "6",
+                "description": "makes API calls",
+                "technology": "REST"
+              }
+            ]
+          },
+          {
+            "id": "6",
+            "name": "API",
+            "description": "Handles business logic",
+            "technology": "Node.js",
+            "tags": "Container",
+            "relationships": [
+              {
+                "id": "r5",
+                "sourceId": "6",
+                "destinationId": "7",
+                "description": "reads/writes"
+              }
+            ]
+          },
+          {
+            "id": "7",
+            "name": "Database",
+            "description": "Stores all data",
+            "technology": "PostgreSQL",
+            "tags": "Container"
+          }
+        ]
+      },
+      {
+        "id": "4",
+        "name": "Email System",
+        "description": "Third-party email service",
+        "tags": "SoftwareSystem,External"
+      }
+    ],
+    "groups": [
+      {
+        "id": "g1",
+        "name": "Internal Users",
+        "people": [
+          { "id": "2", "name": "Admin" }
+        ]
+      }
+    ]
+  },
+  "views": {
+    "systemLandscapeViews": [
+      {
+        "key": "landscape",
+        "description": "System Landscape",
+        "elements": [
+          { "id": "1", "x": 100, "y": 200 },
+          { "id": "2", "x": 400, "y": 200 },
+          { "id": "3", "x": 250, "y": 450 },
+          { "id": "4", "x": 550, "y": 450 }
+        ],
+        "relationships": [
+          { "id": "r1" },
+          { "id": "r2" },
+          { "id": "r3" }
+        ]
+      }
+    ],
+    "systemContextViews": [
+      {
+        "key": "context-banking",
+        "description": "Banking System Context",
+        "softwareSystemId": "3",
+        "elements": [
+          { "id": "1" },
+          { "id": "2" },
+          { "id": "3" },
+          { "id": "4" }
+        ],
+        "relationships": [
+          { "id": "r1" },
+          { "id": "r2" },
+          { "id": "r3" }
+        ],
+        "autoLayout": {
+          "rankDirection": "TopBottom",
+          "rankSeparation": 300,
+          "nodeSeparation": 300
+        }
+      }
+    ],
+    "containerViews": [
+      {
+        "key": "containers-banking",
+        "description": "Banking System Containers",
+        "softwareSystemId": "3",
+        "elements": [
+          { "id": "1" },
+          { "id": "5" },
+          { "id": "6" },
+          { "id": "7" }
+        ],
+        "relationships": [
+          { "id": "r1" },
+          { "id": "r4" },
+          { "id": "r5" }
+        ],
+        "autoLayout": {
+          "rankDirection": "LeftRight"
+        }
+      }
+    ]
+  }
+}
