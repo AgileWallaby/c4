@@ -505,7 +505,7 @@ Fix any lint errors or type errors before considering the implementation complet
 - [x] `parser/workspaceJsonParser.ts` — ID map, node/edge building, layout selection
 - [x] `parser/layoutEngine.ts` — dagre two-pass layout
 - [x] `WorkspaceLoader` — drag-and-drop / file picker
-- [ ] `Header` + `ViewSelector`
+- [x] `Header` + `ViewSelector`
 - [ ] `PersonNode`, `SoftwareSystemNode`, `ContainerNode`, `GroupNode`
 - [ ] `RelationshipEdge`
 - [ ] `DiagramCanvas` — React Flow canvas with all custom types registered
