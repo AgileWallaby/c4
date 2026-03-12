@@ -164,6 +164,7 @@ export function parseView(workspace: WorkspaceJson, viewKey: string): { nodes: N
         if (el.groupId && groupNodeMap.has(el.groupId)) {
             node.parentId = `group-${el.groupId}`
             node.extent = 'parent'
+            node.expandParent = true
         }
 
         elementNodes.push(node)

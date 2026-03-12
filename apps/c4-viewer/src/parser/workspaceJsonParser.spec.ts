@@ -105,6 +105,7 @@ describe('parseView', () => {
             const admin = result.nodes.find((n) => n.id === '2')
             expect(admin?.parentId).toBe('group-g1')
             expect(admin?.extent).toBe('parent')
+            expect(admin?.expandParent).toBe(true)
         })
 
         it('does not assign a parentId to non-grouped elements', () => {
