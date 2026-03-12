@@ -5,7 +5,10 @@
     "version": {
       "manifestRootsToUpdate": [
         "{projectRoot}",
-        { "path": "dist/libs/{projectName}", "preserveLocalDependencyProtocols": false }
+        {
+          "path": "dist/libs/{projectName}",
+          "preserveLocalDependencyProtocols": false
+        }
       ]
     }
   },
@@ -37,12 +40,22 @@
       "inputs": ["default", "^production", "{projectRoot}/vitest.config.ts"]
     },
     "e2e": {
-      "cache": true
+      "cache": true,
+      "inputs": ["default", "^production"]
     },
     "@nx/js:tsc": {
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
+    },
+    "@nx/vite:build": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
+    },
+    "@nx/vitest:test": {
+      "cache": true,
+      "inputs": ["default", "^production"]
     }
   },
   "namedInputs": {
@@ -55,9 +68,27 @@
       "!{projectRoot}/vitest.config.ts",
       "!{projectRoot}/src/test-setup.[jt]s",
       "!{projectRoot}/test-setup.[jt]s",
-      "!{projectRoot}/eslint.config.mjs"
+      "!{projectRoot}/eslint.config.mjs",
+      "!{projectRoot}/tsconfig.spec.json"
     ],
     "sharedGlobals": []
   },
-  "useInferencePlugins": false
+  "useInferencePlugins": false,
+  "generators": {
+    "@nx/react": {
+      "application": {
+        "babel": true,
+        "style": "none",
+        "linter": "none",
+        "bundler": "vite"
+      },
+      "component": {
+        "style": "none"
+      },
+      "library": {
+        "style": "none",
+        "linter": "none"
+      }
+    }
+  }
 }

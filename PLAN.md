@@ -496,8 +496,8 @@ Fix any lint errors or type errors before considering the implementation complet
 
 ## Completion Checklist
 
-- [ ] App scaffolded and Tailwind configured
-- [ ] Dependencies installed (`@xyflow/react`, `@dagrejs/dagre`, `tailwindcss`)
+- [x] App scaffolded and Tailwind configured
+- [x] Dependencies installed (`@xyflow/react`, `@dagrejs/dagre`, `tailwindcss`)
 - [ ] `parser/types.ts` — workspace JSON interfaces
 - [ ] `parser/workspaceJsonParser.ts` — ID map, node/edge building, layout selection
 - [ ] `parser/layoutEngine.ts` — dagre two-pass layout
