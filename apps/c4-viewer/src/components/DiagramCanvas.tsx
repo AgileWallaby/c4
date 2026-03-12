@@ -127,7 +127,10 @@ export function DiagramCanvas({
   });
   const [minZoom, setMinZoom] = useState(0.5);
   const rfInstanceRef = useRef<ReactFlowInstance | null>(null);
-  const cellSizeRef = useRef({ cellWidth: CELL_WIDTH, cellHeight: CELL_HEIGHT });
+  const cellSizeRef = useRef({
+    cellWidth: CELL_WIDTH,
+    cellHeight: CELL_HEIGHT,
+  });
   const gridDimsRef = useRef({ gridRows, gridCols });
   gridDimsRef.current = { gridRows, gridCols };
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
@@ -137,8 +140,7 @@ export function DiagramCanvas({
 
   useLayoutEffect(() => {
     const el = containerRef.current;
-    const w =
-      el && el.clientWidth > 0 ? el.clientWidth : gridCols * CELL_WIDTH;
+    const w = el && el.clientWidth > 0 ? el.clientWidth : gridCols * CELL_WIDTH;
     const h =
       el && el.clientHeight > 0 ? el.clientHeight : gridRows * CELL_HEIGHT;
     const cellWidth = w / gridCols;
@@ -148,12 +150,18 @@ export function DiagramCanvas({
     setCellSize(newCellSize);
     setMinZoom(computeMinZoom(w, h));
     setNodes(
-      applyInitialGridLayout(rawNodes, gridRows, gridCols, cellWidth, cellHeight),
+      applyInitialGridLayout(
+        rawNodes,
+        gridRows,
+        gridCols,
+        cellWidth,
+        cellHeight,
+      ),
     );
     // Reset viewport so the grid fills the container edge-to-edge (zoom=1 with
     // cellWidth = containerW/cols means the grid exactly fills the viewport).
     rfInstanceRef.current?.setViewport({ x: 0, y: 0, zoom: 1 });
-  }, [rawNodes, gridRows, gridCols]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [rawNodes, gridRows, gridCols]);
 
   useLayoutEffect(() => {
     const el = containerRef.current;
@@ -167,13 +175,18 @@ export function DiagramCanvas({
       const { gridRows: rows, gridCols: cols } = gridDimsRef.current;
       const newCellWidth = w / cols;
       const newCellHeight = h / rows;
-      const { cellWidth: oldCellWidth, cellHeight: oldCellHeight } = cellSizeRef.current;
+      const { cellWidth: oldCellWidth, cellHeight: oldCellHeight } =
+        cellSizeRef.current;
       // Skip sub-pixel noise to avoid infinite reflow loops.
       if (
         Math.abs(newCellWidth - oldCellWidth) < 0.5 &&
         Math.abs(newCellHeight - oldCellHeight) < 0.5
-      ) return;
-      const newCellSize = { cellWidth: newCellWidth, cellHeight: newCellHeight };
+      )
+        return;
+      const newCellSize = {
+        cellWidth: newCellWidth,
+        cellHeight: newCellHeight,
+      };
       cellSizeRef.current = newCellSize; // update ref BEFORE setNodes
       setCellSize(newCellSize);
       setMinZoom(computeMinZoom(w, h));
@@ -191,12 +204,10 @@ export function DiagramCanvas({
     });
     observer.observe(el);
     return () => observer.disconnect();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   /** Absolute canvas position of a node (handles child nodes with a parentId). */
-  function absolutePosition(
-    node: Node,
-  ): { x: number; y: number } {
+  function absolutePosition(node: Node): { x: number; y: number } {
     if (!node.parentId) return node.position;
     const parent = nodes.find((n) => n.id === node.parentId);
     return {
@@ -240,14 +251,25 @@ export function DiagramCanvas({
     // Build occupancy from all OTHER grid nodes using absolute positions.
     const absNodes = resolveAbsolutePositions(nodes);
     const others = absNodes.filter((n) => n.id !== node.id && isGridNode(n));
-    const occupied = buildOccupancyMap(others, gridRows, gridCols, cellWidth, cellHeight);
+    const occupied = buildOccupancyMap(
+      others,
+      gridRows,
+      gridCols,
+      cellWidth,
+      cellHeight,
+    );
 
     const snapCell =
       targetCell === null || occupied.has(`${targetCell.row},${targetCell.col}`)
         ? (origin ?? { row: 0, col: 0 })
         : targetCell;
 
-    const snapAbs = cellCenter(snapCell.row, snapCell.col, cellWidth, cellHeight);
+    const snapAbs = cellCenter(
+      snapCell.row,
+      snapCell.col,
+      cellWidth,
+      cellHeight,
+    );
 
     // Compute new position: relative to parent if the node has one.
     const parent = node.parentId
@@ -276,7 +298,9 @@ export function DiagramCanvas({
         onNodeDragStop={handleNodeDragStop}
         nodesConnectable={false}
         defaultViewport={{ x: 0, y: 0, zoom: 1 }}
-        onInit={(inst) => { rfInstanceRef.current = inst; }}
+        onInit={(inst) => {
+          rfInstanceRef.current = inst;
+        }}
         minZoom={minZoom}
       >
         <GridBackground

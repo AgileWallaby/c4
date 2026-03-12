@@ -4,10 +4,7 @@ import { getAllViews, parseView } from "../parser/workspaceJsonParser";
 import { WorkspaceLoader } from "../components/WorkspaceLoader";
 import { Header } from "../components/Header";
 import { DiagramCanvas } from "../components/DiagramCanvas";
-import {
-  isGridNode,
-  computeDefaultGridDimensions,
-} from "../utils/gridLayout";
+import { isGridNode, computeDefaultGridDimensions } from "../utils/gridLayout";
 
 export function App() {
   const [workspace, setWorkspace] = useState<WorkspaceJson | null>(null);

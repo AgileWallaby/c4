@@ -5,9 +5,11 @@ import type { Node, Edge } from "@xyflow/react";
 
 beforeEach(() => {
   global.ResizeObserver = class ResizeObserver {
+    /* eslint-disable @typescript-eslint/no-empty-function */
     observe() {}
     unobserve() {}
     disconnect() {}
+    /* eslint-enable @typescript-eslint/no-empty-function */
   };
 });
 
@@ -49,7 +51,9 @@ vi.mock("@xyflow/react", () => ({
         data-edge-count={edges.length}
         data-node-types={Object.keys(nodeTypes).join(",")}
         data-edge-types={Object.keys(edgeTypes).join(",")}
-        data-default-viewport={defaultViewport ? JSON.stringify(defaultViewport) : ""}
+        data-default-viewport={
+          defaultViewport ? JSON.stringify(defaultViewport) : ""
+        }
         data-min-zoom={minZoom !== undefined ? String(minZoom) : ""}
       >
         {children}
@@ -115,9 +119,7 @@ describe("DiagramCanvas", () => {
   });
 
   it("registers all custom node types", () => {
-    render(
-      <DiagramCanvas nodes={[]} edges={[]} gridRows={2} gridCols={2} />,
-    );
+    render(<DiagramCanvas nodes={[]} edges={[]} gridRows={2} gridCols={2} />);
     const flow = screen.getByTestId("react-flow");
     const types = flow.getAttribute("data-node-types")!.split(",");
     expect(types).toContain("personNode");
@@ -127,41 +129,32 @@ describe("DiagramCanvas", () => {
   });
 
   it("registers the custom edge type", () => {
-    render(
-      <DiagramCanvas nodes={[]} edges={[]} gridRows={2} gridCols={2} />,
-    );
+    render(<DiagramCanvas nodes={[]} edges={[]} gridRows={2} gridCols={2} />);
     const flow = screen.getByTestId("react-flow");
     expect(flow.getAttribute("data-edge-types")).toContain("relationshipEdge");
   });
 
   it("sets defaultViewport to zoom=1 at origin so grid fills container", () => {
-    render(
-      <DiagramCanvas nodes={[]} edges={[]} gridRows={2} gridCols={2} />,
-    );
+    render(<DiagramCanvas nodes={[]} edges={[]} gridRows={2} gridCols={2} />);
     const vp = JSON.parse(
-      screen.getByTestId("react-flow").getAttribute("data-default-viewport") ?? "{}",
+      screen.getByTestId("react-flow").getAttribute("data-default-viewport") ??
+        "{}",
     );
     expect(vp).toEqual({ x: 0, y: 0, zoom: 1 });
   });
 
   it("renders Controls", () => {
-    render(
-      <DiagramCanvas nodes={[]} edges={[]} gridRows={2} gridCols={2} />,
-    );
+    render(<DiagramCanvas nodes={[]} edges={[]} gridRows={2} gridCols={2} />);
     expect(screen.getByTestId("controls")).toBeTruthy();
   });
 
   it("renders MiniMap", () => {
-    render(
-      <DiagramCanvas nodes={[]} edges={[]} gridRows={2} gridCols={2} />,
-    );
+    render(<DiagramCanvas nodes={[]} edges={[]} gridRows={2} gridCols={2} />);
     expect(screen.getByTestId("minimap")).toBeTruthy();
   });
 
   it("renders a bounded grid SVG", () => {
-    render(
-      <DiagramCanvas nodes={[]} edges={[]} gridRows={2} gridCols={3} />,
-    );
+    render(<DiagramCanvas nodes={[]} edges={[]} gridRows={2} gridCols={3} />);
     expect(screen.getByTestId("grid-background")).toBeTruthy();
   });
 
@@ -191,12 +184,7 @@ describe("DiagramCanvas", () => {
       data: { label: "A" },
     };
     render(
-      <DiagramCanvas
-        nodes={[leafNode]}
-        edges={[]}
-        gridRows={2}
-        gridCols={2}
-      />,
+      <DiagramCanvas nodes={[leafNode]} edges={[]} gridRows={2} gridCols={2} />,
     );
 
     // Simulate drag to cell (0,1)
