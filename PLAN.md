@@ -1,5 +1,8 @@
 # C4 Viewer — Implementation Plan
 
+* ALways include testing when doing work in this plan.
+* Always update the Completion Checklist at the end of this file after completing the work.
+
 ## Step 1: Scaffold the App
 
 Run the Nx generator to create the React app:
@@ -501,7 +504,7 @@ Fix any lint errors or type errors before considering the implementation complet
 - [x] `parser/types.ts` — workspace JSON interfaces
 - [x] `parser/workspaceJsonParser.ts` — ID map, node/edge building, layout selection
 - [x] `parser/layoutEngine.ts` — dagre two-pass layout
-- [ ] `WorkspaceLoader` — drag-and-drop / file picker
+- [x] `WorkspaceLoader` — drag-and-drop / file picker
 - [ ] `Header` + `ViewSelector`
 - [ ] `PersonNode`, `SoftwareSystemNode`, `ContainerNode`, `GroupNode`
 - [ ] `RelationshipEdge`
