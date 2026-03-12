@@ -99,6 +99,7 @@
         "id": "g1",
         "name": "Internal Users",
         "people": [
+          { "id": "1", "name": "Customer" },
           { "id": "2", "name": "Admin" }
         ]
       }

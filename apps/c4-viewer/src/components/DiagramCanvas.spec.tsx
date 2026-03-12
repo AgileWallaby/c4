@@ -1,7 +1,15 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, act } from "@testing-library/react";
 import { DiagramCanvas } from "./DiagramCanvas";
 import type { Node, Edge } from "@xyflow/react";
+
+beforeEach(() => {
+  global.ResizeObserver = class ResizeObserver {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  };
+});
 
 let capturedOnNodeDragStop:
   | ((_e: React.MouseEvent, node: Node) => void)
@@ -13,18 +21,26 @@ vi.mock("@xyflow/react", () => ({
     edges,
     nodeTypes,
     edgeTypes,
-    fitView,
+    defaultViewport,
+    minZoom,
     onNodeDragStop,
+    onInit,
     children,
   }: {
     nodes: Node[];
     edges: Edge[];
     nodeTypes: Record<string, unknown>;
     edgeTypes: Record<string, unknown>;
-    fitView?: boolean;
+    defaultViewport?: { x: number; y: number; zoom: number };
+    minZoom?: number;
     onNodeDragStop?: (_e: React.MouseEvent, node: Node) => void;
+    onInit?: (instance: { setViewport: () => void }) => void;
     children?: React.ReactNode;
   }) => {
+    const React = require("react");
+    React.useEffect(() => {
+      onInit?.({ setViewport: vi.fn() });
+    }, [onInit]);
     capturedOnNodeDragStop = onNodeDragStop;
     return (
       <div
@@ -33,7 +49,8 @@ vi.mock("@xyflow/react", () => ({
         data-edge-count={edges.length}
         data-node-types={Object.keys(nodeTypes).join(",")}
         data-edge-types={Object.keys(edgeTypes).join(",")}
-        data-fit-view={fitView ? "true" : "false"}
+        data-default-viewport={defaultViewport ? JSON.stringify(defaultViewport) : ""}
+        data-min-zoom={minZoom !== undefined ? String(minZoom) : ""}
       >
         {children}
       </div>
@@ -117,13 +134,14 @@ describe("DiagramCanvas", () => {
     expect(flow.getAttribute("data-edge-types")).toContain("relationshipEdge");
   });
 
-  it("enables fitView", () => {
+  it("sets defaultViewport to zoom=1 at origin so grid fills container", () => {
     render(
       <DiagramCanvas nodes={[]} edges={[]} gridRows={2} gridCols={2} />,
     );
-    expect(
-      screen.getByTestId("react-flow").getAttribute("data-fit-view"),
-    ).toBe("true");
+    const vp = JSON.parse(
+      screen.getByTestId("react-flow").getAttribute("data-default-viewport") ?? "{}",
+    );
+    expect(vp).toEqual({ x: 0, y: 0, zoom: 1 });
   });
 
   it("renders Controls", () => {
@@ -154,6 +172,15 @@ describe("DiagramCanvas", () => {
     const wrapper = container.firstElementChild as HTMLElement;
     expect(wrapper.className).toMatch(/h-full/);
     expect(wrapper.className).toMatch(/w-full/);
+  });
+
+  it("passes a minZoom prop between 0 and 1 to ReactFlow", () => {
+    render(<DiagramCanvas nodes={[]} edges={[]} gridRows={2} gridCols={2} />);
+    const val = Number(
+      screen.getByTestId("react-flow").getAttribute("data-min-zoom"),
+    );
+    expect(val).toBeGreaterThan(0);
+    expect(val).toBeLessThanOrEqual(1);
   });
 
   it("snaps node to cell center after drag to empty cell", async () => {

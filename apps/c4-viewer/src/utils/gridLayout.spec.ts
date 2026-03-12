@@ -8,12 +8,15 @@ import {
   buildOccupancyMap,
   resolveAbsolutePositions,
   recomputeGroupSizes,
+  computeMinZoom,
+  rescaleToNewCellSizes,
   isGridNode,
   CELL_WIDTH,
   CELL_HEIGHT,
   NODE_WIDTH,
   NODE_HEIGHT,
   GROUP_PADDING,
+  MARGIN,
 } from "./gridLayout";
 
 function makeNode(
@@ -266,6 +269,73 @@ describe("applyInitialGridLayout", () => {
     // Group should wrap the child
     expect(updatedGroup.position.x).toBe(cellCenter(0, 0).x - GROUP_PADDING);
     expect(updatedGroup.position.y).toBe(cellCenter(0, 0).y - GROUP_PADDING);
+  });
+});
+
+describe("computeMinZoom", () => {
+  it("returns 1 - 2*MARGIN/w when width is the binding constraint", () => {
+    const w = 800, h = 400;
+    expect(computeMinZoom(w, h)).toBeCloseTo(1 - (2 * MARGIN) / w);
+  });
+
+  it("returns 1 - 2*MARGIN/h when height is the binding constraint", () => {
+    const w = 400, h = 800;
+    expect(computeMinZoom(w, h)).toBeCloseTo(1 - (2 * MARGIN) / h);
+  });
+
+  it("returns 0.5 for zero-size container", () => {
+    expect(computeMinZoom(0, 0)).toBe(0.5);
+    expect(computeMinZoom(0, 400)).toBe(0.5);
+    expect(computeMinZoom(400, 0)).toBe(0.5);
+  });
+});
+
+describe("rescaleToNewCellSizes", () => {
+  it("top-level node stays in same logical cell after resize", () => {
+    const cw1 = 240, ch1 = 160, cw2 = 300, ch2 = 200;
+    const pos = cellCenter(1, 0, cw1, ch1);
+    const node = makeNode("a", pos.x, pos.y);
+    const result = rescaleToNewCellSizes([node], 2, 2, cw1, ch1, cw2, ch2);
+    expect(result[0].position).toEqual(cellCenter(1, 0, cw2, ch2));
+  });
+
+  it("multiple nodes in different cells each map to correct new cell centers", () => {
+    const cw1 = 240, ch1 = 160, cw2 = 300, ch2 = 200;
+    const nodeA = makeNode("a", cellCenter(0, 0, cw1, ch1).x, cellCenter(0, 0, cw1, ch1).y);
+    const nodeB = makeNode("b", cellCenter(1, 1, cw1, ch1).x, cellCenter(1, 1, cw1, ch1).y);
+    const result = rescaleToNewCellSizes([nodeA, nodeB], 2, 2, cw1, ch1, cw2, ch2);
+    expect(result.find((n) => n.id === "a")!.position).toEqual(cellCenter(0, 0, cw2, ch2));
+    expect(result.find((n) => n.id === "b")!.position).toEqual(cellCenter(1, 1, cw2, ch2));
+  });
+
+  it("child node in group is correctly repositioned and group bounds update", () => {
+    const cw1 = 240, ch1 = 160, cw2 = 300, ch2 = 200;
+    const group = makeGroup("g", 0, 0);
+    const child = makeNode("child", 0, 0, "containerNode", "g");
+    const initial = applyInitialGridLayout([group, child], 2, 2, cw1, ch1);
+
+    const result = rescaleToNewCellSizes(initial, 2, 2, cw1, ch1, cw2, ch2);
+    const updatedChild = result.find((n) => n.id === "child")!;
+    const updatedGroup = result.find((n) => n.id === "g")!;
+
+    expect(updatedChild.position).toEqual({ x: GROUP_PADDING, y: GROUP_PADDING });
+    expect(updatedGroup.position).toEqual({
+      x: cellCenter(0, 0, cw2, ch2).x - GROUP_PADDING,
+      y: cellCenter(0, 0, cw2, ch2).y - GROUP_PADDING,
+    });
+  });
+
+  it("returns nodes unchanged when oldCellWidth <= 0", () => {
+    const nodes = [makeNode("a", 10, 20)];
+    const result = rescaleToNewCellSizes(nodes, 2, 2, 0, 160, 300, 200);
+    expect(result).toBe(nodes);
+  });
+
+  it("off-grid node is clamped to nearest valid cell", () => {
+    const cw1 = 240, ch1 = 160, cw2 = 300, ch2 = 200;
+    const node = makeNode("a", -1000, -1000);
+    const result = rescaleToNewCellSizes([node], 2, 2, cw1, ch1, cw2, ch2);
+    expect(result[0].position).toEqual(cellCenter(0, 0, cw2, ch2));
   });
 });
 

@@ -6,7 +6,7 @@ import {
   useNodesState,
   useViewport,
 } from "@xyflow/react";
-import type { Node, Edge } from "@xyflow/react";
+import type { Node, Edge, ReactFlowInstance } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { PersonNode } from "./nodes/PersonNode";
 import { SoftwareSystemNode } from "./nodes/SoftwareSystemNode";
@@ -21,6 +21,8 @@ import {
   applyInitialGridLayout,
   resolveAbsolutePositions,
   recomputeGroupSizes,
+  computeMinZoom,
+  rescaleToNewCellSizes,
   CELL_WIDTH,
   CELL_HEIGHT,
 } from "../utils/gridLayout";
@@ -123,6 +125,11 @@ export function DiagramCanvas({
     cellWidth: CELL_WIDTH,
     cellHeight: CELL_HEIGHT,
   });
+  const [minZoom, setMinZoom] = useState(0.5);
+  const rfInstanceRef = useRef<ReactFlowInstance | null>(null);
+  const cellSizeRef = useRef({ cellWidth: CELL_WIDTH, cellHeight: CELL_HEIGHT });
+  const gridDimsRef = useRef({ gridRows, gridCols });
+  gridDimsRef.current = { gridRows, gridCols };
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const dragOriginRef = useRef<Map<string, { row: number; col: number }>>(
     new Map(),
@@ -136,11 +143,55 @@ export function DiagramCanvas({
       el && el.clientHeight > 0 ? el.clientHeight : gridRows * CELL_HEIGHT;
     const cellWidth = w / gridCols;
     const cellHeight = h / gridRows;
-    setCellSize({ cellWidth, cellHeight });
+    const newCellSize = { cellWidth, cellHeight };
+    cellSizeRef.current = newCellSize;
+    setCellSize(newCellSize);
+    setMinZoom(computeMinZoom(w, h));
     setNodes(
       applyInitialGridLayout(rawNodes, gridRows, gridCols, cellWidth, cellHeight),
     );
+    // Reset viewport so the grid fills the container edge-to-edge (zoom=1 with
+    // cellWidth = containerW/cols means the grid exactly fills the viewport).
+    rfInstanceRef.current?.setViewport({ x: 0, y: 0, zoom: 1 });
   }, [rawNodes, gridRows, gridCols]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useLayoutEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (!entry) return;
+      const w = entry.contentRect.width;
+      const h = entry.contentRect.height;
+      if (w <= 0 || h <= 0) return;
+      const { gridRows: rows, gridCols: cols } = gridDimsRef.current;
+      const newCellWidth = w / cols;
+      const newCellHeight = h / rows;
+      const { cellWidth: oldCellWidth, cellHeight: oldCellHeight } = cellSizeRef.current;
+      // Skip sub-pixel noise to avoid infinite reflow loops.
+      if (
+        Math.abs(newCellWidth - oldCellWidth) < 0.5 &&
+        Math.abs(newCellHeight - oldCellHeight) < 0.5
+      ) return;
+      const newCellSize = { cellWidth: newCellWidth, cellHeight: newCellHeight };
+      cellSizeRef.current = newCellSize; // update ref BEFORE setNodes
+      setCellSize(newCellSize);
+      setMinZoom(computeMinZoom(w, h));
+      setNodes((currentNodes) =>
+        rescaleToNewCellSizes(
+          currentNodes,
+          rows,
+          cols,
+          oldCellWidth,
+          oldCellHeight,
+          newCellWidth,
+          newCellHeight,
+        ),
+      );
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   /** Absolute canvas position of a node (handles child nodes with a parentId). */
   function absolutePosition(
@@ -224,8 +275,9 @@ export function DiagramCanvas({
         onNodeDragStart={handleNodeDragStart}
         onNodeDragStop={handleNodeDragStop}
         nodesConnectable={false}
-        fitView
-        fitViewOptions={{ padding: 0 }}
+        defaultViewport={{ x: 0, y: 0, zoom: 1 }}
+        onInit={(inst) => { rfInstanceRef.current = inst; }}
+        minZoom={minZoom}
       >
         <GridBackground
           rows={gridRows}

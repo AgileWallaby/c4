@@ -5,6 +5,7 @@ export const CELL_HEIGHT = 160;
 export const NODE_WIDTH = 176;
 export const NODE_HEIGHT = 80;
 export const GROUP_PADDING = 40;
+export const MARGIN = 20; // px — max visible margin beyond grid at minZoom
 
 /** Top-level non-group nodes (original definition, kept for reference). */
 export function isLeafTopLevel(node: Node): boolean {
@@ -188,6 +189,60 @@ export function buildOccupancyMap(
     }
   }
   return map;
+}
+
+export function computeMinZoom(containerW: number, containerH: number): number {
+  if (containerW <= 0 || containerH <= 0) return 0.5;
+  return Math.max(
+    1 - (2 * MARGIN) / containerW,
+    1 - (2 * MARGIN) / containerH,
+  );
+}
+
+/**
+ * Remaps nodes to equivalent cells in new cell geometry while preserving
+ * logical (row, col) positions. Preserves user-rearranged node positions
+ * across container resizes.
+ */
+export function rescaleToNewCellSizes(
+  nodes: Node[],
+  rows: number,
+  cols: number,
+  oldCellWidth: number,
+  oldCellHeight: number,
+  newCellWidth: number,
+  newCellHeight: number,
+): Node[] {
+  if (oldCellWidth <= 0 || oldCellHeight <= 0) return nodes;
+
+  const nodeMap = new Map(nodes.map((n) => [n.id, n]));
+
+  const staged = nodes.map((node) => {
+    if (node.type === "groupNode") {
+      // Reset group position; recomputeGroupSizes will recompute from children.
+      return { ...node, position: { x: 0, y: 0 } };
+    }
+
+    // Compute absolute position in old grid.
+    const parent = node.parentId ? nodeMap.get(node.parentId) : undefined;
+    const absX = (parent?.position.x ?? 0) + node.position.x;
+    const absY = (parent?.position.y ?? 0) + node.position.y;
+
+    let cell = positionToCell(absX, absY, rows, cols, oldCellWidth, oldCellHeight);
+    if (!cell) {
+      // Clamp off-grid nodes to nearest valid cell.
+      const row = Math.min(rows - 1, Math.max(0, Math.round(absY / oldCellHeight)));
+      const col = Math.min(cols - 1, Math.max(0, Math.round(absX / oldCellWidth)));
+      cell = { row, col };
+    }
+
+    return {
+      ...node,
+      position: cellCenter(cell.row, cell.col, newCellWidth, newCellHeight),
+    };
+  });
+
+  return recomputeGroupSizes(staged, newCellWidth, newCellHeight);
 }
 
 /**
