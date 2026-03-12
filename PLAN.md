@@ -507,7 +507,7 @@ Fix any lint errors or type errors before considering the implementation complet
 - [x] `WorkspaceLoader` — drag-and-drop / file picker
 - [x] `Header` + `ViewSelector`
 - [x] `PersonNode`, `SoftwareSystemNode`, `ContainerNode`, `GroupNode`
-- [ ] `RelationshipEdge`
+- [x] `RelationshipEdge`
 - [ ] `DiagramCanvas` — React Flow canvas with all custom types registered
 - [ ] `App.tsx` — state wiring
 - [ ] Parser unit tests with fixture
