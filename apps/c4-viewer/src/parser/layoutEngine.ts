@@ -61,7 +61,11 @@ export function computeLayout(nodes: Node[], edges: Edge[], autoLayout?: AutoLay
         const children = positionedLeaves.filter((n) => n.parentId === groupNode.id)
 
         if (children.length === 0) {
-            return { ...groupNode, position: { x: 0, y: 0 }, style: { ...groupNode.style, width: NODE_WIDTH + GROUP_PADDING * 2, height: NODE_HEIGHT + GROUP_PADDING * 2 } }
+            return {
+                ...groupNode,
+                position: { x: 0, y: 0 },
+                style: { ...groupNode.style, width: NODE_WIDTH + GROUP_PADDING * 2, height: NODE_HEIGHT + GROUP_PADDING * 2 },
+            }
         }
 
         const minX = Math.min(...children.map((c) => c.position.x))

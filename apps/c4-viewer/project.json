@@ -61,6 +61,14 @@
         "reportsDirectory": "../../coverage/apps/c4-viewer"
       }
     },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/c4-viewer/**/*.ts", "apps/c4-viewer/**/*.tsx"],
+        "fix": true
+      }
+    },
     "serve-static": {
       "executor": "@nx/web:file-server",
       "dependsOn": ["build"],

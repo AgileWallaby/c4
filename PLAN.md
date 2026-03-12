@@ -506,7 +506,7 @@ Fix any lint errors or type errors before considering the implementation complet
 - [x] `parser/layoutEngine.ts` — dagre two-pass layout
 - [x] `WorkspaceLoader` — drag-and-drop / file picker
 - [x] `Header` + `ViewSelector`
-- [ ] `PersonNode`, `SoftwareSystemNode`, `ContainerNode`, `GroupNode`
+- [x] `PersonNode`, `SoftwareSystemNode`, `ContainerNode`, `GroupNode`
 - [ ] `RelationshipEdge`
 - [ ] `DiagramCanvas` — React Flow canvas with all custom types registered
 - [ ] `App.tsx` — state wiring

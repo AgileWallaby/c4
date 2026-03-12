@@ -6,7 +6,11 @@ interface ViewSelectorProps {
   onChange: (key: string) => void;
 }
 
-export function ViewSelector({ views, selectedKey, onChange }: ViewSelectorProps) {
+export function ViewSelector({
+  views,
+  selectedKey,
+  onChange,
+}: ViewSelectorProps) {
   return (
     <select
       value={selectedKey}

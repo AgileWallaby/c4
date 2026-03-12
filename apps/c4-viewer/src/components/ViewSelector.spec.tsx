@@ -46,7 +46,11 @@ describe("ViewSelector", () => {
   it("calls onChange with the new key when selection changes", async () => {
     const onChange = vi.fn();
     render(
-      <ViewSelector views={views} selectedKey="landscape" onChange={onChange} />,
+      <ViewSelector
+        views={views}
+        selectedKey="landscape"
+        onChange={onChange}
+      />,
     );
     const select = screen.getByRole("combobox");
     await userEvent.selectOptions(select, "containers");
