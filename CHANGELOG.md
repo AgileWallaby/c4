@@ -1,6 +1,14 @@
 ## 2.8.0 (2026-03-17)
 
-This was a version bump only, there were no code changes.
+### 🚀 Features
+
+- add the new C4 Viewer app with workspace loading, parsing, interactive diagram rendering, and end-to-end coverage
+- expand c4-model with workspace JSON export, model validation, richer view handling, and nested group support
+- add cookbook compliance tests and DSL examples to broaden Structurizr compatibility coverage
+
+### ❤️ Thank You
+
+- James Webster @jimmcslim
 
 ## 2.7.0 (2026-03-09)
 
