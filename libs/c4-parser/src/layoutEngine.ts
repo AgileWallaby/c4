@@ -13,6 +13,55 @@ const rankDirectionMap: Record<string, string> = {
     RightLeft: 'RL',
 }
 
+/**
+ * Size group nodes to wrap their children and convert child positions to parent-relative coordinates.
+ * Mutates leafNodes positions in place.
+ */
+export function adjustGroupBounds(groupNodes: Node[], leafNodes: Node[]): Node[] {
+    const leafById = new Map(leafNodes.map((n) => [n.id, n]))
+
+    const positionedGroups = groupNodes.map((groupNode) => {
+        const children = leafNodes.filter((n) => n.parentId === groupNode.id)
+
+        if (children.length === 0) {
+            return {
+                ...groupNode,
+                position: { x: 0, y: 0 },
+                style: { ...groupNode.style, width: NODE_WIDTH + GROUP_PADDING * 2, height: NODE_HEIGHT + GROUP_PADDING * 2 },
+            }
+        }
+
+        const minX = Math.min(...children.map((c) => c.position.x))
+        const minY = Math.min(...children.map((c) => c.position.y))
+        const maxX = Math.max(...children.map((c) => c.position.x + NODE_WIDTH))
+        const maxY = Math.max(...children.map((c) => c.position.y + NODE_HEIGHT))
+
+        const groupX = minX - GROUP_PADDING
+        const groupY = minY - GROUP_PADDING
+        const groupWidth = maxX - minX + GROUP_PADDING * 2
+        const groupHeight = maxY - minY + GROUP_PADDING * 2
+
+        // Adjust child positions to be relative to the group
+        for (const child of children) {
+            const positioned = leafById.get(child.id)
+            if (positioned) {
+                positioned.position = {
+                    x: child.position.x - groupX,
+                    y: child.position.y - groupY,
+                }
+            }
+        }
+
+        return {
+            ...groupNode,
+            position: { x: groupX, y: groupY },
+            style: { ...groupNode.style, width: groupWidth, height: groupHeight },
+        }
+    })
+
+    return [...positionedGroups, ...leafNodes]
+}
+
 export function computeLayout(nodes: Node[], edges: Edge[], autoLayout?: AutoLayout): Node[] {
     const rankdir = autoLayout?.rankDirection ? (rankDirectionMap[autoLayout.rankDirection] ?? 'TB') : 'TB'
     const ranksep = autoLayout?.rankSeparation ?? 50
@@ -55,46 +104,5 @@ export function computeLayout(nodes: Node[], edges: Edge[], autoLayout?: AutoLay
     }
 
     // Pass 2: size group nodes to wrap their children
-    const leafById = new Map(positionedLeaves.map((n) => [n.id, n]))
-
-    const positionedGroups = groupNodes.map((groupNode) => {
-        const children = positionedLeaves.filter((n) => n.parentId === groupNode.id)
-
-        if (children.length === 0) {
-            return {
-                ...groupNode,
-                position: { x: 0, y: 0 },
-                style: { ...groupNode.style, width: NODE_WIDTH + GROUP_PADDING * 2, height: NODE_HEIGHT + GROUP_PADDING * 2 },
-            }
-        }
-
-        const minX = Math.min(...children.map((c) => c.position.x))
-        const minY = Math.min(...children.map((c) => c.position.y))
-        const maxX = Math.max(...children.map((c) => c.position.x + NODE_WIDTH))
-        const maxY = Math.max(...children.map((c) => c.position.y + NODE_HEIGHT))
-
-        const groupX = minX - GROUP_PADDING
-        const groupY = minY - GROUP_PADDING
-        const groupWidth = maxX - minX + GROUP_PADDING * 2
-        const groupHeight = maxY - minY + GROUP_PADDING * 2
-
-        // Adjust child positions to be relative to the group
-        for (const child of children) {
-            const positioned = leafById.get(child.id)
-            if (positioned) {
-                positioned.position = {
-                    x: child.position.x - groupX,
-                    y: child.position.y - groupY,
-                }
-            }
-        }
-
-        return {
-            ...groupNode,
-            position: { x: groupX, y: groupY },
-            style: { ...groupNode.style, width: groupWidth, height: groupHeight },
-        }
-    })
-
-    return [...positionedGroups, ...positionedLeaves]
+    return adjustGroupBounds(groupNodes, positionedLeaves)
 }

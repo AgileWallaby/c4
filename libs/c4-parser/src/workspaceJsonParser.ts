@@ -1,6 +1,6 @@
 import type { Node, Edge } from '@xyflow/react'
 import type { WorkspaceJson, StructurizrView, ResolvedElement, ElementType, Relationship } from './types'
-import { computeLayout } from './layoutEngine'
+import { computeLayout, adjustGroupBounds } from './layoutEngine'
 
 export function getAllViews(workspace: WorkspaceJson): StructurizrView[] {
     const { views } = workspace
@@ -191,6 +191,10 @@ export function parseView(workspace: WorkspaceJson, viewKey: string): { nodes: N
     const allNodes = [...groupNodes, ...elementNodes]
 
     if (hasEmbeddedPositions) {
+        if (groupNodes.length > 0) {
+            const adjustedNodes = adjustGroupBounds(groupNodes, elementNodes)
+            return { nodes: adjustedNodes, edges }
+        }
         return { nodes: allNodes, edges }
     }
 

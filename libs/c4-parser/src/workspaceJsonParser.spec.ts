@@ -44,11 +44,27 @@ describe('parseView', () => {
         })
 
         it('uses embedded positions from the view JSON', () => {
+            // Customer and Admin are inside the "Internal Users" group, so their
+            // positions are converted to parent-relative coordinates.
+            // Group origin = (100 - 40, 200 - 40) = (60, 160)
             const customer = result.nodes.find((n) => n.id === '1')
-            expect(customer?.position).toEqual({ x: 100, y: 200 })
+            expect(customer?.position).toEqual({ x: 40, y: 40 })
 
+            const admin = result.nodes.find((n) => n.id === '2')
+            expect(admin?.position).toEqual({ x: 340, y: 40 })
+
+            // Non-grouped elements keep their absolute positions
             const bankingSystem = result.nodes.find((n) => n.id === '3')
             expect(bankingSystem?.position).toEqual({ x: 250, y: 450 })
+        })
+
+        it('sizes the group node to wrap its children', () => {
+            const group = result.nodes.find((n) => n.id === 'group-g1')
+            expect(group).toBeDefined()
+            expect(group?.position).toEqual({ x: 60, y: 160 })
+            expect(group?.style).toEqual(
+                expect.objectContaining({ width: 552, height: 160 })
+            )
         })
 
         it('marks external elements with isExternal: true', () => {
@@ -109,8 +125,8 @@ describe('parseView', () => {
         })
 
         it('does not assign a parentId to non-grouped elements', () => {
-            const customer = result.nodes.find((n) => n.id === '1')
-            expect(customer?.parentId).toBeUndefined()
+            const bankingSystem = result.nodes.find((n) => n.id === '3')
+            expect(bankingSystem?.parentId).toBeUndefined()
         })
 
         it('computes non-zero positions for all leaf nodes via dagre', () => {
