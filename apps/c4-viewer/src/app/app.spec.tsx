@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import App from "./app";
-import type { WorkspaceJson } from "../parser/types";
+import type { WorkspaceJson } from '@c4/c4-parser'
 
 const mockViews = [
   { key: "view1", description: "View 1" },

@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { WorkspaceLoader } from "./WorkspaceLoader";
-import type { WorkspaceJson } from "../parser/types";
+import type { WorkspaceJson } from '@c4/c4-parser'
 
 const minimalWorkspace: WorkspaceJson = {
   name: "Test",

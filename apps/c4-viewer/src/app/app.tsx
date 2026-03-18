@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import type { WorkspaceJson } from "../parser/types";
+import type { WorkspaceJson } from '@c4/c4-parser'
 import { getAllViews, parseView } from "@c4/c4-parser";
 import { WorkspaceLoader } from "../components/WorkspaceLoader";
 import { Header } from "../components/Header";
