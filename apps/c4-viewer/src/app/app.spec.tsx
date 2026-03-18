@@ -8,7 +8,7 @@ const mockViews = [
   { key: "view2", description: "View 2" },
 ];
 
-vi.mock("../parser/workspaceJsonParser", () => ({
+vi.mock("@c4/c4-parser", () => ({
   getAllViews: vi.fn(() => mockViews),
   parseView: vi.fn(() => ({ nodes: [], edges: [] })),
 }));

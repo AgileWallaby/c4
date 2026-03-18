@@ -15,6 +15,7 @@ const defaultGridProps = {
   minCells: 4,
   onGridRowsChange: vi.fn(),
   onGridColsChange: vi.fn(),
+  onExportImage: vi.fn(),
 };
 
 describe("Header", () => {
@@ -115,6 +116,7 @@ describe("Header", () => {
         selectedViewKey="landscape"
         onViewChange={vi.fn()}
         onReset={vi.fn()}
+        onExportImage={vi.fn()}
         gridRows={3}
         gridCols={4}
         minCells={6}
@@ -135,6 +137,7 @@ describe("Header", () => {
         selectedViewKey="landscape"
         onViewChange={vi.fn()}
         onReset={vi.fn()}
+        onExportImage={vi.fn()}
         gridRows={2}
         gridCols={2}
         minCells={4}
@@ -147,6 +150,37 @@ describe("Header", () => {
     expect(onGridRowsChange).toHaveBeenCalled();
   });
 
+  it("renders an Export PNG button", () => {
+    render(
+      <Header
+        workspaceName="My Workspace"
+        views={views}
+        selectedViewKey="landscape"
+        onViewChange={vi.fn()}
+        onReset={vi.fn()}
+        {...defaultGridProps}
+      />,
+    );
+    expect(screen.getByRole("button", { name: /export png/i })).toBeTruthy();
+  });
+
+  it("calls onExportImage when Export PNG is clicked", async () => {
+    const onExportImage = vi.fn();
+    render(
+      <Header
+        workspaceName="My Workspace"
+        views={views}
+        selectedViewKey="landscape"
+        onViewChange={vi.fn()}
+        onReset={vi.fn()}
+        {...defaultGridProps}
+        onExportImage={onExportImage}
+      />,
+    );
+    await userEvent.click(screen.getByRole("button", { name: /export png/i }));
+    expect(onExportImage).toHaveBeenCalledOnce();
+  });
+
   it("auto-adjusts cols upwards when rows reduced below minimum", () => {
     const onGridRowsChange = vi.fn();
     const onGridColsChange = vi.fn();
@@ -157,6 +191,7 @@ describe("Header", () => {
         selectedViewKey="landscape"
         onViewChange={vi.fn()}
         onReset={vi.fn()}
+        onExportImage={vi.fn()}
         gridRows={2}
         gridCols={2}
         minCells={4}

@@ -7,6 +7,7 @@ interface HeaderProps {
   selectedViewKey: string;
   onViewChange: (key: string) => void;
   onReset: () => void;
+  onExportImage: () => void;
   gridRows: number;
   gridCols: number;
   minCells: number;
@@ -20,6 +21,7 @@ export function Header({
   selectedViewKey,
   onViewChange,
   onReset,
+  onExportImage,
   gridRows,
   gridCols,
   minCells,
@@ -72,6 +74,13 @@ export function Header({
           className="w-14 rounded border border-gray-300 px-2 py-1.5 text-sm"
         />
       </div>
+      <button
+        type="button"
+        onClick={onExportImage}
+        className="shrink-0 rounded bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700"
+      >
+        Export PNG
+      </button>
       <button
         type="button"
         onClick={onReset}

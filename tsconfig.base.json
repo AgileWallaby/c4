@@ -16,7 +16,9 @@
     "baseUrl": ".",
     "paths": {
       "@agilewallaby/c4-model": ["libs/c4-model/src/index.ts"],
-      "@c4/c4-model-examples": ["libs/c4-model-examples/src/index.ts"]
+      "@c4/c4-model-examples": ["libs/c4-model-examples/src/index.ts"],
+      "@c4/c4-parser": ["libs/c4-parser/src/index.ts"],
+      "@c4/c4-diagram-renderer": ["libs/c4-diagram-renderer/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import type { WorkspaceJson } from "../parser/types";
-import { getAllViews, parseView } from "../parser/workspaceJsonParser";
+import { getAllViews, parseView } from "@c4/c4-parser";
 import { WorkspaceLoader } from "../components/WorkspaceLoader";
 import { Header } from "../components/Header";
 import { DiagramCanvas } from "../components/DiagramCanvas";
@@ -38,6 +38,29 @@ export function App() {
     resetGridForView(workspace!, key);
   }
 
+  const handleExportImage = useCallback(async () => {
+    if (!workspace || !selectedViewKey) return;
+
+    const res = await fetch("/api/export-image", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ workspace, viewKey: selectedViewKey }),
+    });
+
+    if (!res.ok) {
+      console.error("Export failed:", await res.text());
+      return;
+    }
+
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.download = `${selectedViewKey}.png`;
+    link.href = url;
+    link.click();
+    URL.revokeObjectURL(url);
+  }, [workspace, selectedViewKey]);
+
   if (!workspace) {
     return <WorkspaceLoader onWorkspaceLoaded={handleWorkspaceLoaded} />;
   }
@@ -53,6 +76,7 @@ export function App() {
         selectedViewKey={selectedViewKey}
         onViewChange={handleViewChange}
         onReset={handleReset}
+        onExportImage={handleExportImage}
         gridRows={gridRows}
         gridCols={gridCols}
         minCells={nodes.filter(isGridNode).length}
