@@ -69,6 +69,16 @@
         "fix": true
       }
     },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "nx run c4-viewer-api:serve",
+          "nx run c4-viewer:serve"
+        ],
+        "parallel": true
+      }
+    },
     "serve-static": {
       "executor": "@nx/web:file-server",
       "dependsOn": ["build"],

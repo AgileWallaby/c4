@@ -22,13 +22,21 @@ export default defineConfig({
         /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
         trace: 'on-first-retry',
     },
-    /* Run your local dev server before starting the tests */
-    webServer: {
-        command: 'pnpm exec nx run c4-viewer:preview',
-        url: 'http://localhost:4200',
-        reuseExistingServer: true,
-        cwd: workspaceRoot,
-    },
+    /* Run your local servers before starting the tests */
+    webServer: [
+        {
+            command: 'pnpm exec nx run c4-viewer-api:serve',
+            url: 'http://localhost:3001/health',
+            reuseExistingServer: true,
+            cwd: workspaceRoot,
+        },
+        {
+            command: 'pnpm exec nx run c4-viewer:preview',
+            url: 'http://localhost:4200',
+            reuseExistingServer: true,
+            cwd: workspaceRoot,
+        },
+    ],
     projects: [
         {
             name: 'chromium',

@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from "react";
-import type { WorkspaceJson } from '@c4/c4-parser'
-import type { Node } from '@xyflow/react'
+import type { WorkspaceJson } from "@c4/c4-parser";
+import type { Node } from "@xyflow/react";
 import { getAllViews, parseView } from "@c4/c4-parser";
 import { WorkspaceLoader } from "../components/WorkspaceLoader";
 import { Header } from "../components/Header";

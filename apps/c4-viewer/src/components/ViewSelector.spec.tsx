@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ViewSelector } from "./ViewSelector";
-import type { StructurizrView } from '@c4/c4-parser'
+import type { StructurizrView } from "@c4/c4-parser";
 
 const views: StructurizrView[] = [
   { key: "landscape" },

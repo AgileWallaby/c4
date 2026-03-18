@@ -4,20 +4,29 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
 import { nxCopyAssetsPlugin } from "@nx/vite/plugins/nx-copy-assets.plugin";
-import { exportImagePlugin } from "./vite-plugin-export-image";
-
 export default defineConfig(() => ({
   root: import.meta.dirname,
   cacheDir: "../../node_modules/.vite/apps/c4-viewer",
   server: {
     port: 4200,
     host: "localhost",
+    proxy: {
+      "/api": "http://localhost:3001",
+    },
   },
   preview: {
     port: 4200,
     host: "localhost",
+    proxy: {
+      "/api": "http://localhost:3001",
+    },
   },
-  plugins: [tailwindcss(), react(), nxViteTsPaths(), nxCopyAssetsPlugin(["*.md"]), exportImagePlugin()],
+  plugins: [
+    tailwindcss(),
+    react(),
+    nxViteTsPaths(),
+    nxCopyAssetsPlugin(["*.md"]),
+  ],
   // Uncomment this if you are using workers.
   // worker: {
   //   plugins: () => [ nxViteTsPaths() ],

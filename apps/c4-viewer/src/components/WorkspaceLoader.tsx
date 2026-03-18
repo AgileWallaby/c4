@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import type { WorkspaceJson } from '@c4/c4-parser'
+import type { WorkspaceJson } from "@c4/c4-parser";
 
 interface WorkspaceLoaderProps {
   onWorkspaceLoaded: (workspace: WorkspaceJson) => void;

@@ -1,0 +1,44 @@
+{
+  "name": "c4-viewer-api",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/c4-viewer-api/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/c4-viewer-api",
+        "main": "apps/c4-viewer-api/src/main.ts",
+        "tsConfig": "apps/c4-viewer-api/tsconfig.app.json",
+        "format": ["esm"],
+        "bundle": true,
+        "platform": "node",
+        "outputFileName": "main.js",
+        "external": ["playwright"]
+      }
+    },
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx --tsconfig tsconfig.base.json apps/c4-viewer-api/src/main.ts"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/c4-viewer-api/**/*.ts"],
+        "fix": true
+      }
+    },
+    "test": {
+      "executor": "@nx/vitest:test",
+      "outputs": ["{options.reportsDirectory}"],
+      "options": {
+        "reportsDirectory": "../../coverage/apps/c4-viewer-api"
+      }
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import type { StructurizrView } from '@c4/c4-parser'
+import type { StructurizrView } from "@c4/c4-parser";
 
 interface ViewSelectorProps {
   views: StructurizrView[];
