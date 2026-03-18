@@ -1,4 +1,4 @@
-export { renderToImage } from './renderToImage'
+export { renderToImage, renderNodesToImage } from './renderToImage'
 export type { RenderOptions } from './renderToImage'
 export { renderToHtml } from './renderToHtml'
 export type { RenderToHtmlOptions } from './renderToHtml'

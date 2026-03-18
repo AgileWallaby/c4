@@ -112,6 +112,7 @@ interface DiagramCanvasProps {
   edges: Edge[];
   gridRows: number;
   gridCols: number;
+  nodesRef?: React.MutableRefObject<Node[]>;
 }
 
 export function DiagramCanvas({
@@ -119,6 +120,7 @@ export function DiagramCanvas({
   edges,
   gridRows,
   gridCols,
+  nodesRef: externalNodesRef,
 }: DiagramCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [cellSize, setCellSize] = useState({
@@ -205,6 +207,11 @@ export function DiagramCanvas({
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
+
+  // Keep external ref in sync with current node positions.
+  useLayoutEffect(() => {
+    if (externalNodesRef) externalNodesRef.current = nodes;
+  }, [nodes, externalNodesRef]);
 
   /** Absolute canvas position of a node (handles child nodes with a parentId). */
   function absolutePosition(node: Node): { x: number; y: number } {

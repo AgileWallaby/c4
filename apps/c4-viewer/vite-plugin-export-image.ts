@@ -21,17 +21,23 @@ export function exportImagePlugin(): Plugin {
 
                 try {
                     const body = await readBody(req)
-                    const { workspace, viewKey, options } = JSON.parse(body)
-
-                    if (!workspace || !viewKey) {
-                        res.statusCode = 400
-                        res.end('Missing workspace or viewKey')
-                        return
-                    }
+                    const { workspace, viewKey, nodes, edges, options } = JSON.parse(body)
 
                     // Use ssrLoadModule so Vite resolves TS path aliases and transforms the code
                     const mod = await server.ssrLoadModule('@c4/c4-diagram-renderer')
-                    const png = await mod.renderToImage(workspace, viewKey, options)
+
+                    let png: Buffer
+                    if (nodes && edges) {
+                        // Pre-positioned nodes from the viewer's current layout
+                        png = await mod.renderNodesToImage(nodes, edges, options)
+                    } else if (workspace && viewKey) {
+                        // Legacy: parse from workspace JSON
+                        png = await mod.renderToImage(workspace, viewKey, options)
+                    } else {
+                        res.statusCode = 400
+                        res.end('Missing nodes+edges or workspace+viewKey')
+                        return
+                    }
 
                     res.setHeader('Content-Type', 'image/png')
                     res.setHeader('Content-Length', png.length)

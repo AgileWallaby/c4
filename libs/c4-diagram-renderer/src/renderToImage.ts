@@ -1,6 +1,7 @@
 import { chromium } from 'playwright'
 import type { WorkspaceJson } from '@c4/c4-parser'
 import { parseView } from '@c4/c4-parser'
+import type { Node, Edge } from '@xyflow/react'
 import { prepareNodesForSsr } from './prepareNodes'
 import { renderToHtml } from './renderToHtml'
 
@@ -13,6 +14,27 @@ export interface RenderOptions {
     background?: string
     /** Device scale factor for higher resolution output. Default: 2 */
     deviceScaleFactor?: number
+}
+
+/**
+ * Captures a screenshot of the given HTML string using Playwright.
+ */
+async function captureScreenshot(
+    html: string,
+    options: { width: number; height: number; deviceScaleFactor: number },
+): Promise<Buffer> {
+    const browser = await chromium.launch()
+    try {
+        const page = await browser.newPage({
+            viewport: { width: options.width, height: options.height },
+            deviceScaleFactor: options.deviceScaleFactor,
+        })
+        await page.setContent(html, { waitUntil: 'networkidle' })
+        const screenshot = await page.screenshot({ type: 'png' })
+        return Buffer.from(screenshot)
+    } finally {
+        await browser.close()
+    }
 }
 
 /**
@@ -40,17 +62,31 @@ export async function renderToImage(
     // Render to a self-contained HTML document
     const html = renderToHtml(nodes, edges, { width, height, background })
 
-    // Launch headless browser, load HTML, take screenshot
-    const browser = await chromium.launch()
-    try {
-        const page = await browser.newPage({
-            viewport: { width, height },
-            deviceScaleFactor,
-        })
-        await page.setContent(html, { waitUntil: 'networkidle' })
-        const screenshot = await page.screenshot({ type: 'png' })
-        return Buffer.from(screenshot)
-    } finally {
-        await browser.close()
+    return captureScreenshot(html, { width, height, deviceScaleFactor })
+}
+
+/**
+ * Renders pre-positioned nodes and edges to a PNG image buffer.
+ *
+ * Accepts nodes that already have their final positions (e.g. from the viewer's
+ * current layout) and renders them directly, bypassing workspace parsing.
+ */
+export async function renderNodesToImage(
+    nodes: Node[],
+    edges: Edge[],
+    options: RenderOptions = {},
+): Promise<Buffer> {
+    const { width = 1200, height = 800, background = '#ffffff', deviceScaleFactor = 2 } = options
+
+    if (nodes.length === 0) {
+        throw new Error('No nodes provided for rendering.')
     }
+
+    // Add SSR-required properties (width, height, handles)
+    const ssrNodes = prepareNodesForSsr(nodes)
+
+    // Render to a self-contained HTML document
+    const html = renderToHtml(ssrNodes, edges, { width, height, background })
+
+    return captureScreenshot(html, { width, height, deviceScaleFactor })
 }

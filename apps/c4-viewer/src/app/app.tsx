@@ -1,5 +1,6 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import type { WorkspaceJson } from '@c4/c4-parser'
+import type { Node } from '@xyflow/react'
 import { getAllViews, parseView } from "@c4/c4-parser";
 import { WorkspaceLoader } from "../components/WorkspaceLoader";
 import { Header } from "../components/Header";
@@ -11,6 +12,7 @@ export function App() {
   const [selectedViewKey, setSelectedViewKey] = useState<string>("");
   const [gridRows, setGridRows] = useState(1);
   const [gridCols, setGridCols] = useState(1);
+  const nodesRef = useRef<Node[]>([]);
 
   function resetGridForView(ws: WorkspaceJson, viewKey: string) {
     const { nodes } = parseView(ws, viewKey);
@@ -41,10 +43,13 @@ export function App() {
   const handleExportImage = useCallback(async () => {
     if (!workspace || !selectedViewKey) return;
 
+    // Use the viewer's current positioned nodes (via ref) so the export
+    // matches the layout the user sees, including any drag-rearrangements.
+    const { edges } = parseView(workspace, selectedViewKey);
     const res = await fetch("/api/export-image", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ workspace, viewKey: selectedViewKey }),
+      body: JSON.stringify({ nodes: nodesRef.current, edges }),
     });
 
     if (!res.ok) {
@@ -89,6 +94,7 @@ export function App() {
           edges={edges}
           gridRows={gridRows}
           gridCols={gridCols}
+          nodesRef={nodesRef}
         />
       </div>
     </div>
