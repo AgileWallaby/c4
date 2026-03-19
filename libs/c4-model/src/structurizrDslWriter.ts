@@ -340,7 +340,9 @@ export class StructurizrDSLWriter {
 
     private writeView(view: View<Element>, viewType: string, level: number): string {
         let viewDsl = this.writeLine(`${viewType}${view.subject ? ' "' + view.subject.canonicalName + '"' : ''} "${view.key}" {`, level)
-        viewDsl += this.writeLine(`description "${view.description}"`, level + 1)
+        if (view.description) {
+            viewDsl += this.writeLine(`description "${view.description}"`, level + 1)
+        }
         if (view.title) {
             viewDsl += this.writeLine(`title "${view.title}"`, level + 1)
         }

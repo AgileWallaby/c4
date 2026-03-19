@@ -2,10 +2,13 @@ import { Container } from './container'
 import { Element } from './core'
 import { SoftwareSystem } from './softwareSystem'
 
-interface ViewDefinition<T extends Element> {
-    subject?: T
-    description: string
+interface BaseViewDefinition {
+    description?: string
     title?: string
+}
+
+interface ScopedViewDefinition<T extends Element> extends BaseViewDefinition {
+    subject: T
 }
 
 export type AutoLayoutDirection = 'tb' | 'bt' | 'lr' | 'rl'
@@ -76,7 +79,7 @@ export interface RelationshipStyleEntry {
 
 export class View<T extends Element> {
     public readonly subject?: T
-    public readonly description: string
+    public readonly description?: string
     public readonly title?: string
 
     private _scopes: string[] = []
@@ -86,7 +89,7 @@ export class View<T extends Element> {
 
     constructor(
         public readonly key: string,
-        viewDefinition: ViewDefinition<T>
+        viewDefinition: BaseViewDefinition & { subject?: T }
     ) {
         this.description = viewDefinition.description
         this.subject = viewDefinition.subject
@@ -156,25 +159,25 @@ export class Views {
     private _themes: string[] = []
     private _properties = new Map<string, string>()
 
-    public addSystemLandscapeView(key: string, definition: ViewDefinition<Element>): View<Element> {
+    public addSystemLandscapeView(key: string, definition: BaseViewDefinition): View<Element> {
         const view = new View(key, { subject: undefined, description: definition.description, title: definition.title })
         this._systemLandscapeViews.set(key, view)
         return view
     }
 
-    public addSystemContextView(key: string, definition: ViewDefinition<SoftwareSystem>): View<SoftwareSystem> {
+    public addSystemContextView(key: string, definition: ScopedViewDefinition<SoftwareSystem>): View<SoftwareSystem> {
         const view = new View(key, definition)
         this._systemContextViews.set(key, view)
         return view
     }
 
-    public addContainerView(key: string, definition: ViewDefinition<SoftwareSystem>): View<SoftwareSystem> {
+    public addContainerView(key: string, definition: ScopedViewDefinition<SoftwareSystem>): View<SoftwareSystem> {
         const view = new View(key, definition)
         this._containerViews.set(key, view)
         return view
     }
 
-    public addComponentView(key: string, definition: ViewDefinition<Container>): View<Container> {
+    public addComponentView(key: string, definition: ScopedViewDefinition<Container>): View<Container> {
         const view = new View(key, definition)
         this._componentViews.set(key, view)
         return view

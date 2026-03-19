@@ -12,7 +12,6 @@ exports[`cookbook: themes - single theme (azure shorthand) > generates expected 
   views {
     // System Landscape Views
     systemLandscape "Landscape" {
-      description "undefined"
       include *
       autoLayout lr
     }
