@@ -12,12 +12,13 @@ complianceSuite('cookbook: system-context-view', {
         user.uses(system, { description: 'Uses' })
 
         const views = new Views()
-        const view = views.addSystemContextView('SystemContext', {
+        views.addSystemContextView('SystemContext', {
             subject: system,
             description: 'An example of a System Context diagram.',
+        }).with((v) => {
+            v.includeAll()
+            v.autoLayout('lr')
         })
-        view.includeAll()
-        view.autoLayout('lr')
         return { model, views }
     },
     dslPath: 'system-context-view/example-1.dsl',

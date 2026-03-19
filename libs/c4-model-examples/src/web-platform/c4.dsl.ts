@@ -56,8 +56,12 @@ export const c4Module: C4Module<ExampleSystemCatalog, WebPlatformCatalog, Exampl
         return { customer, webPlatform }
     },
     addViews(views: Views, local: WebPlatformCatalog): void {
-        views.addSystemLandscapeView('landscape', { description: 'System Landscape' }).includeAll()
-        views.addContainerView('webPlatform', { subject: local.webPlatform, description: 'Web Platform' }).includeAll()
+        views.addSystemLandscapeView('landscape', { description: 'System Landscape' }).with((v) => {
+            v.includeAll()
+        })
+        views.addContainerView('webPlatform', { subject: local.webPlatform, description: 'Web Platform' }).with((v) => {
+            v.includeAll()
+        })
     },
     addRelationships(local, dependencies, archetypes): void {
         const { webApp, apiServer, database } = local.webPlatform

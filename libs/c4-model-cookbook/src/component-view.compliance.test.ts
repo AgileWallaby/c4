@@ -19,9 +19,10 @@ complianceSuite('cookbook: component-view', {
         c2.uses(database, { description: 'Reads from and writes to' })
 
         const views = new Views()
-        const view = views.addComponentView('Components', { subject: webapp, description: 'An example of a Component diagram.' })
-        view.includeAll()
-        view.autoLayout('lr')
+        views.addComponentView('Components', { subject: webapp, description: 'An example of a Component diagram.' }).with((v) => {
+            v.includeAll()
+            v.autoLayout('lr')
+        })
         return { model, views }
     },
     dslPath: 'component-view/example-1.dsl',

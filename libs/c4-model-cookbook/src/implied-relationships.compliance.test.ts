@@ -15,9 +15,10 @@ complianceSuite('cookbook: implied-relationships - default behavior', {
         user.uses(webapp, { description: 'Uses' })
 
         const views = new Views()
-        const view = views.addSystemContextView('SystemContext', { subject: system, description: 'Implied relationships example.' })
-        view.includeAll()
-        view.autoLayout('lr')
+        views.addSystemContextView('SystemContext', { subject: system, description: 'Implied relationships example.' }).with((v) => {
+            v.includeAll()
+            v.autoLayout('lr')
+        })
         return { model, views }
     },
     dslPath: 'implied-relationships/example-1.dsl',
@@ -38,9 +39,10 @@ complianceSuite('cookbook: implied-relationships - multiple relationships merged
         user.uses(webapp, { description: 'Uses 2' })
 
         const views = new Views()
-        const view = views.addSystemContextView('SystemContext', { subject: system })
-        view.includeAll()
-        view.autoLayout('lr')
+        views.addSystemContextView('SystemContext', { subject: system }).with((v) => {
+            v.includeAll()
+            v.autoLayout('lr')
+        })
         return { model, views }
     },
     dslPath: 'implied-relationships/example-3.dsl',
@@ -58,9 +60,10 @@ complianceSuite('cookbook: implied-relationships - explicit at both levels', {
         user.uses(webapp, { description: 'Uses 2' })
 
         const views = new Views()
-        const view = views.addSystemContextView('SystemContext', { subject: system })
-        view.includeAll()
-        view.autoLayout('lr')
+        views.addSystemContextView('SystemContext', { subject: system }).with((v) => {
+            v.includeAll()
+            v.autoLayout('lr')
+        })
         return { model, views }
     },
     dslPath: 'implied-relationships/example-4.dsl',

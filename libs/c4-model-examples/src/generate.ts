@@ -13,8 +13,9 @@ generateDiagrams<ExampleSystemCatalog>({
     searchRoot: __dirname,
     archetypes: exampleArchetypes,
     addViews: (views) => {
-        const landscape = views.addSystemLandscapeView('landscape', { description: 'System Landscape' })
-        landscape.includeAll()
+        views.addSystemLandscapeView('landscape', { description: 'System Landscape' }).with((v) => {
+            v.includeAll()
+        })
     },
     outputDir: path.join(__dirname, '..', 'diagrams'),
 })

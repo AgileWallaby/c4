@@ -15,9 +15,10 @@ complianceSuite('cookbook: element-styles - baseline', {
         b.uses(c)
 
         const views = new Views()
-        const view = views.addSystemLandscapeView('Landscape', {})
-        view.includeAll()
-        view.autoLayout('lr')
+        views.addSystemLandscapeView('Landscape', {}).with((v) => {
+            v.includeAll()
+            v.autoLayout('lr')
+        })
         return { model, views }
     },
     dslPath: 'element-styles/example-1.dsl',
@@ -33,9 +34,10 @@ complianceSuite('cookbook: element-styles - styling all elements', {
         b.uses(c)
 
         const views = new Views()
-        const view = views.addSystemLandscapeView('Landscape', { description: 'Element styles example.' })
-        view.includeAll()
-        view.autoLayout('lr')
+        views.addSystemLandscapeView('Landscape', { description: 'Element styles example.' }).with((v) => {
+            v.includeAll()
+            v.autoLayout('lr')
+        })
         views.addElementStyle('Element', { background: '#1168bd', color: '#ffffff', shape: 'RoundedBox' })
         return { model, views }
     },
@@ -52,9 +54,10 @@ complianceSuite('cookbook: element-styles - styling individual elements', {
         b.uses(c)
 
         const views = new Views()
-        const view = views.addSystemLandscapeView('Landscape', { description: 'Individual element styles.' })
-        view.includeAll()
-        view.autoLayout('lr')
+        views.addSystemLandscapeView('Landscape', { description: 'Individual element styles.' }).with((v) => {
+            v.includeAll()
+            v.autoLayout('lr')
+        })
         views.addElementStyle('Tag 1', { background: '#1168bd', color: '#ffffff', shape: 'RoundedBox' })
         return { model, views }
     },

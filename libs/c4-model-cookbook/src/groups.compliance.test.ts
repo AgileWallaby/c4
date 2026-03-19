@@ -14,9 +14,10 @@ complianceSuite('cookbook: groups (flat)', {
         a.uses(b)
 
         const views = new Views()
-        const view = views.addSystemLandscapeView('Landscape', { description: 'An example of groups.' })
-        view.includeAll()
-        view.autoLayout('lr')
+        views.addSystemLandscapeView('Landscape', { description: 'An example of groups.' }).with((v) => {
+            v.includeAll()
+            v.autoLayout('lr')
+        })
         return { model, views }
     },
     dslPath: 'groups/example-1.dsl',
@@ -32,9 +33,10 @@ complianceSuite('cookbook: groups - styling all groups', {
         a.uses(b)
 
         const views = new Views()
-        const view = views.addSystemLandscapeView('Landscape', { description: 'Groups with styles.' })
-        view.includeAll()
-        view.autoLayout('lr')
+        views.addSystemLandscapeView('Landscape', { description: 'Groups with styles.' }).with((v) => {
+            v.includeAll()
+            v.autoLayout('lr')
+        })
         views.addElementStyle('Group', { color: '#ff0000' })
         return { model, views }
     },
@@ -51,9 +53,10 @@ complianceSuite('cookbook: groups - styling individual groups', {
         a.uses(b)
 
         const views = new Views()
-        const view = views.addSystemLandscapeView('Landscape', { description: 'Individual group styles.' })
-        view.includeAll()
-        view.autoLayout('lr')
+        views.addSystemLandscapeView('Landscape', { description: 'Individual group styles.' }).with((v) => {
+            v.includeAll()
+            v.autoLayout('lr')
+        })
         views.addElementStyle('Group:Company 1', { color: '#ff0000' })
         return { model, views }
     },
@@ -71,9 +74,10 @@ complianceSuite('cookbook: groups - nested groups', {
         a.uses(b)
 
         const views = new Views()
-        const view = views.addSystemLandscapeView('Landscape', { description: 'An example of nested groups.' })
-        view.includeAll()
-        view.autoLayout('lr')
+        views.addSystemLandscapeView('Landscape', { description: 'An example of nested groups.' }).with((v) => {
+            v.includeAll()
+            v.autoLayout('lr')
+        })
         views.addElementStyle('Group:Company 1/Department 1', { color: '#ff0000' })
         views.addElementStyle('Group:Company 1/Department 2', { color: '#0000ff' })
         return { model, views }

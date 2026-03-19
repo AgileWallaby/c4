@@ -15,9 +15,10 @@ complianceSuite('cookbook: container-view-multiple-software-systems - include al
         c1.uses(c2)
 
         const views = new Views()
-        const view = views.addContainerView('Containers', { subject: s1 })
-        view.includeAll()
-        view.autoLayout('lr')
+        views.addContainerView('Containers', { subject: s1 }).with((v) => {
+            v.includeAll()
+            v.autoLayout('lr')
+        })
         return { model, views }
     },
     dslPath: 'container-view-multiple-software-systems/example-1.dsl',
@@ -34,10 +35,11 @@ complianceSuite('cookbook: container-view-multiple-software-systems - explicit i
         c1.uses(c2)
 
         const views = new Views()
-        const view = views.addContainerView('Containers', { subject: s1 })
-        view.includeElement(c1)
-        view.includeElement(c2)
-        view.autoLayout('lr')
+        views.addContainerView('Containers', { subject: s1 }).with((v) => {
+            v.includeElement(c1)
+            v.includeElement(c2)
+            v.autoLayout('lr')
+        })
         return { model, views }
     },
     dslPath: 'container-view-multiple-software-systems/example-2.dsl',

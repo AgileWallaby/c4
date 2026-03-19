@@ -15,9 +15,10 @@ complianceSuite('cookbook: relationship-styles - baseline', {
         b.uses(c)
 
         const views = new Views()
-        const view = views.addSystemLandscapeView('Landscape', {})
-        view.includeAll()
-        view.autoLayout('lr')
+        views.addSystemLandscapeView('Landscape', {}).with((v) => {
+            v.includeAll()
+            v.autoLayout('lr')
+        })
         return { model, views }
     },
     dslPath: 'relationship-styles/example-1.dsl',
@@ -33,9 +34,10 @@ complianceSuite('cookbook: relationship-styles - styling all relationships', {
         b.uses(c)
 
         const views = new Views()
-        const view = views.addSystemLandscapeView('Landscape', { description: 'Relationship styles example.' })
-        view.includeAll()
-        view.autoLayout('lr')
+        views.addSystemLandscapeView('Landscape', { description: 'Relationship styles example.' }).with((v) => {
+            v.includeAll()
+            v.autoLayout('lr')
+        })
         views.addRelationshipStyle('Relationship', { color: '#ff0000', style: 'solid' })
         return { model, views }
     },
@@ -52,9 +54,10 @@ complianceSuite('cookbook: relationship-styles - styling individual relationship
         b.uses(c, { tags: ['Tag 1'] })
 
         const views = new Views()
-        const view = views.addSystemLandscapeView('Landscape', { description: 'Individual relationship styles.' })
-        view.includeAll()
-        view.autoLayout('lr')
+        views.addSystemLandscapeView('Landscape', { description: 'Individual relationship styles.' }).with((v) => {
+            v.includeAll()
+            v.autoLayout('lr')
+        })
         views.addRelationshipStyle('Tag 1', { color: '#ff0000', style: 'solid' })
         return { model, views }
     },

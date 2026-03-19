@@ -22,9 +22,10 @@ complianceSuite('cookbook: bulk-operations-elements', {
         }
 
         const views = new Views()
-        const view = views.addContainerView('Containers', { subject: a, description: 'Bulk operations example.' })
-        view.includeAll()
-        view.autoLayout()
+        views.addContainerView('Containers', { subject: a, description: 'Bulk operations example.' }).with((v) => {
+            v.includeAll()
+            v.autoLayout()
+        })
         return { model, views }
     },
     dslPath: 'bulk-operations-elements/example-1.dsl',

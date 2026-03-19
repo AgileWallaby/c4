@@ -44,20 +44,22 @@ describe('can write to dsl', () => {
             sys2.uses(sys1)
 
             const views = new Views()
-            const landscapeView = views.addSystemLandscapeView('someName1', { description: 'someDescription' })
-            landscapeView.includeAll()
-            const contextView = views.addSystemContextView('someName', { subject: sys1, description: 'someDescription', title: 'My Title' })
-            contextView.includeAll()
-
-            const containerView = views.addContainerView('someName2s', { subject: sys1, description: 'someDescription' })
-            containerView.includeAll()
-
-            const componentView = views.addComponentView('someName3', {
+            views.addSystemLandscapeView('someName1', { description: 'someDescription' }).with((v) => {
+                v.includeAll()
+            })
+            views.addSystemContextView('someName', { subject: sys1, description: 'someDescription', title: 'My Title' }).with((v) => {
+                v.includeAll()
+            })
+            views.addContainerView('someName2s', { subject: sys1, description: 'someDescription' }).with((v) => {
+                v.includeAll()
+            })
+            views.addComponentView('someName3', {
                 subject: cont1,
                 description: 'someOtherDescripgtion',
                 title: 'The Other Title',
+            }).with((v) => {
+                v.includeAll()
             })
-            componentView.includeAll()
 
             const dsl = new StructurizrDSLWriter(model, views).write()
             expect(dsl).toMatchSnapshot()
@@ -158,8 +160,9 @@ describe('can write to dsl', () => {
         async () => {
             const model = new Model('m')
             const views = new Views()
-            const view = views.addSystemLandscapeView('sl', { description: 'desc' })
-            view.autoLayout()
+            views.addSystemLandscapeView('sl', { description: 'desc' }).with((v) => {
+                v.autoLayout()
+            })
             const dsl = new StructurizrDSLWriter(model, views).write()
 
             expect(dsl).toMatchSnapshot()
@@ -173,8 +176,9 @@ describe('can write to dsl', () => {
         async () => {
             const model = new Model('m')
             const views = new Views()
-            const view = views.addSystemLandscapeView('sl', { description: 'desc' })
-            view.autoLayout('lr')
+            views.addSystemLandscapeView('sl', { description: 'desc' }).with((v) => {
+                v.autoLayout('lr')
+            })
             const dsl = new StructurizrDSLWriter(model, views).write()
 
             expect(dsl).toMatchSnapshot()
@@ -188,8 +192,9 @@ describe('can write to dsl', () => {
         async () => {
             const model = new Model('m')
             const views = new Views()
-            const view = views.addSystemLandscapeView('sl', { description: 'desc' })
-            view.autoLayout('tb', 300, 100)
+            views.addSystemLandscapeView('sl', { description: 'desc' }).with((v) => {
+                v.autoLayout('tb', 300, 100)
+            })
             const dsl = new StructurizrDSLWriter(model, views).write()
 
             expect(dsl).toMatchSnapshot()
@@ -203,8 +208,9 @@ describe('can write to dsl', () => {
         async () => {
             const model = new Model('m')
             const views = new Views()
-            const view = views.addSystemLandscapeView('sl', { description: 'desc' })
-            view.setDefault()
+            views.addSystemLandscapeView('sl', { description: 'desc' }).with((v) => {
+                v.setDefault()
+            })
             const dsl = new StructurizrDSLWriter(model, views).write()
 
             expect(dsl).toMatchSnapshot()
@@ -218,9 +224,10 @@ describe('can write to dsl', () => {
         async () => {
             const model = new Model('m')
             const views = new Views()
-            const view = views.addSystemLandscapeView('sl', { description: 'desc' })
-            view.addProperty('structurizr.sort', 'created')
-            view.addProperty('custom.key', 'some value')
+            views.addSystemLandscapeView('sl', { description: 'desc' }).with((v) => {
+                v.addProperty('structurizr.sort', 'created')
+                v.addProperty('custom.key', 'some value')
+            })
             const dsl = new StructurizrDSLWriter(model, views).write()
 
             expect(dsl).toMatchSnapshot()
@@ -318,9 +325,10 @@ describe('can write to dsl', () => {
             const person = model.person('alice')
             const sys = model.softwareSystem('MySystem')
             const views = new Views()
-            // Container view is View<SoftwareSystem> — should accept Person (an Element)
-            const containerView = views.addContainerView('cv', { subject: sys, description: 'desc' })
-            containerView.includeElement(person)
+            // Container view is scoped to SoftwareSystem — ViewBuilder.includeElement should accept Person (an Element)
+            views.addContainerView('cv', { subject: sys, description: 'desc' }).with((v) => {
+                v.includeElement(person)
+            })
             const dsl = new StructurizrDSLWriter(model, views).write()
 
             expect(dsl).toMatchSnapshot()

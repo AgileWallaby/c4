@@ -40,8 +40,9 @@ describe('generateDiagrams', () => {
             searchRoot: __dirname,
             archetypes: exampleArchetypes,
             addViews: (views) => {
-                const v = views.addSystemLandscapeView('landscape', { description: 'Landscape' })
-                v.includeAll()
+                views.addSystemLandscapeView('landscape', { description: 'Landscape' }).with((v) => {
+                    v.includeAll()
+                })
             },
             outputDir,
         })

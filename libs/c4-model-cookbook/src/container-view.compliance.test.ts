@@ -16,9 +16,10 @@ complianceSuite('cookbook: container-view', {
         webapp.uses(database, { description: 'Reads from and writes to' })
 
         const views = new Views()
-        const view = views.addContainerView('Containers', { subject: system, description: 'An example of a Container diagram.' })
-        view.includeAll()
-        view.autoLayout('lr')
+        views.addContainerView('Containers', { subject: system, description: 'An example of a Container diagram.' }).with((v) => {
+            v.includeAll()
+            v.autoLayout('lr')
+        })
         return { model, views }
     },
     dslPath: 'container-view/example-1.dsl',

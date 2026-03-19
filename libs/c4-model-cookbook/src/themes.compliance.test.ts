@@ -12,9 +12,10 @@ complianceSuite('cookbook: themes - single theme (azure shorthand)', {
         model.softwareSystem('Authentication Service', { tags: ['Microsoft Azure - Azure Active Directory'] })
 
         const views = new Views()
-        const view = views.addSystemLandscapeView('Landscape', {})
-        view.includeAll()
-        view.autoLayout('lr')
+        views.addSystemLandscapeView('Landscape', {}).with((v) => {
+            v.includeAll()
+            v.autoLayout('lr')
+        })
         views.addTheme('microsoft-azure-2021.01')
         return { model, views }
     },
@@ -30,9 +31,10 @@ complianceSuite('cookbook: themes - theme with element styles', {
         model.softwareSystem('Authentication Service', { tags: ['Microsoft Azure - Azure Active Directory'] })
 
         const views = new Views()
-        const view = views.addSystemLandscapeView('Landscape', { description: 'Theme with element styles.' })
-        view.includeAll()
-        view.autoLayout('lr')
+        views.addSystemLandscapeView('Landscape', { description: 'Theme with element styles.' }).with((v) => {
+            v.includeAll()
+            v.autoLayout('lr')
+        })
         views.addElementStyle('Software System', { background: '#ffffff', shape: 'RoundedBox' })
         views.addTheme('https://static.structurizr.com/themes/microsoft-azure-2021.01.26/theme.json')
         return { model, views }

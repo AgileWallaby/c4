@@ -3,7 +3,7 @@ import { Component } from './component'
 import { Container, ContainerGroup } from './container'
 import { Model, ModelGroup } from './model'
 import { SoftwareSystem, SoftwareSystemGroup } from './softwareSystem'
-import { View, Views } from './views'
+import { ReadonlyView, Views } from './views'
 import { ElementArchetype, RelationshipArchetype } from './archetype'
 
 const INDENT_SIZE = 2
@@ -338,7 +338,7 @@ export class StructurizrDSLWriter {
         return modelDsl
     }
 
-    private writeView(view: View<Element>, viewType: string, level: number): string {
+    private writeView(view: ReadonlyView<Element>, viewType: string, level: number): string {
         let viewDsl = this.writeLine(`${viewType}${view.subject ? ' "' + view.subject.canonicalName + '"' : ''} "${view.key}" {`, level)
         if (view.description) {
             viewDsl += this.writeLine(`description "${view.description}"`, level + 1)
