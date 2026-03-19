@@ -1,3 +1,16 @@
+# 3.0.0 (2026-03-19)
+
+### 🚀 Features
+
+- add c4-parser and c4-diagram-renderer libraries with initial implementations ([f5e311d](https://github.com/AgileWallaby/c4/commit/f5e311d))
+- implement adjustGroupBounds function to size group nodes and adjust child positions ([a7ebb26](https://github.com/AgileWallaby/c4/commit/a7ebb26))
+- add support for rendering pre-positioned nodes and edges to image, update export API ([ed413e8](https://github.com/AgileWallaby/c4/commit/ed413e8))
+- add TypeScript configuration for c4-viewer-api and update e2e tests ([6543b84](https://github.com/AgileWallaby/c4/commit/6543b84))
+
+### ❤️ Thank You
+
+- James Webster
+
 ## 2.8.0 (2026-03-17)
 
 ### 🚀 Features
