@@ -132,6 +132,11 @@ export class View<T extends Element> {
         this._properties.set(name, value)
     }
 
+    public with(callback: (self: this) => void): this {
+        callback(this)
+        return this
+    }
+
     public get scopes(): ReadonlyArray<string> {
         return this._scopes
     }

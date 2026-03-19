@@ -2,6 +2,7 @@ import { Relationship } from './core'
 import { Container } from './container'
 import { SoftwareSystem } from './softwareSystem'
 import { RelationshipArchetype } from './archetype'
+import { Views } from './views'
 
 describe('Core', () => {
     test('Relationship', () => {
@@ -108,5 +109,46 @@ describe('Core', () => {
             const webApp: Container = result.webApp
             expect(webApp).toBeDefined()
         })
+    })
+})
+
+describe('View with()', () => {
+    test('returns the same view instance', () => {
+        const views = new Views()
+        const view = views.addSystemLandscapeView('landscape', {})
+        const result = view.with((v) => {
+            v.includeAll()
+        })
+
+        expect(result).toBe(view)
+    })
+
+    test('configures the view via callback', () => {
+        const views = new Views()
+        const system = new SoftwareSystem('My System')
+        const view = views.addSystemContextView('ctx', { subject: system }).with((v) => {
+            v.includeAll()
+            v.autoLayout('lr')
+        })
+
+        expect(view.scopes).toEqual(['include *'])
+        expect(view.autoLayoutConfig).toEqual({ direction: 'lr', rankSeparation: undefined, nodeSeparation: undefined })
+    })
+
+    test('supports chaining after with()', () => {
+        const views = new Views()
+        const system = new SoftwareSystem('My System')
+        const view = views
+            .addContainerView('containers', { subject: system, description: 'Container view' })
+            .with((v) => {
+                v.includeAll()
+                v.autoLayout('tb', 300, 100)
+                v.setDefault()
+            })
+
+        expect(view.scopes).toEqual(['include *'])
+        expect(view.autoLayoutConfig).toEqual({ direction: 'tb', rankSeparation: 300, nodeSeparation: 100 })
+        expect(view.isDefault).toBe(true)
+        expect(view.description).toBe('Container view')
     })
 })
