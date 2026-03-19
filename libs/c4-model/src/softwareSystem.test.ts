@@ -1,6 +1,6 @@
 import { SoftwareSystem } from './softwareSystem'
 import { faker } from '@faker-js/faker'
-import { ElementArchetype } from './archetype'
+import { ELEMENT_KINDS, ElementArchetype } from './archetype'
 
 describe('SoftwareSystem', () => {
     describe('can be created', () => {
@@ -66,7 +66,7 @@ describe('SoftwareSystem', () => {
         })
 
         test('can define a container with archetype', () => {
-            const arch = new ElementArchetype('springBoot', 'container', {
+            const arch = new ElementArchetype('springBoot', ELEMENT_KINDS.container, {
                 technology: 'Spring Boot',
                 tags: ['Application'],
             })
@@ -79,7 +79,7 @@ describe('SoftwareSystem', () => {
         })
 
         test('can define a container with archetype and override', () => {
-            const arch = new ElementArchetype('springBoot', 'container', {
+            const arch = new ElementArchetype('springBoot', ELEMENT_KINDS.container, {
                 technology: 'Spring Boot',
                 tags: ['Application'],
             })

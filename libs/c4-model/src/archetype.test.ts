@@ -1,10 +1,10 @@
-import { ElementArchetype, RelationshipArchetype, mergeArchetypeWithOverride } from './archetype'
+import { ELEMENT_KINDS, ElementArchetype, RelationshipArchetype, mergeArchetypeWithOverride } from './archetype'
 
 describe('ElementArchetype', () => {
     test('construction with no definition or parent', () => {
-        const arch = new ElementArchetype('base', 'container')
+        const arch = new ElementArchetype('base', ELEMENT_KINDS.container)
         expect(arch.name).toBe('base')
-        expect(arch.elementKind).toBe('container')
+        expect(arch.elementKind).toBe(ELEMENT_KINDS.container)
         expect(arch.ownTags).toEqual([])
         expect(arch.tags).toEqual([])
         expect(arch.description).toBeUndefined()
@@ -13,7 +13,7 @@ describe('ElementArchetype', () => {
     })
 
     test('construction with definition', () => {
-        const arch = new ElementArchetype('springBoot', 'container', {
+        const arch = new ElementArchetype('springBoot', ELEMENT_KINDS.container, {
             technology: 'Spring Boot',
             description: 'A Spring Boot app',
             tags: ['Application'],
@@ -27,13 +27,13 @@ describe('ElementArchetype', () => {
     })
 
     test('2-level inheritance', () => {
-        const parent = new ElementArchetype('springBoot', 'container', {
+        const parent = new ElementArchetype('springBoot', ELEMENT_KINDS.container, {
             technology: 'Spring Boot',
             tags: ['Application'],
         })
         const child = new ElementArchetype(
             'microservice',
-            'container',
+            ELEMENT_KINDS.container,
             {
                 tags: ['Microservice'],
             },
@@ -48,14 +48,14 @@ describe('ElementArchetype', () => {
     })
 
     test('3-level inheritance chain', () => {
-        const grandparent = new ElementArchetype('base', 'container', {
+        const grandparent = new ElementArchetype('base', ELEMENT_KINDS.container, {
             technology: 'Java',
             description: 'Base service',
             tags: ['Service'],
         })
         const parent = new ElementArchetype(
             'springBoot',
-            'container',
+            ELEMENT_KINDS.container,
             {
                 technology: 'Spring Boot',
                 tags: ['Spring'],
@@ -64,7 +64,7 @@ describe('ElementArchetype', () => {
         )
         const child = new ElementArchetype(
             'microservice',
-            'container',
+            ELEMENT_KINDS.container,
             {
                 description: 'Microservice',
                 tags: ['Micro'],
@@ -78,12 +78,12 @@ describe('ElementArchetype', () => {
     })
 
     test('child description overrides parent', () => {
-        const parent = new ElementArchetype('parent', 'softwareSystem', {
+        const parent = new ElementArchetype('parent', ELEMENT_KINDS.softwareSystem, {
             description: 'Parent desc',
         })
         const child = new ElementArchetype(
             'child',
-            'softwareSystem',
+            ELEMENT_KINDS.softwareSystem,
             {
                 description: 'Child desc',
             },
@@ -94,12 +94,22 @@ describe('ElementArchetype', () => {
     })
 
     test('child inherits parent description when not specified', () => {
-        const parent = new ElementArchetype('parent', 'softwareSystem', {
+        const parent = new ElementArchetype('parent', ELEMENT_KINDS.softwareSystem, {
             description: 'Parent desc',
         })
-        const child = new ElementArchetype('child', 'softwareSystem', {}, parent)
+        const child = new ElementArchetype('child', ELEMENT_KINDS.softwareSystem, {}, parent)
 
         expect(child.description).toBe('Parent desc')
+    })
+
+    test('canonicalName applies camelCase', () => {
+        const arch = new ElementArchetype('Spring Boot App', ELEMENT_KINDS.container)
+        expect(arch.canonicalName).toBe('springBootApp')
+    })
+
+    test('canonicalName is identity for already camelCase names', () => {
+        const arch = new ElementArchetype('nodeService', ELEMENT_KINDS.container)
+        expect(arch.canonicalName).toBe('nodeService')
     })
 })
 
@@ -141,6 +151,16 @@ describe('RelationshipArchetype', () => {
         expect(https.tags).toEqual(['Base', 'Synchronous'])
         expect(https.technology).toBe('HTTPS')
         expect(https.description).toBe('Sync call')
+    })
+
+    test('canonicalName applies camelCase', () => {
+        const arch = new RelationshipArchetype('HTTPS JSON')
+        expect(arch.canonicalName).toBe('httpsJson')
+    })
+
+    test('canonicalName is identity for already camelCase names', () => {
+        const arch = new RelationshipArchetype('httpsJson')
+        expect(arch.canonicalName).toBe('httpsJson')
     })
 })
 

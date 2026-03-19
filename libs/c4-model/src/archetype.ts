@@ -1,6 +1,14 @@
+import { camelCase } from 'change-case'
 import { TechnologyDefinition } from './core'
 
-export type ElementKind = 'person' | 'softwareSystem' | 'container' | 'component'
+export const ELEMENT_KINDS = {
+    person: 'person',
+    softwareSystem: 'softwareSystem',
+    container: 'container',
+    component: 'component',
+} as const
+
+export type ElementKind = (typeof ELEMENT_KINDS)[keyof typeof ELEMENT_KINDS]
 
 export class ElementArchetype {
     readonly ownDescription?: string
@@ -9,6 +17,10 @@ export class ElementArchetype {
     readonly description?: string
     readonly technology?: string
     readonly tags: ReadonlyArray<string>
+
+    public get canonicalName(): string {
+        return camelCase(this.name)
+    }
 
     constructor(
         public readonly name: string,
@@ -33,6 +45,10 @@ export class RelationshipArchetype {
     readonly description?: string
     readonly technology?: string
     readonly tags: ReadonlyArray<string>
+
+    public get canonicalName(): string {
+        return camelCase(this.name)
+    }
 
     constructor(
         public readonly name: string,

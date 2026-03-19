@@ -1,4 +1,4 @@
-import { ElementArchetype, RelationshipArchetype } from '@agilewallaby/c4-model'
+import { ELEMENT_KINDS, ElementArchetype, RelationshipArchetype } from '@agilewallaby/c4-model'
 
 import type { WebPlatformCatalog } from './web-platform/c4.dsl'
 import type { EmailServiceCatalog } from './email-service/c4.dsl'
@@ -8,7 +8,7 @@ export type ExampleSystemCatalog = {
     emailService: EmailServiceCatalog
 }
 
-export const nodeService = new ElementArchetype('nodeService', 'container', {
+export const nodeService = new ElementArchetype('nodeService', ELEMENT_KINDS.container, {
     technology: 'Node.js',
     tags: ['Service'],
 })

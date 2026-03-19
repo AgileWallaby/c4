@@ -1,6 +1,6 @@
-import { ElementArchetype, RelationshipArchetype } from '@agilewallaby/c4-model'
+import { ELEMENT_KINDS, ElementArchetype, RelationshipArchetype } from '@agilewallaby/c4-model'
 
-export const nodeService = new ElementArchetype('nodeService', 'container', {
+export const nodeService = new ElementArchetype('nodeService', ELEMENT_KINDS.container, {
     technology: 'Node.js',
     tags: ['Service'],
 })

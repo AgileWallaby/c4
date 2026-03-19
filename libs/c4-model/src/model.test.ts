@@ -1,5 +1,5 @@
 import { Model } from './model'
-import { ElementArchetype } from './archetype'
+import { ELEMENT_KINDS, ElementArchetype } from './archetype'
 
 describe('Model', () => {
     let model: Model
@@ -59,7 +59,7 @@ describe('Model', () => {
 
     describe('can define SoftwareSystems with archetypes', () => {
         test('defining a SoftwareSystem with archetype should apply archetype properties', () => {
-            const arch = new ElementArchetype('internalSystem', 'softwareSystem', {
+            const arch = new ElementArchetype('internalSystem', ELEMENT_KINDS.softwareSystem, {
                 description: 'Internal system',
                 tags: ['Internal'],
             })
@@ -71,7 +71,7 @@ describe('Model', () => {
         })
 
         test('defining a SoftwareSystem with archetype and override', () => {
-            const arch = new ElementArchetype('internalSystem', 'softwareSystem', {
+            const arch = new ElementArchetype('internalSystem', ELEMENT_KINDS.softwareSystem, {
                 description: 'Internal system',
                 tags: ['Internal'],
             })
@@ -84,7 +84,7 @@ describe('Model', () => {
 
     describe('can define People with archetypes', () => {
         test('defining a Person with archetype should apply archetype properties', () => {
-            const arch = new ElementArchetype('externalUser', 'person', {
+            const arch = new ElementArchetype('externalUser', ELEMENT_KINDS.person, {
                 description: 'External user',
                 tags: ['External'],
             })
@@ -96,7 +96,7 @@ describe('Model', () => {
         })
 
         test('defining a Person with archetype and override', () => {
-            const arch = new ElementArchetype('externalUser', 'person', {
+            const arch = new ElementArchetype('externalUser', ELEMENT_KINDS.person, {
                 description: 'External user',
                 tags: ['External'],
             })

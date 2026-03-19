@@ -3,7 +3,7 @@ import { Container } from './container'
 import { faker } from '@faker-js/faker'
 import { SoftwareSystem } from './softwareSystem'
 import { Person } from './person'
-import { ElementArchetype } from './archetype'
+import { ELEMENT_KINDS, ElementArchetype } from './archetype'
 
 describe('Container', () => {
     const name = faker.word.words()
@@ -54,7 +54,7 @@ describe('Container', () => {
         })
 
         test('can define a component with archetype', () => {
-            const arch = new ElementArchetype('springController', 'component', {
+            const arch = new ElementArchetype('springController', ELEMENT_KINDS.component, {
                 technology: 'Spring MVC Controller',
                 tags: ['Controller'],
             })
@@ -67,7 +67,7 @@ describe('Container', () => {
         })
 
         test('can define a component with archetype and override', () => {
-            const arch = new ElementArchetype('springController', 'component', {
+            const arch = new ElementArchetype('springController', ELEMENT_KINDS.component, {
                 technology: 'Spring MVC Controller',
                 tags: ['Controller'],
             })

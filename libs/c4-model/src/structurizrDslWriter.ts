@@ -68,7 +68,7 @@ export class StructurizrDSLWriter {
         let dsl = this.writeLine(`archetypes {`, level)
 
         for (const arch of elementArchetypes) {
-            const baseType = arch.parent ? arch.parent.name : arch.elementKind
+            const baseType = arch.parent ? arch.parent.canonicalName : arch.elementKind
             let inner = ''
             if (arch.ownDescription) {
                 inner += this.writeLine(`description "${arch.ownDescription}"`, level + 2)
@@ -80,16 +80,16 @@ export class StructurizrDSLWriter {
                 inner += this.writeLine(`tags ${arch.ownTags.map((t) => `"${t}"`).join(' ')}`, level + 2)
             }
             if (inner) {
-                dsl += this.writeLine(`${arch.name} = ${baseType} {`, level + 1)
+                dsl += this.writeLine(`${arch.canonicalName} = ${baseType} {`, level + 1)
                 dsl += inner
                 dsl += this.writeLine(`}`, level + 1)
             } else {
-                dsl += this.writeLine(`${arch.name} = ${baseType} {}`, level + 1)
+                dsl += this.writeLine(`${arch.canonicalName} = ${baseType} {}`, level + 1)
             }
         }
 
         for (const arch of relationshipArchetypes) {
-            const arrow = arch.parent ? `--${arch.parent.name}->` : `->`
+            const arrow = arch.parent ? `--${arch.parent.canonicalName}->` : `->`
             let inner = ''
             if (arch.ownDescription) {
                 inner += this.writeLine(`description "${arch.ownDescription}"`, level + 2)
@@ -101,11 +101,11 @@ export class StructurizrDSLWriter {
                 inner += this.writeLine(`tags ${arch.ownTags.map((t) => `"${t}"`).join(' ')}`, level + 2)
             }
             if (inner) {
-                dsl += this.writeLine(`${arch.name} = ${arrow} {`, level + 1)
+                dsl += this.writeLine(`${arch.canonicalName} = ${arrow} {`, level + 1)
                 dsl += inner
                 dsl += this.writeLine(`}`, level + 1)
             } else {
-                dsl += this.writeLine(`${arch.name} = ${arrow} {}`, level + 1)
+                dsl += this.writeLine(`${arch.canonicalName} = ${arrow} {}`, level + 1)
             }
         }
 
@@ -116,7 +116,7 @@ export class StructurizrDSLWriter {
     private writeElement(elementType: string, element: Element, level: number, closeElement = true): string {
         let elementDsl = ''
 
-        const type = element.archetype ? element.archetype.name : elementType
+        const type = element.archetype ? element.archetype.canonicalName : elementType
         elementDsl += this.writeLine(`${element.canonicalName} = ${type} "${element.name}" {`, level)
         if (element.archetype) {
             const ovr = element.overrideDefinition
@@ -227,7 +227,7 @@ export class StructurizrDSLWriter {
     private writeRelationship(relationship: Relationship, level: number): string {
         let dsl = ''
         if (relationship.archetype) {
-            const arrow = `--${relationship.archetype.name}->`
+            const arrow = `--${relationship.archetype.canonicalName}->`
             const ovr = relationship.overrideDefinition
             const desc = ovr?.description ?? relationship.description ?? 'uses'
             dsl += this.writeLine(

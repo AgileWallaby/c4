@@ -3,7 +3,7 @@
 import { Model } from './model'
 import { StructurizrDSLWriter } from './structurizrDSLWriter'
 import { Views } from './views'
-import { ElementArchetype, RelationshipArchetype } from './archetype'
+import { ELEMENT_KINDS, ElementArchetype, RelationshipArchetype } from './archetype'
 import { validateModel } from './validateModel'
 
 const TEST_TIMEOUT = 60_000
@@ -70,13 +70,13 @@ describe('can write to dsl', () => {
         'should output archetypes block when archetypes are used',
         async () => {
             const model = new Model('archModel')
-            const springBoot = new ElementArchetype('springBootApp', 'container', {
+            const springBoot = new ElementArchetype('springBootApp', ELEMENT_KINDS.container, {
                 technology: 'Spring Boot',
                 tags: ['Application'],
             })
             const microservice = new ElementArchetype(
                 'microservice',
-                'container',
+                ELEMENT_KINDS.container,
                 {
                     tags: ['Microservice'],
                 },
