@@ -1,3 +1,13 @@
+# 4.0.0 (2026-03-20)
+
+### 🚀 Features
+
+- add 'with()' method to Views class for enhanced view configuration ([a875110](https://github.com/AgileWallaby/c4/commit/a875110))
+
+### ❤️ Thank You
+
+- James Webster @jimmcslim
+
 # 3.0.0 (2026-03-19)
 
 ### 🚀 Features
