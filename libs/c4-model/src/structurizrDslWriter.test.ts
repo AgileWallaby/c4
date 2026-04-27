@@ -17,6 +17,8 @@ describe('can write to dsl', () => {
         views = new Views()
     })
 
+    const writeDsl = () => new StructurizrDSLWriter(model, views).write()
+
     test(
         'full model with all view types',
         async () => {
@@ -69,7 +71,7 @@ describe('can write to dsl', () => {
                 v.includeAll()
             })
 
-            const dsl = new StructurizrDSLWriter(model, views).write()
+            const dsl = writeDsl()
             expect(dsl).toMatchSnapshot()
             await validateModel(model, views)
         },
@@ -97,7 +99,7 @@ describe('can write to dsl', () => {
             sys.container('Web App', springBoot)
             sys.container('API', microservice, { description: 'REST API' })
 
-            const dsl = new StructurizrDSLWriter(model, views).write()
+            const dsl = writeDsl()
             expect(dsl).toMatchSnapshot()
             await validateModel(model, views)
         },
@@ -115,7 +117,7 @@ describe('can write to dsl', () => {
             const sys = model.softwareSystem('mySystem')
             person.uses(sys, https, { description: 'Makes API calls' })
 
-            const dsl = new StructurizrDSLWriter(model, views).write()
+            const dsl = writeDsl()
             expect(dsl).toMatchSnapshot()
             await validateModel(model, views)
         },
@@ -136,7 +138,7 @@ describe('can write to dsl', () => {
             const containerGroup = container.group('Domain Services')
             containerGroup.component('Auth Service')
 
-            const dsl = new StructurizrDSLWriter(model, views).write()
+            const dsl = writeDsl()
             expect(dsl).toMatchSnapshot()
             await validateModel(model, views)
         },
@@ -149,7 +151,7 @@ describe('can write to dsl', () => {
             model = new Model('noArchModel')
             model.softwareSystem('sys1')
 
-            const dsl = new StructurizrDSLWriter(model, views).write()
+            const dsl = writeDsl()
             expect(dsl).toMatchSnapshot()
             await validateModel(model, views)
         },
@@ -166,7 +168,7 @@ describe('can write to dsl', () => {
             })
             const dsl = new StructurizrDSLWriter(model, views).write()
 
-            const dsl = new StructurizrDSLWriter(model, views).write()
+            const dsl = writeDsl()
             expect(dsl).toMatchSnapshot()
             await validateModel(model, views)
         },
@@ -183,7 +185,7 @@ describe('can write to dsl', () => {
             })
             const dsl = new StructurizrDSLWriter(model, views).write()
 
-            const dsl = new StructurizrDSLWriter(model, views).write()
+            const dsl = writeDsl()
             expect(dsl).toMatchSnapshot()
             await validateModel(model, views)
         },
@@ -200,7 +202,7 @@ describe('can write to dsl', () => {
             })
             const dsl = new StructurizrDSLWriter(model, views).write()
 
-            const dsl = new StructurizrDSLWriter(model, views).write()
+            const dsl = writeDsl()
             expect(dsl).toMatchSnapshot()
             await validateModel(model, views)
         },
@@ -217,7 +219,7 @@ describe('can write to dsl', () => {
             })
             const dsl = new StructurizrDSLWriter(model, views).write()
 
-            const dsl = new StructurizrDSLWriter(model, views).write()
+            const dsl = writeDsl()
             expect(dsl).toMatchSnapshot()
             await validateModel(model, views)
         },
@@ -235,7 +237,7 @@ describe('can write to dsl', () => {
             })
             const dsl = new StructurizrDSLWriter(model, views).write()
 
-            const dsl = new StructurizrDSLWriter(model, views).write()
+            const dsl = writeDsl()
             expect(dsl).toMatchSnapshot()
             await validateModel(model, views)
         },
@@ -247,7 +249,7 @@ describe('can write to dsl', () => {
         async () => {
             views.addProperty('structurizr.timezone', 'UTC')
 
-            const dsl = new StructurizrDSLWriter(model, views).write()
+            const dsl = writeDsl()
             expect(dsl).toMatchSnapshot()
             await validateModel(model, views)
         },
@@ -265,7 +267,7 @@ describe('can write to dsl', () => {
                 border: 'solid',
             })
 
-            const dsl = new StructurizrDSLWriter(model, views).write()
+            const dsl = writeDsl()
             expect(dsl).toMatchSnapshot()
             await validateModel(model, views)
         },
@@ -282,7 +284,7 @@ describe('can write to dsl', () => {
                 routing: 'Curved',
             })
 
-            const dsl = new StructurizrDSLWriter(model, views).write()
+            const dsl = writeDsl()
             expect(dsl).toMatchSnapshot()
             await validateModel(model, views)
         },
@@ -294,7 +296,7 @@ describe('can write to dsl', () => {
         async () => {
             views.addTheme('https://static.structurizr.com/themes/default/theme.json')
 
-            const dsl = new StructurizrDSLWriter(model, views).write()
+            const dsl = writeDsl()
             expect(dsl).toMatchSnapshot()
             await validateModel(model, views)
         },
@@ -307,7 +309,7 @@ describe('can write to dsl', () => {
             views.addTheme('default')
             views.addTheme('https://static.structurizr.com/themes/default/theme.json')
 
-            const dsl = new StructurizrDSLWriter(model, views).write()
+            const dsl = writeDsl()
             expect(dsl).toMatchSnapshot()
             await validateModel(model, views)
         },
@@ -326,7 +328,7 @@ describe('can write to dsl', () => {
             })
             const dsl = new StructurizrDSLWriter(model, views).write()
 
-            const dsl = new StructurizrDSLWriter(model, views).write()
+            const dsl = writeDsl()
             expect(dsl).toMatchSnapshot()
             await validateModel(model, views)
         },
@@ -338,7 +340,7 @@ describe('can write to dsl', () => {
         const sys = model.softwareSystem('MySystem')
         const view = views.addContainerView('cv', { subject: sys, description: 'desc' })
         view.includeElements(person)
-        expect(new StructurizrDSLWriter(model, views).write()).toMatchSnapshot()
+        expect(writeDsl()).toMatchSnapshot()
     })
 
     test('includeElements - array of elements', () => {
@@ -347,21 +349,21 @@ describe('can write to dsl', () => {
         const sys = model.softwareSystem('MySystem')
         const view = views.addContainerView('cv', { subject: sys, description: 'desc' })
         view.includeElements([person1, person2])
-        expect(new StructurizrDSLWriter(model, views).write()).toMatchSnapshot()
+        expect(writeDsl()).toMatchSnapshot()
     })
 
     test('includeExpressions - single expression', () => {
         const sys = model.softwareSystem('MySystem')
         const view = views.addContainerView('cv', { subject: sys, description: 'desc' })
         view.includeExpressions('element.type==Person')
-        expect(new StructurizrDSLWriter(model, views).write()).toMatchSnapshot()
+        expect(writeDsl()).toMatchSnapshot()
     })
 
     test('includeExpressions - array of expressions', () => {
         const sys = model.softwareSystem('MySystem')
         const view = views.addContainerView('cv', { subject: sys, description: 'desc' })
         view.includeExpressions(['element.type==Person', 'element.type==SoftwareSystem'])
-        expect(new StructurizrDSLWriter(model, views).write()).toMatchSnapshot()
+        expect(writeDsl()).toMatchSnapshot()
     })
 
     test('excludeElements - single element', () => {
@@ -370,7 +372,7 @@ describe('can write to dsl', () => {
         const view = views.addContainerView('cv', { subject: sys, description: 'desc' })
         view.includeAll()
         view.excludeElements(person)
-        expect(new StructurizrDSLWriter(model, views).write()).toMatchSnapshot()
+        expect(writeDsl()).toMatchSnapshot()
     })
 
     test('excludeElements - array of elements', () => {
@@ -380,7 +382,7 @@ describe('can write to dsl', () => {
         const view = views.addContainerView('cv', { subject: sys, description: 'desc' })
         view.includeAll()
         view.excludeElements([person1, person2])
-        expect(new StructurizrDSLWriter(model, views).write()).toMatchSnapshot()
+        expect(writeDsl()).toMatchSnapshot()
     })
 
     test('excludeExpressions - single expression', () => {
@@ -388,7 +390,7 @@ describe('can write to dsl', () => {
         const view = views.addContainerView('cv', { subject: sys, description: 'desc' })
         view.includeAll()
         view.excludeExpressions('element.type==Person')
-        expect(new StructurizrDSLWriter(model, views).write()).toMatchSnapshot()
+        expect(writeDsl()).toMatchSnapshot()
     })
 
     test('excludeExpressions - array of expressions', () => {
@@ -396,6 +398,6 @@ describe('can write to dsl', () => {
         const view = views.addContainerView('cv', { subject: sys, description: 'desc' })
         view.includeAll()
         view.excludeExpressions(['element.type==Person', 'element.type==SoftwareSystem'])
-        expect(new StructurizrDSLWriter(model, views).write()).toMatchSnapshot()
+        expect(writeDsl()).toMatchSnapshot()
     })
 })
