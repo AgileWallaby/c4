@@ -80,6 +80,113 @@ exports[`can write to dsl > default - marks view as default 1`] = `
 "
 `;
 
+exports[`can write to dsl > excludeElements - array of elements 1`] = `
+"workspace "m" {
+  model {
+    // Elements
+    alice = person "alice" {
+      tags "Element" "Person"
+    }
+    bob = person "bob" {
+      tags "Element" "Person"
+    }
+    mySystem = softwareSystem "MySystem" {
+      tags "Element" "Software System"
+    }
+    // Relationships
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    // Container Views
+    container "mySystem" "cv" {
+      description "desc"
+      include *
+      exclude alice
+      exclude bob
+    }
+    // Component Views
+  }
+}
+"
+`;
+
+exports[`can write to dsl > excludeElements - single element 1`] = `
+"workspace "m" {
+  model {
+    // Elements
+    alice = person "alice" {
+      tags "Element" "Person"
+    }
+    mySystem = softwareSystem "MySystem" {
+      tags "Element" "Software System"
+    }
+    // Relationships
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    // Container Views
+    container "mySystem" "cv" {
+      description "desc"
+      include *
+      exclude alice
+    }
+    // Component Views
+  }
+}
+"
+`;
+
+exports[`can write to dsl > excludeExpressions - array of expressions 1`] = `
+"workspace "m" {
+  model {
+    // Elements
+    mySystem = softwareSystem "MySystem" {
+      tags "Element" "Software System"
+    }
+    // Relationships
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    // Container Views
+    container "mySystem" "cv" {
+      description "desc"
+      include *
+      exclude element.type==Person
+      exclude element.type==SoftwareSystem
+    }
+    // Component Views
+  }
+}
+"
+`;
+
+exports[`can write to dsl > excludeExpressions - single expression 1`] = `
+"workspace "m" {
+  model {
+    // Elements
+    mySystem = softwareSystem "MySystem" {
+      tags "Element" "Software System"
+    }
+    // Relationships
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    // Container Views
+    container "mySystem" "cv" {
+      description "desc"
+      include *
+      exclude element.type==Person
+    }
+    // Component Views
+  }
+}
+"
+`;
+
 exports[`can write to dsl > full model with all view types 1`] = `
 "workspace "name" {
   model {
@@ -214,6 +321,109 @@ exports[`can write to dsl > includeElement accepts Person on container view 1`] 
     container "mySystem" "cv" {
       description "desc"
       include alice
+    }
+    // Component Views
+  }
+}
+"
+`;
+
+exports[`can write to dsl > includeElements - array of elements 1`] = `
+"workspace "m" {
+  model {
+    // Elements
+    alice = person "alice" {
+      tags "Element" "Person"
+    }
+    bob = person "bob" {
+      tags "Element" "Person"
+    }
+    mySystem = softwareSystem "MySystem" {
+      tags "Element" "Software System"
+    }
+    // Relationships
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    // Container Views
+    container "mySystem" "cv" {
+      description "desc"
+      include alice
+      include bob
+    }
+    // Component Views
+  }
+}
+"
+`;
+
+exports[`can write to dsl > includeElements - single element 1`] = `
+"workspace "m" {
+  model {
+    // Elements
+    alice = person "alice" {
+      tags "Element" "Person"
+    }
+    mySystem = softwareSystem "MySystem" {
+      tags "Element" "Software System"
+    }
+    // Relationships
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    // Container Views
+    container "mySystem" "cv" {
+      description "desc"
+      include alice
+    }
+    // Component Views
+  }
+}
+"
+`;
+
+exports[`can write to dsl > includeExpressions - array of expressions 1`] = `
+"workspace "m" {
+  model {
+    // Elements
+    mySystem = softwareSystem "MySystem" {
+      tags "Element" "Software System"
+    }
+    // Relationships
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    // Container Views
+    container "mySystem" "cv" {
+      description "desc"
+      include element.type==Person
+      include element.type==SoftwareSystem
+    }
+    // Component Views
+  }
+}
+"
+`;
+
+exports[`can write to dsl > includeExpressions - single expression 1`] = `
+"workspace "m" {
+  model {
+    // Elements
+    mySystem = softwareSystem "MySystem" {
+      tags "Element" "Software System"
+    }
+    // Relationships
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    // Container Views
+    container "mySystem" "cv" {
+      description "desc"
+      include element.type==Person
     }
     // Component Views
   }
