@@ -101,8 +101,16 @@ export class View<T extends Element> {
         this._scopes.push(`include ${element.canonicalName}`)
     }
 
+    public includeElements(elements: Element | Element[]) {
+        ;[elements].flat().forEach(e => this.includeElement(e))
+    }
+
     public includeExpression(expression: string) {
         this._scopes.push(`include ${expression}`)
+    }
+
+    public includeExpressions(expressions: string | string[]) {
+        ;[expressions].flat().forEach(e => this.includeExpression(e))
     }
 
     public excludeAll() {
@@ -113,8 +121,16 @@ export class View<T extends Element> {
         this._scopes.push(`exclude ${element.canonicalName}`)
     }
 
+    public excludeElements(elements: Element | Element[]) {
+        ;[elements].flat().forEach(e => this.excludeElement(e))
+    }
+
     public excludeExpression(expression: string) {
         this._scopes.push(`exclude ${expression}`)
+    }
+
+    public excludeExpressions(expressions: string | string[]) {
+        ;[expressions].flat().forEach(e => this.excludeExpression(e))
     }
 
     public autoLayout(direction?: AutoLayoutDirection, rankSeparation?: number, nodeSeparation?: number): void {
