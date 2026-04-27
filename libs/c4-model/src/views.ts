@@ -102,10 +102,7 @@ export class View<T extends Element> {
     }
 
     public includeElements(elements: Element | Element[]) {
-        const arr = Array.isArray(elements) ? elements : [elements]
-        for (const element of arr) {
-            this._scopes.push(`include ${element.canonicalName}`)
-        }
+        ;[elements].flat().forEach(e => this.includeElement(e))
     }
 
     public includeExpression(expression: string) {
@@ -113,10 +110,7 @@ export class View<T extends Element> {
     }
 
     public includeExpressions(expressions: string | string[]) {
-        const arr = Array.isArray(expressions) ? expressions : [expressions]
-        for (const expression of arr) {
-            this._scopes.push(`include ${expression}`)
-        }
+        ;[expressions].flat().forEach(e => this.includeExpression(e))
     }
 
     public excludeAll() {
@@ -128,10 +122,7 @@ export class View<T extends Element> {
     }
 
     public excludeElements(elements: Element | Element[]) {
-        const arr = Array.isArray(elements) ? elements : [elements]
-        for (const element of arr) {
-            this._scopes.push(`exclude ${element.canonicalName}`)
-        }
+        ;[elements].flat().forEach(e => this.excludeElement(e))
     }
 
     public excludeExpression(expression: string) {
@@ -139,10 +130,7 @@ export class View<T extends Element> {
     }
 
     public excludeExpressions(expressions: string | string[]) {
-        const arr = Array.isArray(expressions) ? expressions : [expressions]
-        for (const expression of arr) {
-            this._scopes.push(`exclude ${expression}`)
-        }
+        ;[expressions].flat().forEach(e => this.excludeExpression(e))
     }
 
     public autoLayout(direction?: AutoLayoutDirection, rankSeparation?: number, nodeSeparation?: number): void {
