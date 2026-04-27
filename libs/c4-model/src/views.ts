@@ -4,7 +4,7 @@ import { SoftwareSystem } from './softwareSystem'
 
 interface ViewDefinition<T extends Element> {
     subject?: T
-    description: string
+    description?: string
     title?: string
 }
 
@@ -76,7 +76,7 @@ export interface RelationshipStyleEntry {
 
 export class View<T extends Element> {
     public readonly subject?: T
-    public readonly description: string
+    public readonly description?: string
     public readonly title?: string
 
     private _scopes: string[] = []

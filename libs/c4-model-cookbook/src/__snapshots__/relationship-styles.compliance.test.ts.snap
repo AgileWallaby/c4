@@ -24,7 +24,6 @@ exports[`cookbook: relationship-styles - baseline > generates expected DSL 1`] =
   views {
     // System Landscape Views
     systemLandscape "Landscape" {
-      description "undefined"
       include *
       autoLayout lr
     }

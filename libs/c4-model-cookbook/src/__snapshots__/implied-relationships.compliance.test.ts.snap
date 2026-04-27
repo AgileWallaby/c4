@@ -64,7 +64,6 @@ exports[`cookbook: implied-relationships - explicit at both levels > generates e
     // System Landscape Views
     // System Context Views
     systemContext "softwareSystem" "SystemContext" {
-      description "undefined"
       include *
       autoLayout lr
     }
@@ -100,7 +99,6 @@ exports[`cookbook: implied-relationships - multiple relationships merged > gener
     // System Landscape Views
     // System Context Views
     systemContext "softwareSystem" "SystemContext" {
-      description "undefined"
       include *
       autoLayout lr
     }
