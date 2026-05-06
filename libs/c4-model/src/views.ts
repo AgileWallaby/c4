@@ -128,8 +128,22 @@ class View<T extends Element> implements ViewBuilder, ReadonlyView<T> {
         this._scopes.push(`include ${element.canonicalName}`)
     }
 
+    public includeElements(elements: Element | Element[]) {
+        const arr = Array.isArray(elements) ? elements : [elements]
+        for (const element of arr) {
+            this._scopes.push(`include ${element.canonicalName}`)
+        }
+    }
+
     public includeExpression(expression: string) {
         this._scopes.push(`include ${expression}`)
+    }
+
+    public includeExpressions(expressions: string | string[]) {
+        const arr = Array.isArray(expressions) ? expressions : [expressions]
+        for (const expression of arr) {
+            this._scopes.push(`include ${expression}`)
+        }
     }
 
     public excludeAll() {
@@ -140,8 +154,22 @@ class View<T extends Element> implements ViewBuilder, ReadonlyView<T> {
         this._scopes.push(`exclude ${element.canonicalName}`)
     }
 
+    public excludeElements(elements: Element | Element[]) {
+        const arr = Array.isArray(elements) ? elements : [elements]
+        for (const element of arr) {
+            this._scopes.push(`exclude ${element.canonicalName}`)
+        }
+    }
+
     public excludeExpression(expression: string) {
         this._scopes.push(`exclude ${expression}`)
+    }
+
+    public excludeExpressions(expressions: string | string[]) {
+        const arr = Array.isArray(expressions) ? expressions : [expressions]
+        for (const expression of arr) {
+            this._scopes.push(`exclude ${expression}`)
+        }
     }
 
     public autoLayout(direction?: AutoLayoutDirection, rankSeparation?: number, nodeSeparation?: number): void {

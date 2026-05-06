@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { Model } from './model'
-import { StructurizrDSLWriter } from './structurizrDSLWriter'
+import { StructurizrDSLWriter } from './structurizrDslWriter'
 import { Views } from './views'
 import { ELEMENT_KINDS, ElementArchetype, RelationshipArchetype } from './archetype'
 import { validateModel } from './validateModel'
@@ -336,4 +336,86 @@ describe('can write to dsl', () => {
         },
         TEST_TIMEOUT
     )
+
+    test('includeElements - single element', () => {
+        const model = new Model('m')
+        const person = model.person('alice')
+        const sys = model.softwareSystem('MySystem')
+        const views = new Views()
+        const view = views.addContainerView('cv', { subject: sys, description: 'desc' })
+        view.includeElements(person)
+        expect(new StructurizrDSLWriter(model, views).write()).toMatchSnapshot()
+    })
+
+    test('includeElements - array of elements', () => {
+        const model = new Model('m')
+        const person1 = model.person('alice')
+        const person2 = model.person('bob')
+        const sys = model.softwareSystem('MySystem')
+        const views = new Views()
+        const view = views.addContainerView('cv', { subject: sys, description: 'desc' })
+        view.includeElements([person1, person2])
+        expect(new StructurizrDSLWriter(model, views).write()).toMatchSnapshot()
+    })
+
+    test('includeExpressions - single expression', () => {
+        const model = new Model('m')
+        const sys = model.softwareSystem('MySystem')
+        const views = new Views()
+        const view = views.addContainerView('cv', { subject: sys, description: 'desc' })
+        view.includeExpressions('element.type==Person')
+        expect(new StructurizrDSLWriter(model, views).write()).toMatchSnapshot()
+    })
+
+    test('includeExpressions - array of expressions', () => {
+        const model = new Model('m')
+        const sys = model.softwareSystem('MySystem')
+        const views = new Views()
+        const view = views.addContainerView('cv', { subject: sys, description: 'desc' })
+        view.includeExpressions(['element.type==Person', 'element.type==SoftwareSystem'])
+        expect(new StructurizrDSLWriter(model, views).write()).toMatchSnapshot()
+    })
+
+    test('excludeElements - single element', () => {
+        const model = new Model('m')
+        const person = model.person('alice')
+        const sys = model.softwareSystem('MySystem')
+        const views = new Views()
+        const view = views.addContainerView('cv', { subject: sys, description: 'desc' })
+        view.includeAll()
+        view.excludeElements(person)
+        expect(new StructurizrDSLWriter(model, views).write()).toMatchSnapshot()
+    })
+
+    test('excludeElements - array of elements', () => {
+        const model = new Model('m')
+        const person1 = model.person('alice')
+        const person2 = model.person('bob')
+        const sys = model.softwareSystem('MySystem')
+        const views = new Views()
+        const view = views.addContainerView('cv', { subject: sys, description: 'desc' })
+        view.includeAll()
+        view.excludeElements([person1, person2])
+        expect(new StructurizrDSLWriter(model, views).write()).toMatchSnapshot()
+    })
+
+    test('excludeExpressions - single expression', () => {
+        const model = new Model('m')
+        const sys = model.softwareSystem('MySystem')
+        const views = new Views()
+        const view = views.addContainerView('cv', { subject: sys, description: 'desc' })
+        view.includeAll()
+        view.excludeExpressions('element.type==Person')
+        expect(new StructurizrDSLWriter(model, views).write()).toMatchSnapshot()
+    })
+
+    test('excludeExpressions - array of expressions', () => {
+        const model = new Model('m')
+        const sys = model.softwareSystem('MySystem')
+        const views = new Views()
+        const view = views.addContainerView('cv', { subject: sys, description: 'desc' })
+        view.includeAll()
+        view.excludeExpressions(['element.type==Person', 'element.type==SoftwareSystem'])
+        expect(new StructurizrDSLWriter(model, views).write()).toMatchSnapshot()
+    })
 })
