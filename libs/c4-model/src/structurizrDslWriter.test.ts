@@ -53,7 +53,6 @@ describe('can write to dsl', () => {
             sys1.uses(sys2)
             sys2.uses(sys1)
 
-            const views = new Views()
             views.addSystemLandscapeView('someName1', { description: 'someDescription' }).with((v) => {
                 v.includeAll()
             })
@@ -161,13 +160,9 @@ describe('can write to dsl', () => {
     test(
         'autoLayout - bare',
         async () => {
-            const model = new Model('m')
-            const views = new Views()
             views.addSystemLandscapeView('sl', { description: 'desc' }).with((v) => {
                 v.autoLayout()
             })
-            const dsl = new StructurizrDSLWriter(model, views).write()
-
             const dsl = writeDsl()
             expect(dsl).toMatchSnapshot()
             await validateModel(model, views)
@@ -178,13 +173,9 @@ describe('can write to dsl', () => {
     test(
         'autoLayout - with direction',
         async () => {
-            const model = new Model('m')
-            const views = new Views()
             views.addSystemLandscapeView('sl', { description: 'desc' }).with((v) => {
                 v.autoLayout('lr')
             })
-            const dsl = new StructurizrDSLWriter(model, views).write()
-
             const dsl = writeDsl()
             expect(dsl).toMatchSnapshot()
             await validateModel(model, views)
@@ -195,13 +186,9 @@ describe('can write to dsl', () => {
     test(
         'autoLayout - with direction and separations',
         async () => {
-            const model = new Model('m')
-            const views = new Views()
             views.addSystemLandscapeView('sl', { description: 'desc' }).with((v) => {
                 v.autoLayout('tb', 300, 100)
             })
-            const dsl = new StructurizrDSLWriter(model, views).write()
-
             const dsl = writeDsl()
             expect(dsl).toMatchSnapshot()
             await validateModel(model, views)
@@ -212,13 +199,9 @@ describe('can write to dsl', () => {
     test(
         'default - marks view as default',
         async () => {
-            const model = new Model('m')
-            const views = new Views()
             views.addSystemLandscapeView('sl', { description: 'desc' }).with((v) => {
                 v.setDefault()
             })
-            const dsl = new StructurizrDSLWriter(model, views).write()
-
             const dsl = writeDsl()
             expect(dsl).toMatchSnapshot()
             await validateModel(model, views)
@@ -229,14 +212,10 @@ describe('can write to dsl', () => {
     test(
         'per-view properties - emitted inside view block',
         async () => {
-            const model = new Model('m')
-            const views = new Views()
             views.addSystemLandscapeView('sl', { description: 'desc' }).with((v) => {
                 v.addProperty('structurizr.sort', 'created')
                 v.addProperty('custom.key', 'some value')
             })
-            const dsl = new StructurizrDSLWriter(model, views).write()
-
             const dsl = writeDsl()
             expect(dsl).toMatchSnapshot()
             await validateModel(model, views)
@@ -321,13 +300,10 @@ describe('can write to dsl', () => {
         async () => {
             const person = model.person('alice')
             const sys = model.softwareSystem('MySystem')
-            const views = new Views()
             // Container view is scoped to SoftwareSystem — ViewBuilder.includeElement should accept Person (an Element)
             views.addContainerView('cv', { subject: sys, description: 'desc' }).with((v) => {
                 v.includeElement(person)
             })
-            const dsl = new StructurizrDSLWriter(model, views).write()
-
             const dsl = writeDsl()
             expect(dsl).toMatchSnapshot()
             await validateModel(model, views)
@@ -338,8 +314,9 @@ describe('can write to dsl', () => {
     test('includeElements - single element', () => {
         const person = model.person('alice')
         const sys = model.softwareSystem('MySystem')
-        const view = views.addContainerView('cv', { subject: sys, description: 'desc' })
-        view.includeElements(person)
+        views.addContainerView('cv', { subject: sys, description: 'desc' }).with((v) => {
+            v.includeElements(person)
+        })
         expect(writeDsl()).toMatchSnapshot()
     })
 
@@ -347,31 +324,35 @@ describe('can write to dsl', () => {
         const person1 = model.person('alice')
         const person2 = model.person('bob')
         const sys = model.softwareSystem('MySystem')
-        const view = views.addContainerView('cv', { subject: sys, description: 'desc' })
-        view.includeElements([person1, person2])
+        views.addContainerView('cv', { subject: sys, description: 'desc' }).with((v) => {
+            v.includeElements([person1, person2])
+        })
         expect(writeDsl()).toMatchSnapshot()
     })
 
     test('includeExpressions - single expression', () => {
         const sys = model.softwareSystem('MySystem')
-        const view = views.addContainerView('cv', { subject: sys, description: 'desc' })
-        view.includeExpressions('element.type==Person')
+        views.addContainerView('cv', { subject: sys, description: 'desc' }).with((v) => {
+            v.includeExpressions('element.type==Person')
+        })
         expect(writeDsl()).toMatchSnapshot()
     })
 
     test('includeExpressions - array of expressions', () => {
         const sys = model.softwareSystem('MySystem')
-        const view = views.addContainerView('cv', { subject: sys, description: 'desc' })
-        view.includeExpressions(['element.type==Person', 'element.type==SoftwareSystem'])
+        views.addContainerView('cv', { subject: sys, description: 'desc' }).with((v) => {
+            v.includeExpressions(['element.type==Person', 'element.type==SoftwareSystem'])
+        })
         expect(writeDsl()).toMatchSnapshot()
     })
 
     test('excludeElements - single element', () => {
         const person = model.person('alice')
         const sys = model.softwareSystem('MySystem')
-        const view = views.addContainerView('cv', { subject: sys, description: 'desc' })
-        view.includeAll()
-        view.excludeElements(person)
+        views.addContainerView('cv', { subject: sys, description: 'desc' }).with((v) => {
+            v.includeAll()
+            v.excludeElements(person)
+        })
         expect(writeDsl()).toMatchSnapshot()
     })
 
@@ -379,25 +360,28 @@ describe('can write to dsl', () => {
         const person1 = model.person('alice')
         const person2 = model.person('bob')
         const sys = model.softwareSystem('MySystem')
-        const view = views.addContainerView('cv', { subject: sys, description: 'desc' })
-        view.includeAll()
-        view.excludeElements([person1, person2])
+        views.addContainerView('cv', { subject: sys, description: 'desc' }).with((v) => {
+            v.includeAll()
+            v.excludeElements([person1, person2])
+        })
         expect(writeDsl()).toMatchSnapshot()
     })
 
     test('excludeExpressions - single expression', () => {
         const sys = model.softwareSystem('MySystem')
-        const view = views.addContainerView('cv', { subject: sys, description: 'desc' })
-        view.includeAll()
-        view.excludeExpressions('element.type==Person')
+        views.addContainerView('cv', { subject: sys, description: 'desc' }).with((v) => {
+            v.includeAll()
+            v.excludeExpressions('element.type==Person')
+        })
         expect(writeDsl()).toMatchSnapshot()
     })
 
     test('excludeExpressions - array of expressions', () => {
         const sys = model.softwareSystem('MySystem')
-        const view = views.addContainerView('cv', { subject: sys, description: 'desc' })
-        view.includeAll()
-        view.excludeExpressions(['element.type==Person', 'element.type==SoftwareSystem'])
+        views.addContainerView('cv', { subject: sys, description: 'desc' }).with((v) => {
+            v.includeAll()
+            v.excludeExpressions(['element.type==Person', 'element.type==SoftwareSystem'])
+        })
         expect(writeDsl()).toMatchSnapshot()
     })
 })
