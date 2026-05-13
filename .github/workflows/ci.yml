@@ -55,3 +55,19 @@ jobs:
         run: pnpm nx run-many -t test
         env:
           TESTCONTAINERS_RYUK_DISABLED: 'true'
+
+  ci:
+    name: CI
+    if: always()
+    needs: [typecheck, test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify required jobs succeeded
+        run: |
+          if [[ "${{ needs.typecheck.result }}" != "success" || "${{ needs.test.result }}" != "success" ]]; then
+            echo "One or more required jobs failed or were skipped."
+            echo "  typecheck: ${{ needs.typecheck.result }}"
+            echo "  test:      ${{ needs.test.result }}"
+            exit 1
+          fi
+          echo "All required jobs succeeded."
