@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+  #   branches-ignore:
+  #     - main
+  # pull_request:
+  #   branches:
+  #     - main
+
+jobs:
+  typecheck:
+    name: Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Type check
+        run: |
+          pnpm exec tsc --noEmit -p libs/c4-model/tsconfig.lib.json
+          pnpm exec tsc --noEmit -p libs/c4-parser/tsconfig.lib.json
+          pnpm exec tsc --noEmit -p libs/c4-diagram-renderer/tsconfig.lib.json
+          pnpm exec tsc --noEmit -p libs/c4-model-examples/tsconfig.lib.json
+          pnpm exec tsc --noEmit -p libs/c4-model-cookbook/tsconfig.spec.json
+          pnpm exec tsc --noEmit -p apps/c4-viewer/tsconfig.app.json
+          pnpm exec tsc --noEmit -p apps/c4-viewer-api/tsconfig.app.json
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run tests
+        run: pnpm nx run-many -t test
+        env:
+          TESTCONTAINERS_RYUK_DISABLED: 'true'
