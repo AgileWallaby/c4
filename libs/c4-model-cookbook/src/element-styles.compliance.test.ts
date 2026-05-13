@@ -7,7 +7,7 @@ import { complianceSuite } from './testUtils/complianceSuite'
 // example-1: no element styles
 complianceSuite('cookbook: element-styles - baseline', {
     buildModel() {
-        const model = new Model()
+        const model = new Model('ElementStylesBaseline')
         const a = model.softwareSystem('A')
         const b = model.softwareSystem('B')
         const c = model.softwareSystem('C')

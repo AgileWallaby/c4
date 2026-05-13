@@ -7,7 +7,7 @@ import { complianceSuite } from './testUtils/complianceSuite'
 // example-1: no relationship styles
 complianceSuite('cookbook: relationship-styles - baseline', {
     buildModel() {
-        const model = new Model()
+        const model = new Model('RelationshipStylesBaseline')
         const a = model.softwareSystem('A')
         const b = model.softwareSystem('B')
         const c = model.softwareSystem('C')

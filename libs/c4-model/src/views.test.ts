@@ -1,10 +1,10 @@
 import { Model } from './model'
-import { View, Views } from './views'
+import { ReadonlyView, Views } from './views'
 
 describe('View', () => {
     let model: Model
     let views: Views
-    let view: View<ReturnType<Model['softwareSystem']>>
+    let view: ReadonlyView<ReturnType<Model['softwareSystem']>>
 
     beforeEach(() => {
         model = new Model('m')

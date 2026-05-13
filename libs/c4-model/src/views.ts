@@ -80,10 +80,14 @@ export interface RelationshipStyleEntry {
 export interface ViewBuilder {
     includeAll(): void
     includeElement(element: Element): void
+    includeElements(elements: Element | Element[]): void
     includeExpression(expression: string): void
+    includeExpressions(expressions: string | string[]): void
     excludeAll(): void
     excludeElement(element: Element): void
+    excludeElements(elements: Element | Element[]): void
     excludeExpression(expression: string): void
+    excludeExpressions(expressions: string | string[]): void
     autoLayout(direction?: AutoLayoutDirection, rankSeparation?: number, nodeSeparation?: number): void
     setDefault(): void
     addProperty(name: string, value: string): void
@@ -98,10 +102,23 @@ export interface ReadonlyView<T extends Element> {
     readonly autoLayoutConfig: AutoLayout | undefined
     readonly isDefault: boolean
     readonly properties: ReadonlyMap<string, string>
+    includeAll(): void
+    includeElement(element: Element): void
+    includeElements(elements: Element | Element[]): void
+    includeExpression(expression: string): void
+    includeExpressions(expressions: string | string[]): void
+    excludeAll(): void
+    excludeElement(element: Element): void
+    excludeElements(elements: Element | Element[]): void
+    excludeExpression(expression: string): void
+    excludeExpressions(expressions: string | string[]): void
+    autoLayout(direction?: AutoLayoutDirection, rankSeparation?: number, nodeSeparation?: number): void
+    setDefault(): void
+    addProperty(name: string, value: string): void
     with(callback: (builder: ViewBuilder) => void): ReadonlyView<T>
 }
 
-class View<T extends Element> implements ViewBuilder, ReadonlyView<T> {
+export class View<T extends Element> implements ViewBuilder, ReadonlyView<T> {
     public readonly subject?: T
     public readonly description?: string
     public readonly title?: string

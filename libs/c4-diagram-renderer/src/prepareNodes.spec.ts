@@ -63,7 +63,7 @@ describe('prepareNodesForSsr', () => {
         const result = prepareNodesForSsr(nodes)
 
         expect(result[0].position).toEqual({ x: 50, y: 100 })
-        expect(result[0].data.label).toBe('API')
+        expect(result[0].data['label']).toBe('API')
         expect(result[0].parentId).toBe('g1')
     })
 })

@@ -8,7 +8,7 @@ import { complianceSuite } from './testUtils/complianceSuite'
 // Note: validating this example requires network access to resolve the theme URL
 complianceSuite('cookbook: themes - single theme (azure shorthand)', {
     buildModel() {
-        const model = new Model()
+        const model = new Model('ThemesSingleAzureShorthand')
         model.softwareSystem('Authentication Service', { tags: ['Microsoft Azure - Azure Active Directory'] })
 
         const views = new Views()

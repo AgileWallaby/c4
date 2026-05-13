@@ -7,7 +7,7 @@ import { complianceSuite } from './testUtils/complianceSuite'
 // example-1: container view with include * — only containers of the subject system are included
 complianceSuite('cookbook: container-view-multiple-software-systems - include all', {
     buildModel() {
-        const model = new Model()
+        const model = new Model('ContainerViewMultipleSoftwareSystemsIncludeAll')
         const s1 = model.softwareSystem('Software System 1')
         const c1 = s1.container('Container 1')
         const s2 = model.softwareSystem('Software System 2')
@@ -27,7 +27,7 @@ complianceSuite('cookbook: container-view-multiple-software-systems - include al
 // example-2: container view with explicit include of containers from both systems
 complianceSuite('cookbook: container-view-multiple-software-systems - explicit include', {
     buildModel() {
-        const model = new Model()
+        const model = new Model('ContainerViewMultipleSoftwareSystemsExplicitInclude')
         const s1 = model.softwareSystem('Software System 1')
         const c1 = s1.container('Container 1')
         const s2 = model.softwareSystem('Software System 2')

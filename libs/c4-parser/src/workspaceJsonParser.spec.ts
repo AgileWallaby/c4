@@ -62,25 +62,23 @@ describe('parseView', () => {
             const group = result.nodes.find((n) => n.id === 'group-g1')
             expect(group).toBeDefined()
             expect(group?.position).toEqual({ x: 60, y: 160 })
-            expect(group?.style).toEqual(
-                expect.objectContaining({ width: 552, height: 160 })
-            )
+            expect(group?.style).toEqual(expect.objectContaining({ width: 552, height: 160 }))
         })
 
         it('marks external elements with isExternal: true', () => {
             const customer = result.nodes.find((n) => n.id === '1')
-            expect(customer?.data.isExternal).toBe(true)
+            expect(customer?.data['isExternal']).toBe(true)
 
             const emailSystem = result.nodes.find((n) => n.id === '4')
-            expect(emailSystem?.data.isExternal).toBe(true)
+            expect(emailSystem?.data['isExternal']).toBe(true)
         })
 
         it('marks internal elements with isExternal: false', () => {
             const admin = result.nodes.find((n) => n.id === '2')
-            expect(admin?.data.isExternal).toBe(false)
+            expect(admin?.data['isExternal']).toBe(false)
 
             const bankingSystem = result.nodes.find((n) => n.id === '3')
-            expect(bankingSystem?.data.isExternal).toBe(false)
+            expect(bankingSystem?.data['isExternal']).toBe(false)
         })
 
         it('builds edges with correct source and target', () => {
@@ -114,7 +112,7 @@ describe('parseView', () => {
         it('creates a group node for Internal Users', () => {
             const groupNodes = result.nodes.filter((n) => n.type === 'groupNode')
             expect(groupNodes).toHaveLength(1)
-            expect(groupNodes[0].data.label).toBe('Internal Users')
+            expect(groupNodes[0].data['label']).toBe('Internal Users')
         })
 
         it('assigns Admin to the group node via parentId', () => {
@@ -148,7 +146,7 @@ describe('parseView', () => {
 
         it('includes technology in container node data', () => {
             const webApp = result.nodes.find((n) => n.id === '5')
-            expect(webApp?.data.technology).toBe('React')
+            expect(webApp?.data['technology']).toBe('React')
         })
 
         it('sets parentSystemId relationship via type mapping', () => {

@@ -31,7 +31,7 @@ describe('cookbook: implied-relationships - disabling implied relationships', ()
 
 complianceSuite('cookbook: implied-relationships - multiple relationships merged', {
     buildModel() {
-        const model = new Model()
+        const model = new Model('ImpliedRelationshipsMultipleMerged')
         const user = model.person('User')
         const system = model.softwareSystem('Software System')
         const webapp = system.container('Web Application')
@@ -50,7 +50,7 @@ complianceSuite('cookbook: implied-relationships - multiple relationships merged
 
 complianceSuite('cookbook: implied-relationships - explicit at both levels', {
     buildModel() {
-        const model = new Model()
+        const model = new Model('ImpliedRelationshipsExplicitAtBothLevels')
         const user = model.person('User')
         const system = model.softwareSystem('Software System')
         const webapp = system.container('Web Application')

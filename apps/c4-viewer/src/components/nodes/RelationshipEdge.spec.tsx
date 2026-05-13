@@ -75,7 +75,6 @@ describe("RelationshipEdge", () => {
 
   it("does not render label when data is undefined", () => {
     const props = makeProps();
-    // @ts-expect-error testing undefined data
     props.data = undefined;
     render(<RelationshipEdge {...props} />);
     expect(screen.queryByTestId("edge-label-renderer")).toBeNull();

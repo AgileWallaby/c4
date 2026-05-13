@@ -23,20 +23,20 @@ interface RelationshipEntry {
  */
 function collectElements(workspace: AnyObject): ElementEntry[] {
     const elements: ElementEntry[] = []
-    const model = workspace.model ?? {}
+    const model = workspace['model'] ?? {}
 
-    const collectPerson = (p: AnyObject) => elements.push({ id: p.id, name: p.name, type: 'person' })
+    const collectPerson = (p: AnyObject) => elements.push({ id: p['id'], name: p['name'], type: 'person' })
 
     const collectSoftwareSystem = (ss: AnyObject) => {
-        elements.push({ id: ss.id, name: ss.name, type: 'softwareSystem' })
-        for (const c of ss.containers ?? []) {
-            elements.push({ id: c.id, name: c.name, type: 'container', parentName: ss.name })
-            for (const comp of c.components ?? []) {
+        elements.push({ id: ss['id'], name: ss['name'], type: 'softwareSystem' })
+        for (const c of ss['containers'] ?? []) {
+            elements.push({ id: c['id'], name: c['name'], type: 'container', parentName: ss['name'] })
+            for (const comp of c['components'] ?? []) {
                 elements.push({
-                    id: comp.id,
-                    name: comp.name,
+                    id: comp['id'],
+                    name: comp['name'],
                     type: 'component',
-                    parentName: `${ss.name}/${c.name}`,
+                    parentName: `${ss['name']}/${c['name']}`,
                 })
             }
         }
@@ -50,27 +50,27 @@ function collectElements(workspace: AnyObject): ElementEntry[] {
 
 function collectRelationships(workspace: AnyObject): RelationshipEntry[] {
     const relationships: RelationshipEntry[] = []
-    const model = workspace.model ?? {}
+    const model = workspace['model'] ?? {}
 
     const addRels = (rels: AnyObject[]) => {
         for (const r of rels ?? []) {
             relationships.push({
-                id: r.id,
-                sourceId: r.sourceId,
-                destinationId: r.destinationId,
-                description: r.description ?? '',
+                id: r['id'],
+                sourceId: r['sourceId'],
+                destinationId: r['destinationId'],
+                description: r['description'] ?? '',
             })
         }
     }
 
-    addRels(model.relationships ?? [])
-    for (const p of model.people ?? []) addRels(p.relationships ?? [])
-    for (const ss of model.softwareSystems ?? []) {
-        addRels(ss.relationships ?? [])
-        for (const c of ss.containers ?? []) {
-            addRels(c.relationships ?? [])
-            for (const comp of c.components ?? []) {
-                addRels(comp.relationships ?? [])
+    addRels(model['relationships'] ?? [])
+    for (const p of model['people'] ?? []) addRels(p['relationships'] ?? [])
+    for (const ss of model['softwareSystems'] ?? []) {
+        addRels(ss['relationships'] ?? [])
+        for (const c of ss['containers'] ?? []) {
+            addRels(c['relationships'] ?? [])
+            for (const comp of c['components'] ?? []) {
+                addRels(comp['relationships'] ?? [])
             }
         }
     }
@@ -209,11 +209,13 @@ const STRIP_PROPERTY_KEYS = new Set([
 ])
 
 function stripProperties(obj: AnyObject): AnyObject {
-    if (!obj.properties || typeof obj.properties !== 'object') return obj
-    const filtered = Object.fromEntries(Object.entries(obj.properties as AnyObject).filter(([k]) => !STRIP_PROPERTY_KEYS.has(k)))
-    const result = { ...obj, properties: filtered }
-    if (Object.keys(result.properties).length === 0) delete result.properties
-    return result
+    if (!obj['properties'] || typeof obj['properties'] !== 'object') return obj
+    const filtered = Object.fromEntries(Object.entries(obj['properties'] as AnyObject).filter(([k]) => !STRIP_PROPERTY_KEYS.has(k)))
+    if (Object.keys(filtered).length === 0) {
+        const { properties: _properties, ...rest } = obj
+        return rest
+    }
+    return { ...obj, properties: filtered }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -235,40 +237,40 @@ function stripPropertiesDeep(value: unknown): any {
 
 function stripMetadata(ws: AnyObject): AnyObject {
     const result = { ...ws }
-    delete result.name
-    delete result.description
-    if (result.views && typeof result.views === 'object') {
-        const views = { ...result.views }
+    delete result['name']
+    delete result['description']
+    if (result['views'] && typeof result['views'] === 'object') {
+        const views = { ...result['views'] }
         for (const [viewType, viewArray] of Object.entries(views)) {
             if (Array.isArray(viewArray)) {
                 views[viewType] = viewArray.map((v: AnyObject) => {
                     const view = { ...v }
-                    delete view.key
-                    delete view.description
-                    delete view.generatedKey
+                    delete view['key']
+                    delete view['description']
+                    delete view['generatedKey']
                     return view
                 })
             }
         }
-        result.views = views
+        result['views'] = views
     }
     return result
 }
 
 function sortViewsByContent(ws: AnyObject): AnyObject {
     const result = { ...ws }
-    if (result.views && typeof result.views === 'object') {
-        const views = { ...result.views }
+    if (result['views'] && typeof result['views'] === 'object') {
+        const views = { ...result['views'] }
         for (const [viewType, viewArray] of Object.entries(views)) {
             if (Array.isArray(viewArray)) {
                 views[viewType] = [...viewArray].sort((a: AnyObject, b: AnyObject) => {
-                    const keyA = JSON.stringify((a.elements ?? []).map((e: AnyObject) => e.id).sort())
-                    const keyB = JSON.stringify((b.elements ?? []).map((e: AnyObject) => e.id).sort())
+                    const keyA = JSON.stringify((a['elements'] ?? []).map((e: AnyObject) => e['id']).sort())
+                    const keyB = JSON.stringify((b['elements'] ?? []).map((e: AnyObject) => e['id']).sort())
                     return keyA.localeCompare(keyB)
                 })
             }
         }
-        result.views = views
+        result['views'] = views
     }
     return result
 }
