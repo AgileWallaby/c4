@@ -49,3 +49,4 @@ libs/c4-model-examples/diagrams/*
 
 vite.config.*.timestamp*
 vitest.config.*.timestamp*
+.env
