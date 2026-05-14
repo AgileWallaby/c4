@@ -18,7 +18,7 @@ exports[`cookbook: system-context-view > generates expected DSL 1`] = `
   views {
     // System Landscape Views
     // System Context Views
-    systemContext "softwareSystem" "SystemContext" {
+    systemContext softwareSystem "SystemContext" {
       description "An example of a System Context diagram."
       include *
       autoLayout lr

@@ -38,7 +38,7 @@ exports[`cookbook: component-view > generates expected DSL 1`] = `
     // System Context Views
     // Container Views
     // Component Views
-    component "webApplication" "Components" {
+    component webApplication "Components" {
       description "An example of a Component diagram."
       include *
       autoLayout lr

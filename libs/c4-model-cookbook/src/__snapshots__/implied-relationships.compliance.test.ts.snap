@@ -21,7 +21,7 @@ exports[`cookbook: implied-relationships - default behavior > generates expected
   views {
     // System Landscape Views
     // System Context Views
-    systemContext "softwareSystem" "SystemContext" {
+    systemContext softwareSystem "SystemContext" {
       description "Implied relationships example."
       include *
       autoLayout lr
@@ -63,7 +63,7 @@ exports[`cookbook: implied-relationships - explicit at both levels > generates e
   views {
     // System Landscape Views
     // System Context Views
-    systemContext "softwareSystem" "SystemContext" {
+    systemContext softwareSystem "SystemContext" {
       include *
       autoLayout lr
     }
@@ -98,7 +98,7 @@ exports[`cookbook: implied-relationships - multiple relationships merged > gener
   views {
     // System Landscape Views
     // System Context Views
-    systemContext "softwareSystem" "SystemContext" {
+    systemContext softwareSystem "SystemContext" {
       include *
       autoLayout lr
     }

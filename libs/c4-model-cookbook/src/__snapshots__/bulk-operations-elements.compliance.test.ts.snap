@@ -34,7 +34,7 @@ exports[`cookbook: bulk-operations-elements > generates expected DSL 1`] = `
     // System Landscape Views
     // System Context Views
     // Container Views
-    container "a" "Containers" {
+    container a "Containers" {
       description "Bulk operations example."
       include *
       autoLayout

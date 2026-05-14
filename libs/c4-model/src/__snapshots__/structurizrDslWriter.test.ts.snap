@@ -99,7 +99,7 @@ exports[`can write to dsl > excludeElements - array of elements 1`] = `
     // System Landscape Views
     // System Context Views
     // Container Views
-    container "mySystem" "cv" {
+    container mySystem "cv" {
       description "desc"
       include *
       exclude alice
@@ -127,7 +127,7 @@ exports[`can write to dsl > excludeElements - single element 1`] = `
     // System Landscape Views
     // System Context Views
     // Container Views
-    container "mySystem" "cv" {
+    container mySystem "cv" {
       description "desc"
       include *
       exclude alice
@@ -151,7 +151,7 @@ exports[`can write to dsl > excludeExpressions - array of expressions 1`] = `
     // System Landscape Views
     // System Context Views
     // Container Views
-    container "mySystem" "cv" {
+    container mySystem "cv" {
       description "desc"
       include *
       exclude element.type==Person
@@ -176,7 +176,7 @@ exports[`can write to dsl > excludeExpressions - single expression 1`] = `
     // System Landscape Views
     // System Context Views
     // Container Views
-    container "mySystem" "cv" {
+    container mySystem "cv" {
       description "desc"
       include *
       exclude element.type==Person
@@ -281,18 +281,18 @@ exports[`can write to dsl > full model with all view types 1`] = `
       include *
     }
     // System Context Views
-    systemContext "softwareSystem1" "someName" {
+    systemContext softwareSystem1 "someName" {
       description "someDescription"
       title "My Title"
       include *
     }
     // Container Views
-    container "softwareSystem1" "someName2s" {
+    container softwareSystem1 "someName2s" {
       description "someDescription"
       include *
     }
     // Component Views
-    component "container1" "someName3" {
+    component container1 "someName3" {
       description "someOtherDescripgtion"
       title "The Other Title"
       include *
@@ -318,7 +318,7 @@ exports[`can write to dsl > includeElement accepts Person on container view 1`] 
     // System Landscape Views
     // System Context Views
     // Container Views
-    container "mySystem" "cv" {
+    container mySystem "cv" {
       description "desc"
       include alice
     }
@@ -347,7 +347,7 @@ exports[`can write to dsl > includeElements - array of elements 1`] = `
     // System Landscape Views
     // System Context Views
     // Container Views
-    container "mySystem" "cv" {
+    container mySystem "cv" {
       description "desc"
       include alice
       include bob
@@ -374,7 +374,7 @@ exports[`can write to dsl > includeElements - single element 1`] = `
     // System Landscape Views
     // System Context Views
     // Container Views
-    container "mySystem" "cv" {
+    container mySystem "cv" {
       description "desc"
       include alice
     }
@@ -397,7 +397,7 @@ exports[`can write to dsl > includeExpressions - array of expressions 1`] = `
     // System Landscape Views
     // System Context Views
     // Container Views
-    container "mySystem" "cv" {
+    container mySystem "cv" {
       description "desc"
       include element.type==Person
       include element.type==SoftwareSystem
@@ -421,7 +421,7 @@ exports[`can write to dsl > includeExpressions - single expression 1`] = `
     // System Landscape Views
     // System Context Views
     // Container Views
-    container "mySystem" "cv" {
+    container mySystem "cv" {
       description "desc"
       include element.type==Person
     }

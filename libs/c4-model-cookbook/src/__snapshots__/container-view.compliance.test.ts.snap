@@ -28,7 +28,7 @@ exports[`cookbook: container-view > generates expected DSL 1`] = `
     // System Landscape Views
     // System Context Views
     // Container Views
-    container "softwareSystem" "Containers" {
+    container softwareSystem "Containers" {
       description "An example of a Container diagram."
       include *
       autoLayout lr

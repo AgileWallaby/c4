@@ -25,7 +25,7 @@ exports[`cookbook: container-view-multiple-software-systems - explicit include >
     // System Landscape Views
     // System Context Views
     // Container Views
-    container "softwareSystem_1" "Containers" {
+    container softwareSystem_1 "Containers" {
       include container_1
       include container_2
       autoLayout lr
@@ -61,7 +61,7 @@ exports[`cookbook: container-view-multiple-software-systems - include all > gene
     // System Landscape Views
     // System Context Views
     // Container Views
-    container "softwareSystem_1" "Containers" {
+    container softwareSystem_1 "Containers" {
       include *
       autoLayout lr
     }
