@@ -10,6 +10,7 @@ import { Views } from './views'
 export async function validateModel(model: Model, views: Views): Promise<void> {
     const dsl = new StructurizrDSLWriter(model, views).write()
     const tmpDir = await fs.promises.mkdtemp(path.join(fs.realpathSync(os.tmpdir()), 'c4-validate-'))
+    await fs.promises.chmod(tmpDir, 0o755)
     try {
         await fs.promises.writeFile(path.join(tmpDir, 'workspace.dsl'), dsl, 'utf8')
 

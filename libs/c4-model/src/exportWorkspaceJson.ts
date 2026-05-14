@@ -9,6 +9,7 @@ import { Views } from './views'
 
 export async function exportWorkspaceJsonFromDsl(dsl: string): Promise<unknown> {
     const tmpDir = await fs.promises.mkdtemp(path.join(fs.realpathSync(os.tmpdir()), 'c4-export-'))
+    await fs.promises.chmod(tmpDir, 0o755)
     try {
         await fs.promises.writeFile(path.join(tmpDir, 'workspace.dsl'), dsl, 'utf8')
 

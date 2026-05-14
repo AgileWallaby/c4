@@ -21,6 +21,7 @@ export async function generateDiagrams<TRoot>(options: GenerateDiagramsOptions<T
 
     // d) Write DSL to a temp directory (resolve symlinks so Docker bind mounts work on macOS)
     const tmpDir = await fs.promises.mkdtemp(path.join(fs.realpathSync(os.tmpdir()), 'c4-diagrams-'))
+    await fs.promises.chmod(tmpDir, 0o755)
     await fs.promises.writeFile(path.join(tmpDir, 'workspace.dsl'), dsl, 'utf8')
 
     // e) Run Structurizr CLI container to export .mmd files
