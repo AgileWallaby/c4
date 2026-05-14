@@ -1,10 +1,10 @@
 import * as fs from 'fs'
-import * as os from 'os'
 import * as path from 'path'
 
 import { BuildModelOptions, buildModel } from './buildModel'
 import { createMermaidContainer, createStructurizrContainer } from './containers'
 import { StructurizrDSLWriter } from './structurizrDslWriter'
+import { createTmpDir } from './tmpDir'
 
 export interface GenerateDiagramsOptions<TRoot> extends BuildModelOptions<TRoot> {
     outputDir: string
@@ -20,8 +20,7 @@ export async function generateDiagrams<TRoot>(options: GenerateDiagramsOptions<T
     const dsl = new StructurizrDSLWriter(model, views).write()
 
     // d) Write DSL to a temp directory (resolve symlinks so Docker bind mounts work on macOS)
-    const tmpDir = await fs.promises.mkdtemp(path.join(fs.realpathSync(os.tmpdir()), 'c4-diagrams-'))
-    await fs.promises.chmod(tmpDir, 0o755)
+    const tmpDir = await createTmpDir('c4-diagrams-')
     await fs.promises.writeFile(path.join(tmpDir, 'workspace.dsl'), dsl, 'utf8')
 
     // e) Run Structurizr CLI container to export .mmd files
