@@ -34,7 +34,7 @@ exports[`cookbook: implied-relationships - default behavior > generates expected
 `;
 
 exports[`cookbook: implied-relationships - explicit at both levels > generates expected DSL 1`] = `
-"workspace "undefined" {
+"workspace "ImpliedRelationshipsExplicitAtBothLevels" {
   model {
     // Elements
     user = person "User" {
@@ -75,7 +75,7 @@ exports[`cookbook: implied-relationships - explicit at both levels > generates e
 `;
 
 exports[`cookbook: implied-relationships - multiple relationships merged > generates expected DSL 1`] = `
-"workspace "undefined" {
+"workspace "ImpliedRelationshipsMultipleMerged" {
   model {
     // Elements
     user = person "User" {

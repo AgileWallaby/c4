@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`cookbook: container-view-multiple-software-systems - explicit include > generates expected DSL 1`] = `
-"workspace "undefined" {
+"workspace "ContainerViewMultipleSoftwareSystemsExplicitInclude" {
   model {
     // Elements
     softwareSystem_1 = softwareSystem "Software System 1" {
@@ -37,7 +37,7 @@ exports[`cookbook: container-view-multiple-software-systems - explicit include >
 `;
 
 exports[`cookbook: container-view-multiple-software-systems - include all > generates expected DSL 1`] = `
-"workspace "undefined" {
+"workspace "ContainerViewMultipleSoftwareSystemsIncludeAll" {
   model {
     // Elements
     softwareSystem_1 = softwareSystem "Software System 1" {
