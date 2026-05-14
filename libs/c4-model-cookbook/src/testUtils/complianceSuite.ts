@@ -1,5 +1,7 @@
 import * as fs from 'fs'
 import * as path from 'path'
+import { dirname } from 'path'
+import { fileURLToPath } from 'url'
 
 import { Model, StructurizrDSLWriter, Views, exportWorkspaceJson, exportWorkspaceJsonFromDsl, validateModel } from '@agilewallaby/c4-model'
 
@@ -47,7 +49,7 @@ export function complianceSuite(suiteName: string, options: ComplianceSuiteOptio
                 async () => {
                     const { model, views } = options.buildModel()
                     const originalDsl = await fs.promises.readFile(
-                        path.join(import.meta.dirname, '..', 'dsl', options.dslPath),
+                        path.join(dirname(fileURLToPath(import.meta.url)), '..', 'dsl', options.dslPath),
                         'utf8'
                     )
                     const [originalJson, generatedJson] = await Promise.all([
