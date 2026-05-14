@@ -16,7 +16,7 @@ export async function validateModel(model: Model, views: Views): Promise<void> {
 
         const logs: string[] = []
         try {
-            await new GenericContainer('structurizr/structurizr')
+            await new GenericContainer('structurizr/cli')
                 .withBindMounts([{ source: tmpDir, target: '/workspace', mode: 'rw' }])
                 .withCommand(['validate', '-workspace', '/workspace/workspace.dsl'])
                 .withWaitStrategy(Wait.forOneShotStartup())

@@ -25,7 +25,7 @@ export async function generateDiagrams<TRoot>(options: GenerateDiagramsOptions<T
     await fs.promises.writeFile(path.join(tmpDir, 'workspace.dsl'), dsl, 'utf8')
 
     // e) Run Structurizr CLI container to export .mmd files
-    await new GenericContainer('structurizr/structurizr')
+    await new GenericContainer('structurizr/cli')
         .withBindMounts([{ source: tmpDir, target: '/workspace', mode: 'rw' }])
         .withCommand(['export', '-w', '/workspace/workspace.dsl', '-f', 'mermaid', '-o', '/workspace'])
         .withWaitStrategy(Wait.forOneShotStartup())

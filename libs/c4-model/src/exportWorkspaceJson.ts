@@ -15,7 +15,7 @@ export async function exportWorkspaceJsonFromDsl(dsl: string): Promise<unknown> 
 
         const logs: string[] = []
         try {
-            await new GenericContainer('structurizr/structurizr')
+            await new GenericContainer('structurizr/cli')
                 .withBindMounts([{ source: tmpDir, target: '/workspace', mode: 'rw' }])
                 .withCommand(['export', '-w', '/workspace/workspace.dsl', '-f', 'json', '-o', '/workspace'])
                 .withWaitStrategy(Wait.forOneShotStartup())

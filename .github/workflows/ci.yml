@@ -55,7 +55,7 @@ jobs:
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Pull Docker images
-        run: docker pull structurizr/structurizr
+        run: docker pull structurizr/cli
 
       - name: Run tests
         run: pnpm nx run-many -t test
