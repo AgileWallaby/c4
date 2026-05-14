@@ -2,8 +2,7 @@ import * as fs from 'fs'
 import * as os from 'os'
 import * as path from 'path'
 
-import { GenericContainer, Wait } from 'testcontainers'
-
+import { createStructurizrContainer } from './containers'
 import { Model } from './model'
 import { StructurizrDSLWriter } from './structurizrDslWriter'
 import { Views } from './views'
@@ -16,11 +15,8 @@ export async function validateModel(model: Model, views: Views): Promise<void> {
 
         const logs: string[] = []
         try {
-            await new GenericContainer('structurizr/structurizr')
-                .withBindMounts([{ source: tmpDir, target: '/workspace', mode: 'rw' }])
+            await createStructurizrContainer(tmpDir, logs)
                 .withCommand(['validate', '-workspace', '/workspace/workspace.dsl'])
-                .withWaitStrategy(Wait.forOneShotStartup())
-                .withLogConsumer((stream) => stream.on('data', (chunk) => logs.push(chunk.toString())))
                 .start()
         } catch {
             throw new Error(`Structurizr validation failed:\n${logs.join('')}`)

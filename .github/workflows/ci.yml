@@ -56,8 +56,8 @@ jobs:
 
       - name: Pull Docker images for tests
         run: |
-          docker pull structurizr/structurizr
-          docker pull minlag/mermaid-cli
+          docker pull structurizr/structurizr:2026.04.19
+          docker pull minlag/mermaid-cli:11.15.0
 
       - name: Run tests
         run: pnpm nx run-many -t test
