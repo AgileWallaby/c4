@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`cookbook: themes - single theme (azure shorthand) > generates expected DSL 1`] = `
-"workspace "undefined" {
+"workspace "ThemesSingleAzureShorthand" {
   model {
     // Elements
     authenticationService = softwareSystem "Authentication Service" {
