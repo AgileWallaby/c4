@@ -55,9 +55,11 @@ jobs:
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Pull Docker images
-        run: docker pull structurizr/cli
+        run: |
+          docker pull structurizr/cli
+          docker pull minlag/mermaid-cli
 
       - name: Run tests
-        run: pnpm nx run-many -t test
+        run: pnpm nx run-many -t test --output-style=stream
         env:
           TESTCONTAINERS_RYUK_DISABLED: 'true'

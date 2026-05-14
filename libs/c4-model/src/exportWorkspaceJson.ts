@@ -14,14 +14,22 @@ export async function exportWorkspaceJsonFromDsl(dsl: string): Promise<unknown> 
         await fs.promises.writeFile(path.join(tmpDir, 'workspace.dsl'), dsl, 'utf8')
 
         const logs: string[] = []
+        let logsEndedResolve = () => {}
+        const logsEnded = new Promise<void>((resolve) => { logsEndedResolve = resolve })
         try {
             await new GenericContainer('structurizr/cli')
                 .withBindMounts([{ source: tmpDir, target: '/workspace', mode: 'rw' }])
                 .withCommand(['export', '-w', '/workspace/workspace.dsl', '-f', 'json', '-o', '/workspace'])
                 .withWaitStrategy(Wait.forOneShotStartup())
-                .withLogConsumer((stream) => stream.on('data', (chunk) => logs.push(chunk.toString())))
+                .withLogConsumer((stream) => {
+                    stream.on('data', (chunk) => logs.push(chunk.toString()))
+                    stream.on('end', logsEndedResolve)
+                    stream.on('close', logsEndedResolve)
+                    stream.on('error', logsEndedResolve)
+                })
                 .start()
         } catch {
+            await Promise.race([logsEnded, new Promise<void>((r) => setTimeout(r, 2000))])
             throw new Error(`Structurizr JSON export failed:\n${logs.join('')}`)
         }
 
