@@ -10,7 +10,8 @@ export function readReactFlowCss(): string {
     const candidates = [
         // When running from the workspace root (typical Nx setup)
         resolve(process.cwd(), 'node_modules/@xyflow/react/dist/style.css'),
-        // When running from the library directory
+        // When running from the library directory (src/ is 3 levels from workspace root)
+        resolve(dirname(new URL(import.meta.url).pathname), '../../../node_modules/@xyflow/react/dist/style.css'),
         resolve(dirname(new URL(import.meta.url).pathname), '../../node_modules/@xyflow/react/dist/style.css'),
         resolve(dirname(new URL(import.meta.url).pathname), '../../../../node_modules/@xyflow/react/dist/style.css'),
     ]
