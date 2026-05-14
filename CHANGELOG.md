@@ -1,3 +1,18 @@
+## 4.1.0 (2026-05-14)
+
+### 🚀 Features
+
+- **c4-model:** add plural include/exclude on views ([cf8fd87](https://github.com/AgileWallaby/c4/commit/cf8fd87))
+
+### 🩹 Fixes
+
+- type errors ([79ba1a2](https://github.com/AgileWallaby/c4/commit/79ba1a2))
+- update GitHub CI process ([#5](https://github.com/AgileWallaby/c4/pull/5))
+
+### ❤️ Thank You
+
+- James Webster @jimmcslim
+
 # 4.0.0 (2026-03-20)
 
 ### 🚀 Features
