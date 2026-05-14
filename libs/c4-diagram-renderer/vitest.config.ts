@@ -19,5 +19,6 @@ export default defineConfig({
         include: ['src/**/*.{test,spec}.{ts,tsx}'],
         testTimeout: 30000,
         coverage: { reportsDirectory: '../../coverage/libs/c4-diagram-renderer', provider: 'v8' },
+        reporters: ['default'],
     },
 })
