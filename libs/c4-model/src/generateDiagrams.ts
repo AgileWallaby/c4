@@ -2,9 +2,8 @@ import * as fs from 'fs'
 import * as os from 'os'
 import * as path from 'path'
 
-import { GenericContainer, Wait } from 'testcontainers'
-
 import { BuildModelOptions, buildModel } from './buildModel'
+import { createMermaidContainer, createStructurizrContainer } from './containers'
 import { StructurizrDSLWriter } from './structurizrDslWriter'
 
 export interface GenerateDiagramsOptions<TRoot> extends BuildModelOptions<TRoot> {
@@ -25,11 +24,14 @@ export async function generateDiagrams<TRoot>(options: GenerateDiagramsOptions<T
     await fs.promises.writeFile(path.join(tmpDir, 'workspace.dsl'), dsl, 'utf8')
 
     // e) Run Structurizr CLI container to export .mmd files
-    await new GenericContainer('structurizr/structurizr')
-        .withBindMounts([{ source: tmpDir, target: '/workspace', mode: 'rw' }])
-        .withCommand(['export', '-w', '/workspace/workspace.dsl', '-f', 'mermaid', '-o', '/workspace'])
-        .withWaitStrategy(Wait.forOneShotStartup())
-        .start()
+    const logs: string[] = []
+    try {
+        await createStructurizrContainer(tmpDir, logs)
+            .withCommand(['export', '-w', '/workspace/workspace.dsl', '-f', 'mermaid', '-o', '/workspace'])
+            .start()
+    } catch {
+        throw new Error(`Structurizr mermaid export failed:\n${logs.join('')}`)
+    }
 
     // f) Copy .mmd files to outputDir
     await fs.promises.mkdir(outputDir, { recursive: true })
@@ -46,10 +48,8 @@ export async function generateDiagrams<TRoot>(options: GenerateDiagramsOptions<T
     for (const file of mmdFiles) {
         const baseName = path.basename(file, '.mmd')
         const pngFile = `${baseName}.png`
-        await new GenericContainer('minlag/mermaid-cli')
-            .withBindMounts([{ source: tmpDir, target: '/data', mode: 'rw' }])
+        await createMermaidContainer(tmpDir)
             .withCommand(['-i', `/data/${file}`, '-o', `/data/${pngFile}`])
-            .withWaitStrategy(Wait.forOneShotStartup())
             .start()
 
         await fs.promises.copyFile(path.join(tmpDir, pngFile), path.join(outputDir, pngFile))

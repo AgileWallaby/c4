@@ -2,8 +2,7 @@ import * as fs from 'fs'
 import * as os from 'os'
 import * as path from 'path'
 
-import { GenericContainer, Wait } from 'testcontainers'
-
+import { createStructurizrContainer } from './containers'
 import { Model } from './model'
 import { StructurizrDSLWriter } from './structurizrDslWriter'
 import { Views } from './views'
@@ -15,11 +14,8 @@ export async function exportWorkspaceJsonFromDsl(dsl: string): Promise<unknown> 
 
         const logs: string[] = []
         try {
-            await new GenericContainer('structurizr/structurizr')
-                .withBindMounts([{ source: tmpDir, target: '/workspace', mode: 'rw' }])
+            await createStructurizrContainer(tmpDir, logs)
                 .withCommand(['export', '-w', '/workspace/workspace.dsl', '-f', 'json', '-o', '/workspace'])
-                .withWaitStrategy(Wait.forOneShotStartup())
-                .withLogConsumer((stream) => stream.on('data', (chunk) => logs.push(chunk.toString())))
                 .start()
         } catch {
             throw new Error(`Structurizr JSON export failed:\n${logs.join('')}`)
