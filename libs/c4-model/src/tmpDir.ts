@@ -4,6 +4,6 @@ import * as path from 'path'
 
 export async function createTmpDir(prefix: string): Promise<string> {
     const tmpDir = await fs.promises.mkdtemp(path.join(fs.realpathSync(os.tmpdir()), prefix))
-    await fs.promises.chmod(tmpDir, 0o755)
+    await fs.promises.chmod(tmpDir, 0o777)
     return tmpDir
 }
