@@ -51,6 +51,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Install Playwright dependencies
+        run: pnpm exec playwright install --with-deps
+
+      - name: Pull Docker images for tests
+        run: |
+          docker pull structurizr/structurizr
+          docker pull minlag/mermaid-cli
+
       - name: Run tests
         run: pnpm nx run-many -t test
         env:
