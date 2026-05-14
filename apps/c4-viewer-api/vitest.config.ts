@@ -12,5 +12,6 @@ export default defineConfig({
         include: ['src/**/*.{test,spec}.ts'],
         passWithNoTests: true,
         coverage: { reportsDirectory: '../../coverage/apps/c4-viewer-api', provider: 'v8' },
+        reporters: ['default'],
     },
 })

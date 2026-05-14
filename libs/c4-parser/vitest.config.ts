@@ -11,5 +11,6 @@ export default defineConfig({
         root: __dirname,
         include: ['src/**/*.{test,spec}.ts'],
         coverage: { reportsDirectory: '../../coverage/libs/c4-parser', provider: 'v8' },
+        reporters: ['default'],
     },
 })

@@ -5,5 +5,6 @@ export default defineConfig({
         environment: 'node',
         include: ['src/**/*.{test,spec}.ts'],
         coverage: { reportsDirectory: '../../coverage/libs/c4-model', provider: 'v8' },
+        reporters: ['default'],
     },
 })
