@@ -398,4 +398,56 @@ describe('can write to dsl', () => {
         })
         expect(writeDsl()).toMatchSnapshot()
     })
+
+    test('dynamic view step with technology', () => {
+        const a = model.softwareSystem('A')
+        const b = model.softwareSystem('B')
+        a.uses(b, { description: 'Calls', technology: 'HTTPS' })
+        views.addDynamicView('D', {}).with((v) => {
+            v.addStep(a, b, 'Calls', 'HTTPS')
+        })
+        expect(writeDsl()).toMatchSnapshot()
+    })
+
+    test('dynamic view step without technology', () => {
+        const a = model.softwareSystem('A')
+        const b = model.softwareSystem('B')
+        a.uses(b, { description: 'Calls' })
+        views.addDynamicView('D', {}).with((v) => {
+            v.addStep(a, b, 'Calls')
+        })
+        expect(writeDsl()).toMatchSnapshot()
+    })
+
+    test('dynamic view step - throws when no relationship exists', () => {
+        const a = model.softwareSystem('A')
+        const b = model.softwareSystem('B')
+        expect(() => {
+            views.addDynamicView('D', {}).with((v) => {
+                v.addStep(a, b)
+            })
+        }).toThrow("No relationship exists from 'A' to 'B' in the model")
+    })
+
+    test('dynamic view step - throws when technology does not match model', () => {
+        const a = model.softwareSystem('A')
+        const b = model.softwareSystem('B')
+        a.uses(b, { technology: 'HTTPS' })
+        expect(() => {
+            views.addDynamicView('D', {}).with((v) => {
+                v.addStep(a, b, undefined, 'gRPC')
+            })
+        }).toThrow("Step technology 'gRPC' does not match the model relationship technology 'HTTPS'")
+    })
+
+    test('dynamic view step - throws when technology specified but model has none', () => {
+        const a = model.softwareSystem('A')
+        const b = model.softwareSystem('B')
+        a.uses(b)
+        expect(() => {
+            views.addDynamicView('D', {}).with((v) => {
+                v.addStep(a, b, undefined, 'HTTPS')
+            })
+        }).toThrow("Step technology 'HTTPS' does not match the model relationship technology 'none'")
+    })
 })

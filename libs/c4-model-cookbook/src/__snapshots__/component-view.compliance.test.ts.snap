@@ -43,6 +43,7 @@ exports[`cookbook: component-view > generates expected DSL 1`] = `
       include *
       autoLayout lr
     }
+    // Dynamic Views
   }
 }
 "

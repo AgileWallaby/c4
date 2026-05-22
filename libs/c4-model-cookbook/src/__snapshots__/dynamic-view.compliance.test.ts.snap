@@ -1,0 +1,52 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`cookbook: dynamic-view > generates expected DSL 1`] = `
+"workspace "Online Book Store" {
+  model {
+    // Elements
+    customer = person "Customer" {
+      tags "Element" "Person"
+    }
+    onlineBookStore = softwareSystem "Online book store" {
+      tags "Element" "Software System"
+      webApplication = container "Web Application" {
+        tags "Element" "Container"
+      }
+      database = container "Database" {
+        tags "Element" "Container"
+      }
+    }
+    // Relationships
+    customer -> webApplication "Browses and makes purchases using" {
+      tags "Relationship"
+    }
+    webApplication -> database "Reads from and writes to" {
+      tags "Relationship"
+    }
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    // Container Views
+    container "onlineBookStore" "Containers" {
+      include *
+      autoLayout lr
+    }
+    // Component Views
+    // Dynamic Views
+    dynamic onlineBookStore "PastOrders" {
+      title "Request past orders feature"
+      customer -> webApplication "Requests past orders from"
+      webApplication -> database "Queries for orders using"
+      autoLayout lr
+    }
+    dynamic onlineBookStore "TopBooks" {
+      title "Browse top 20 books feature"
+      customer -> webApplication "Requests the top 20 books from"
+      webApplication -> database "Queries the top 20 books using"
+      autoLayout lr
+    }
+  }
+}
+"
+`;

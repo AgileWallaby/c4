@@ -15,6 +15,7 @@ exports[`can write to dsl > autoLayout - bare 1`] = `
     // System Context Views
     // Container Views
     // Component Views
+    // Dynamic Views
   }
 }
 "
@@ -35,6 +36,7 @@ exports[`can write to dsl > autoLayout - with direction 1`] = `
     // System Context Views
     // Container Views
     // Component Views
+    // Dynamic Views
   }
 }
 "
@@ -55,6 +57,7 @@ exports[`can write to dsl > autoLayout - with direction and separations 1`] = `
     // System Context Views
     // Container Views
     // Component Views
+    // Dynamic Views
   }
 }
 "
@@ -75,6 +78,65 @@ exports[`can write to dsl > default - marks view as default 1`] = `
     // System Context Views
     // Container Views
     // Component Views
+    // Dynamic Views
+  }
+}
+"
+`;
+
+exports[`can write to dsl > dynamic view step with technology 1`] = `
+"workspace "m" {
+  model {
+    // Elements
+    a = softwareSystem "A" {
+      tags "Element" "Software System"
+    }
+    b = softwareSystem "B" {
+      tags "Element" "Software System"
+    }
+    // Relationships
+    a -> b "Calls" "HTTPS" {
+      tags "Relationship"
+    }
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    // Container Views
+    // Component Views
+    // Dynamic Views
+    dynamic * "D" {
+      a -> b "Calls" "HTTPS"
+    }
+  }
+}
+"
+`;
+
+exports[`can write to dsl > dynamic view step without technology 1`] = `
+"workspace "m" {
+  model {
+    // Elements
+    a = softwareSystem "A" {
+      tags "Element" "Software System"
+    }
+    b = softwareSystem "B" {
+      tags "Element" "Software System"
+    }
+    // Relationships
+    a -> b "Calls" {
+      tags "Relationship"
+    }
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    // Container Views
+    // Component Views
+    // Dynamic Views
+    dynamic * "D" {
+      a -> b "Calls"
+    }
   }
 }
 "
@@ -106,6 +168,7 @@ exports[`can write to dsl > excludeElements - array of elements 1`] = `
       exclude bob
     }
     // Component Views
+    // Dynamic Views
   }
 }
 "
@@ -133,6 +196,7 @@ exports[`can write to dsl > excludeElements - single element 1`] = `
       exclude alice
     }
     // Component Views
+    // Dynamic Views
   }
 }
 "
@@ -158,6 +222,7 @@ exports[`can write to dsl > excludeExpressions - array of expressions 1`] = `
       exclude element.type==SoftwareSystem
     }
     // Component Views
+    // Dynamic Views
   }
 }
 "
@@ -182,6 +247,7 @@ exports[`can write to dsl > excludeExpressions - single expression 1`] = `
       exclude element.type==Person
     }
     // Component Views
+    // Dynamic Views
   }
 }
 "
@@ -297,6 +363,7 @@ exports[`can write to dsl > full model with all view types 1`] = `
       title "The Other Title"
       include *
     }
+    // Dynamic Views
   }
 }
 "
@@ -323,6 +390,7 @@ exports[`can write to dsl > includeElement accepts Person on container view 1`] 
       include alice
     }
     // Component Views
+    // Dynamic Views
   }
 }
 "
@@ -353,6 +421,7 @@ exports[`can write to dsl > includeElements - array of elements 1`] = `
       include bob
     }
     // Component Views
+    // Dynamic Views
   }
 }
 "
@@ -379,6 +448,7 @@ exports[`can write to dsl > includeElements - single element 1`] = `
       include alice
     }
     // Component Views
+    // Dynamic Views
   }
 }
 "
@@ -403,6 +473,7 @@ exports[`can write to dsl > includeExpressions - array of expressions 1`] = `
       include element.type==SoftwareSystem
     }
     // Component Views
+    // Dynamic Views
   }
 }
 "
@@ -426,6 +497,7 @@ exports[`can write to dsl > includeExpressions - single expression 1`] = `
       include element.type==Person
     }
     // Component Views
+    // Dynamic Views
   }
 }
 "
@@ -449,6 +521,7 @@ exports[`can write to dsl > per-view properties - emitted inside view block 1`] 
     // System Context Views
     // Container Views
     // Component Views
+    // Dynamic Views
   }
 }
 "
@@ -468,6 +541,7 @@ exports[`can write to dsl > should not output archetypes block when no archetype
     // System Context Views
     // Container Views
     // Component Views
+    // Dynamic Views
   }
 }
 "
@@ -501,6 +575,7 @@ exports[`can write to dsl > should output archetypes block when archetypes are u
     // System Context Views
     // Container Views
     // Component Views
+    // Dynamic Views
   }
 }
 "
@@ -533,6 +608,7 @@ exports[`can write to dsl > should output relationship archetypes when used 1`] 
     // System Context Views
     // Container Views
     // Component Views
+    // Dynamic Views
   }
 }
 "
@@ -567,6 +643,7 @@ exports[`can write to dsl > should use camelCase identifiers for multi-word grou
     // System Context Views
     // Container Views
     // Component Views
+    // Dynamic Views
   }
 }
 "
@@ -583,6 +660,7 @@ exports[`can write to dsl > styles - element style with multiple fields 1`] = `
     // System Context Views
     // Container Views
     // Component Views
+    // Dynamic Views
     styles {
       element "Database" {
         shape Cylinder
@@ -608,6 +686,7 @@ exports[`can write to dsl > styles - relationship style 1`] = `
     // System Context Views
     // Container Views
     // Component Views
+    // Dynamic Views
     styles {
       relationship "Synchronous" {
         thickness 2
@@ -632,6 +711,7 @@ exports[`can write to dsl > themes - multiple themes uses "themes" keyword 1`] =
     // System Context Views
     // Container Views
     // Component Views
+    // Dynamic Views
     themes default https://static.structurizr.com/themes/default/theme.json
   }
 }
@@ -649,6 +729,7 @@ exports[`can write to dsl > themes - single theme uses "theme" keyword 1`] = `
     // System Context Views
     // Container Views
     // Component Views
+    // Dynamic Views
     theme https://static.structurizr.com/themes/default/theme.json
   }
 }
@@ -671,6 +752,7 @@ exports[`can write to dsl > title - emits title in view block 1`] = `
     // System Context Views
     // Container Views
     // Component Views
+    // Dynamic Views
   }
 }
 "
@@ -691,6 +773,7 @@ exports[`can write to dsl > title - omitted when not set 1`] = `
     // System Context Views
     // Container Views
     // Component Views
+    // Dynamic Views
   }
 }
 "
@@ -707,6 +790,7 @@ exports[`can write to dsl > views-level properties - emitted inside views block 
     // System Context Views
     // Container Views
     // Component Views
+    // Dynamic Views
     properties {
       "structurizr.timezone" "UTC"
     }

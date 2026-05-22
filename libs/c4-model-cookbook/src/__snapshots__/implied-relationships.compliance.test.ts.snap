@@ -28,6 +28,7 @@ exports[`cookbook: implied-relationships - default behavior > generates expected
     }
     // Container Views
     // Component Views
+    // Dynamic Views
   }
 }
 "
@@ -69,6 +70,7 @@ exports[`cookbook: implied-relationships - explicit at both levels > generates e
     }
     // Container Views
     // Component Views
+    // Dynamic Views
   }
 }
 "
@@ -104,6 +106,7 @@ exports[`cookbook: implied-relationships - multiple relationships merged > gener
     }
     // Container Views
     // Component Views
+    // Dynamic Views
   }
 }
 "
