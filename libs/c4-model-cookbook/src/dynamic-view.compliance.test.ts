@@ -24,8 +24,8 @@ complianceSuite('cookbook: dynamic-view', {
             subject: onlineBookStore,
             title: 'Request past orders feature',
         }).with((v) => {
-            v.addStep(customer, webapp, 'Requests past orders from', 'HTTPS')
-            v.addStep(webapp, database, 'Queries for orders using', 'SQL')
+            v.addStep(customer, webapp, 'Requests past orders from')
+            v.addStep(webapp, database, 'Queries for orders using')
             v.autoLayout('lr')
         })
         views.addDynamicView('TopBooks', {

@@ -36,8 +36,8 @@ exports[`cookbook: dynamic-view > generates expected DSL 1`] = `
     // Dynamic Views
     dynamic onlineBookStore "PastOrders" {
       title "Request past orders feature"
-      customer -> webApplication "Requests past orders from" "HTTPS"
-      webApplication -> database "Queries for orders using" "SQL"
+      customer -> webApplication "Requests past orders from"
+      webApplication -> database "Queries for orders using"
       autoLayout lr
     }
     dynamic onlineBookStore "TopBooks" {
