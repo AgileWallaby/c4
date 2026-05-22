@@ -209,6 +209,22 @@ describe('can write to dsl', () => {
         TEST_TIMEOUT
     )
 
+    test('title - emits title in view block', () => {
+        views.addSystemLandscapeView('sl', { description: 'desc', title: 'My Landscape' }).with((v) => {
+            v.includeAll()
+        })
+        expect(writeDsl()).toMatchSnapshot()
+    })
+
+    test('title - omitted when not set', () => {
+        views.addSystemLandscapeView('sl', { description: 'desc' }).with((v) => {
+            v.includeAll()
+        })
+        const dsl = writeDsl()
+        expect(dsl).not.toContain('title')
+        expect(dsl).toMatchSnapshot()
+    })
+
     test(
         'per-view properties - emitted inside view block',
         async () => {
