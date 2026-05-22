@@ -655,6 +655,47 @@ exports[`can write to dsl > themes - single theme uses "theme" keyword 1`] = `
 "
 `;
 
+exports[`can write to dsl > title - emits title in view block 1`] = `
+"workspace "m" {
+  model {
+    // Elements
+    // Relationships
+  }
+  views {
+    // System Landscape Views
+    systemLandscape "sl" {
+      description "desc"
+      title "My Landscape"
+      include *
+    }
+    // System Context Views
+    // Container Views
+    // Component Views
+  }
+}
+"
+`;
+
+exports[`can write to dsl > title - omitted when not set 1`] = `
+"workspace "m" {
+  model {
+    // Elements
+    // Relationships
+  }
+  views {
+    // System Landscape Views
+    systemLandscape "sl" {
+      description "desc"
+      include *
+    }
+    // System Context Views
+    // Container Views
+    // Component Views
+  }
+}
+"
+`;
+
 exports[`can write to dsl > views-level properties - emitted inside views block 1`] = `
 "workspace "m" {
   model {
