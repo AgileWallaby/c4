@@ -265,11 +265,7 @@ export class DynamicView implements DynamicViewBuilder, ReadonlyDynamicView {
     }
 
     public addParallel(sequences: DynamicViewRelationshipStep[][]): void {
-        for (const sequence of sequences) {
-            for (const step of sequence) {
-                this.validateRelationshipStep(step.source, step.destination, step.technology)
-            }
-        }
+        sequences.flatMap((s) => s).forEach((step) => this.validateRelationshipStep(step.source, step.destination, step.technology))
         this._steps.push({ parallel: sequences })
     }
 
