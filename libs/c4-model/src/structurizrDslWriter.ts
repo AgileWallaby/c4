@@ -3,7 +3,7 @@ import { Component } from './component'
 import { Container, ContainerGroup } from './container'
 import { Model, ModelGroup } from './model'
 import { SoftwareSystem, SoftwareSystemGroup } from './softwareSystem'
-import { ReadonlyView, Views } from './views'
+import { DynamicViewRelationshipStep, ReadonlyDynamicView, ReadonlyView, Views } from './views'
 import { ElementArchetype, RelationshipArchetype } from './archetype'
 
 const INDENT_SIZE = 2
@@ -371,6 +371,64 @@ export class StructurizrDSLWriter {
         return viewDsl
     }
 
+    private writeDynamicRelationshipStep(step: DynamicViewRelationshipStep, level: number): string {
+        const line = step.description
+            ? `${step.source.canonicalName} -> ${step.destination.canonicalName} "${step.description}"`
+            : `${step.source.canonicalName} -> ${step.destination.canonicalName}`
+        return this.writeLine(line, level)
+    }
+
+    private writeDynamicParallelGroup(sequences: DynamicViewRelationshipStep[][], level: number): string {
+        let dsl = this.writeLine('{', level)
+        for (const sequence of sequences) {
+            dsl += this.writeLine('{', level + 1)
+            for (const step of sequence) {
+                dsl += this.writeDynamicRelationshipStep(step, level + 2)
+            }
+            dsl += this.writeLine('}', level + 1)
+        }
+        dsl += this.writeLine('}', level)
+        return dsl
+    }
+
+    private writeDynamicView(view: ReadonlyDynamicView, level: number): string {
+        const scope = view.subject ? view.subject.canonicalName : '*'
+        let dsl = this.writeLine(`dynamic ${scope} "${view.key}" {`, level)
+        if (view.description) {
+            dsl += this.writeLine(`description "${view.description}"`, level + 1)
+        }
+        if (view.title) {
+            dsl += this.writeLine(`title "${view.title}"`, level + 1)
+        }
+        if (view.isDefault) {
+            dsl += this.writeLine('default', level + 1)
+        }
+        for (const step of view.steps) {
+            if ('parallel' in step) {
+                dsl += this.writeDynamicParallelGroup(step.parallel, level + 1)
+            } else {
+                dsl += this.writeDynamicRelationshipStep(step, level + 1)
+            }
+        }
+        if (view.autoLayoutConfig) {
+            const { direction, rankSeparation, nodeSeparation } = view.autoLayoutConfig
+            let line = 'autoLayout'
+            if (direction) line += ` ${direction}`
+            if (rankSeparation !== undefined) line += ` ${rankSeparation}`
+            if (nodeSeparation !== undefined) line += ` ${nodeSeparation}`
+            dsl += this.writeLine(line, level + 1)
+        }
+        if (view.properties.size > 0) {
+            dsl += this.writeLine('properties {', level + 1)
+            for (const [name, value] of view.properties) {
+                dsl += this.writeLine(`"${name}" "${value}"`, level + 2)
+            }
+            dsl += this.writeLine('}', level + 1)
+        }
+        dsl += this.writeLine('}', level)
+        return dsl
+    }
+
     private writeStyles(views: Views, level: number): string {
         const { elementStyles, relationshipStyles } = views
         if (elementStyles.length === 0 && relationshipStyles.length === 0) return ''
@@ -431,6 +489,11 @@ export class StructurizrDSLWriter {
         viewDsl += this.writeLine('// Component Views', level + 1)
         views.componentViews.forEach((view) => {
             viewDsl += this.writeView(view, 'component', level + 1)
+        })
+
+        viewDsl += this.writeLine('// Dynamic Views', level + 1)
+        views.dynamicViews.forEach((view) => {
+            viewDsl += this.writeDynamicView(view, level + 1)
         })
 
         viewDsl += this.writeStyles(views, level + 1)

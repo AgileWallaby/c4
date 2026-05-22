@@ -211,11 +211,101 @@ export class View<T extends Element> implements ViewBuilder, ReadonlyView<T> {
     }
 }
 
+export interface DynamicViewRelationshipStep {
+    source: Element
+    destination: Element
+    description?: string
+}
+
+export type DynamicViewStep = DynamicViewRelationshipStep | { parallel: DynamicViewRelationshipStep[][] }
+
+export interface DynamicViewBuilder {
+    addStep(source: Element, destination: Element, description?: string): void
+    addParallel(sequences: DynamicViewRelationshipStep[][]): void
+    autoLayout(direction?: AutoLayoutDirection, rankSeparation?: number, nodeSeparation?: number): void
+    setDefault(): void
+    addProperty(name: string, value: string): void
+}
+
+export interface ReadonlyDynamicView extends DynamicViewBuilder {
+    readonly key: string
+    readonly subject?: Element
+    readonly description?: string
+    readonly title?: string
+    readonly steps: ReadonlyArray<DynamicViewStep>
+    readonly autoLayoutConfig: AutoLayout | undefined
+    readonly isDefault: boolean
+    readonly properties: ReadonlyMap<string, string>
+    with(callback: (builder: DynamicViewBuilder) => void): ReadonlyDynamicView
+}
+
+export class DynamicView implements DynamicViewBuilder, ReadonlyDynamicView {
+    public readonly subject?: Element
+    public readonly description?: string
+    public readonly title?: string
+
+    private _steps: DynamicViewStep[] = []
+    private _autoLayout?: AutoLayout
+    private _isDefault = false
+    private _properties = new Map<string, string>()
+
+    constructor(
+        public readonly key: string,
+        definition: { subject?: Element; description?: string; title?: string }
+    ) {
+        this.subject = definition.subject
+        this.description = definition.description
+        this.title = definition.title
+    }
+
+    public addStep(source: Element, destination: Element, description?: string): void {
+        this._steps.push({ source, destination, description })
+    }
+
+    public addParallel(sequences: DynamicViewRelationshipStep[][]): void {
+        this._steps.push({ parallel: sequences })
+    }
+
+    public autoLayout(direction?: AutoLayoutDirection, rankSeparation?: number, nodeSeparation?: number): void {
+        this._autoLayout = { direction, rankSeparation, nodeSeparation }
+    }
+
+    public setDefault(): void {
+        this._isDefault = true
+    }
+
+    public addProperty(name: string, value: string): void {
+        this._properties.set(name, value)
+    }
+
+    public with(callback: (builder: DynamicViewBuilder) => void): ReadonlyDynamicView {
+        callback(this)
+        return this
+    }
+
+    public get steps(): ReadonlyArray<DynamicViewStep> {
+        return this._steps
+    }
+
+    public get autoLayoutConfig(): AutoLayout | undefined {
+        return this._autoLayout
+    }
+
+    public get isDefault(): boolean {
+        return this._isDefault
+    }
+
+    public get properties(): ReadonlyMap<string, string> {
+        return this._properties
+    }
+}
+
 export class Views {
     private readonly _systemLandscapeViews = new Map<string, View<Element>>()
     private readonly _systemContextViews = new Map<string, View<SoftwareSystem>>()
     private readonly _containerViews = new Map<string, View<SoftwareSystem>>()
     private readonly _componentViews = new Map<string, View<Container>>()
+    private readonly _dynamicViews = new Map<string, DynamicView>()
     private _elementStyles: ElementStyleEntry[] = []
     private _relationshipStyles: RelationshipStyleEntry[] = []
     private _themes: string[] = []
@@ -242,6 +332,12 @@ export class Views {
     public addComponentView(key: string, definition: ScopedViewDefinition<Container>): ReadonlyView<Container> {
         const view = new View(key, definition)
         this._componentViews.set(key, view)
+        return view
+    }
+
+    public addDynamicView(key: string, definition: { subject?: Element; description?: string; title?: string }): ReadonlyDynamicView {
+        const view = new DynamicView(key, definition)
+        this._dynamicViews.set(key, view)
         return view
     }
 
@@ -275,6 +371,10 @@ export class Views {
 
     public get componentViews(): ReadonlyArray<ReadonlyView<Container>> {
         return Array.from(this._componentViews.values())
+    }
+
+    public get dynamicViews(): ReadonlyArray<ReadonlyDynamicView> {
+        return Array.from(this._dynamicViews.values())
     }
 
     public get elementStyles(): ReadonlyArray<ElementStyleEntry> {
