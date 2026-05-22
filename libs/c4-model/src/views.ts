@@ -215,12 +215,13 @@ export interface DynamicViewRelationshipStep {
     source: Element
     destination: Element
     description?: string
+    technology?: string
 }
 
 export type DynamicViewStep = DynamicViewRelationshipStep | { parallel: DynamicViewRelationshipStep[][] }
 
 export interface DynamicViewBuilder {
-    addStep(source: Element, destination: Element, description?: string): void
+    addStep(source: Element, destination: Element, description?: string, technology?: string): void
     addParallel(sequences: DynamicViewRelationshipStep[][]): void
     autoLayout(direction?: AutoLayoutDirection, rankSeparation?: number, nodeSeparation?: number): void
     setDefault(): void
@@ -258,8 +259,8 @@ export class DynamicView implements DynamicViewBuilder, ReadonlyDynamicView {
         this.title = definition.title
     }
 
-    public addStep(source: Element, destination: Element, description?: string): void {
-        this._steps.push({ source, destination, description })
+    public addStep(source: Element, destination: Element, description?: string, technology?: string): void {
+        this._steps.push({ source, destination, description, technology })
     }
 
     public addParallel(sequences: DynamicViewRelationshipStep[][]): void {

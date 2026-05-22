@@ -398,4 +398,24 @@ describe('can write to dsl', () => {
         })
         expect(writeDsl()).toMatchSnapshot()
     })
+
+    test('dynamic view step with technology', () => {
+        const a = model.softwareSystem('A')
+        const b = model.softwareSystem('B')
+        a.uses(b, { description: 'Calls' })
+        views.addDynamicView('D', {}).with((v) => {
+            v.addStep(a, b, 'Calls', 'HTTPS')
+        })
+        expect(writeDsl()).toMatchSnapshot()
+    })
+
+    test('dynamic view step without technology', () => {
+        const a = model.softwareSystem('A')
+        const b = model.softwareSystem('B')
+        a.uses(b, { description: 'Calls' })
+        views.addDynamicView('D', {}).with((v) => {
+            v.addStep(a, b, 'Calls')
+        })
+        expect(writeDsl()).toMatchSnapshot()
+    })
 })

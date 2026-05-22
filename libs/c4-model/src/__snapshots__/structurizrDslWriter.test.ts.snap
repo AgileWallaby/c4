@@ -84,6 +84,64 @@ exports[`can write to dsl > default - marks view as default 1`] = `
 "
 `;
 
+exports[`can write to dsl > dynamic view step with technology 1`] = `
+"workspace "m" {
+  model {
+    // Elements
+    a = softwareSystem "A" {
+      tags "Element" "Software System"
+    }
+    b = softwareSystem "B" {
+      tags "Element" "Software System"
+    }
+    // Relationships
+    a -> b "Calls" {
+      tags "Relationship"
+    }
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    // Container Views
+    // Component Views
+    // Dynamic Views
+    dynamic * "D" {
+      a -> b "Calls" "HTTPS"
+    }
+  }
+}
+"
+`;
+
+exports[`can write to dsl > dynamic view step without technology 1`] = `
+"workspace "m" {
+  model {
+    // Elements
+    a = softwareSystem "A" {
+      tags "Element" "Software System"
+    }
+    b = softwareSystem "B" {
+      tags "Element" "Software System"
+    }
+    // Relationships
+    a -> b "Calls" {
+      tags "Relationship"
+    }
+  }
+  views {
+    // System Landscape Views
+    // System Context Views
+    // Container Views
+    // Component Views
+    // Dynamic Views
+    dynamic * "D" {
+      a -> b "Calls"
+    }
+  }
+}
+"
+`;
+
 exports[`can write to dsl > excludeElements - array of elements 1`] = `
 "workspace "m" {
   model {

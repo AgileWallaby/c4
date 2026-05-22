@@ -372,9 +372,9 @@ export class StructurizrDSLWriter {
     }
 
     private writeDynamicRelationshipStep(step: DynamicViewRelationshipStep, level: number): string {
-        const line = step.description
-            ? `${step.source.canonicalName} -> ${step.destination.canonicalName} "${step.description}"`
-            : `${step.source.canonicalName} -> ${step.destination.canonicalName}`
+        let line = `${step.source.canonicalName} -> ${step.destination.canonicalName}`
+        if (step.description) line += ` "${step.description}"`
+        if (step.technology) line += ` "${step.technology}"`
         return this.writeLine(line, level)
     }
 
