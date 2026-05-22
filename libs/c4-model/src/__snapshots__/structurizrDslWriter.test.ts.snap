@@ -95,7 +95,7 @@ exports[`can write to dsl > dynamic view step with technology 1`] = `
       tags "Element" "Software System"
     }
     // Relationships
-    a -> b "Calls" {
+    a -> b "Calls" "HTTPS" {
       tags "Relationship"
     }
   }

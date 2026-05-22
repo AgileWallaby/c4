@@ -260,11 +260,32 @@ export class DynamicView implements DynamicViewBuilder, ReadonlyDynamicView {
     }
 
     public addStep(source: Element, destination: Element, description?: string, technology?: string): void {
+        this.validateRelationshipStep(source, destination, technology)
         this._steps.push({ source, destination, description, technology })
     }
 
     public addParallel(sequences: DynamicViewRelationshipStep[][]): void {
+        for (const sequence of sequences) {
+            for (const step of sequence) {
+                this.validateRelationshipStep(step.source, step.destination, step.technology)
+            }
+        }
         this._steps.push({ parallel: sequences })
+    }
+
+    private validateRelationshipStep(source: Element, destination: Element, technology?: string): void {
+        const relationship = source.relationships.find((r) => r.destination === destination)
+        if (!relationship) {
+            throw new Error(
+                `No relationship exists from '${source.name}' to '${destination.name}' in the model`
+            )
+        }
+        if (technology !== undefined && technology !== relationship.technology) {
+            const modelTech = relationship.technology ?? 'none'
+            throw new Error(
+                `Step technology '${technology}' does not match the model relationship technology '${modelTech}'`
+            )
+        }
     }
 
     public autoLayout(direction?: AutoLayoutDirection, rankSeparation?: number, nodeSeparation?: number): void {
