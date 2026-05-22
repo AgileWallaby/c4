@@ -25,6 +25,7 @@ exports[`cookbook: system-context-view > generates expected DSL 1`] = `
     }
     // Container Views
     // Component Views
+    // Dynamic Views
   }
 }
 "

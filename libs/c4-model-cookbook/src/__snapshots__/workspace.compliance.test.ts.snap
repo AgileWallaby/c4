@@ -11,6 +11,7 @@ exports[`cookbook: workspace - name only > generates expected DSL 1`] = `
     // System Context Views
     // Container Views
     // Component Views
+    // Dynamic Views
   }
 }
 "

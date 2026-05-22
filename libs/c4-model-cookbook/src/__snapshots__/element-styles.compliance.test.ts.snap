@@ -30,6 +30,7 @@ exports[`cookbook: element-styles - baseline > generates expected DSL 1`] = `
     // System Context Views
     // Container Views
     // Component Views
+    // Dynamic Views
   }
 }
 "
@@ -66,6 +67,7 @@ exports[`cookbook: element-styles - styling all elements > generates expected DS
     // System Context Views
     // Container Views
     // Component Views
+    // Dynamic Views
     styles {
       element "Element" {
         shape RoundedBox
@@ -109,6 +111,7 @@ exports[`cookbook: element-styles - styling individual elements > generates expe
     // System Context Views
     // Container Views
     // Component Views
+    // Dynamic Views
     styles {
       element "Tag 1" {
         shape RoundedBox

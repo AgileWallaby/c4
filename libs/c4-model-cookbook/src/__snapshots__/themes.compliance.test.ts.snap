@@ -18,6 +18,7 @@ exports[`cookbook: themes - single theme (azure shorthand) > generates expected 
     // System Context Views
     // Container Views
     // Component Views
+    // Dynamic Views
     theme microsoft-azure-2021.01
   }
 }
@@ -43,6 +44,7 @@ exports[`cookbook: themes - theme with element styles > generates expected DSL 1
     // System Context Views
     // Container Views
     // Component Views
+    // Dynamic Views
     styles {
       element "Software System" {
         shape RoundedBox
