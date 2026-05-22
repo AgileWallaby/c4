@@ -1,6 +1,6 @@
 import { GenericContainer, Wait } from 'testcontainers'
 
-const STRUCTURIZR_IMAGE = 'structurizr/structurizr:2026.04.19'
+const STRUCTURIZR_IMAGE = 'structurizr/structurizr:2026.05.16'
 const MERMAID_CLI_IMAGE = 'minlag/mermaid-cli:11.15.0'
 
 export function createStructurizrContainer(tmpDir: string, logs: string[]): GenericContainer {

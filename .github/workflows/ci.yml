@@ -56,7 +56,7 @@ jobs:
 
       - name: Pull Docker images for tests
         run: |
-          docker pull structurizr/structurizr:2026.04.19
+          docker pull structurizr/structurizr:2026.05.16
           docker pull minlag/mermaid-cli:11.15.0
 
       - name: Run tests
