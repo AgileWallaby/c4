@@ -107,6 +107,7 @@ exports[`build model > can build model 1`] = `
       include *
     }
     // Component Views
+    // Dynamic Views
   }
 }
 "
@@ -219,6 +220,7 @@ exports[`build model > can build model with explicit modules 1`] = `
       include *
     }
     // Component Views
+    // Dynamic Views
   }
 }
 "
