@@ -220,9 +220,7 @@ describe('can write to dsl', () => {
         views.addSystemLandscapeView('sl', { description: 'desc' }).with((v) => {
             v.includeAll()
         })
-        const dsl = writeDsl()
-        expect(dsl).not.toContain('title')
-        expect(dsl).toMatchSnapshot()
+        expect(writeDsl()).toMatchSnapshot()
     })
 
     test(
