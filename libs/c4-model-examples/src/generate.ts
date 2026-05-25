@@ -18,6 +18,7 @@ generateDiagrams<ExampleSystemCatalog>({
         })
     },
     outputDir: path.join(__dirname, '..', 'diagrams'),
+    format: ['mermaid', 'svg'],
 })
     .then((files) => {
         console.log('Generated:')
